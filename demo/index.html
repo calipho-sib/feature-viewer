@@ -1,0 +1,287 @@
+<html>
+<head>
+    <title>neXtProt protein sequence viewer</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+    <link rel="stylesheet" href="codemirror.css">
+    <script src="dependencies.js"></script>
+    <script src="../src/feature-viewer.js"></script>
+</head>
+
+<body class="container col-md-10 col-xs-12 col-md-offset-1">
+<div class="jumbotron">
+    <p class="pull-right" style="display: inline-block;"><a href="http://www.nextprot.org" alt="neXtProt"
+                                                            style="color:#C50063;">neXtProt &copy;</a></p>
+
+    <h1>Feature Viewer</h1>
+
+    <p>This javascript tool based on the library D3, will allow you to display the features covering your sequence of DNA, protein, or others.
+</div>
+<div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
+    <div class="panel panel-default col-md-5 col-md-offset-1 col-xs-10 col-xs-offset-1">
+        <div class="row panel-heading">
+            <h4 class="text-center">Initialize the Feature Viewer</h4>
+        </div>
+        <div class="panel-body">
+            <p>You will first need to create the SVG that will contains the features.<br>
+                To do so, give whithin the parameters, the sequence and the div in which the features will be display.<br>
+                You can also adjust some rendering options :</p>
+            <ul>
+                <li><strong>showAxis</strong> <em>(boolean)</em> : Display or not the x-Axis</li>
+                <li><strong>showSequence</strong> <em>(boolean)</em> : Display or not the sequence </li>
+                <li><strong>brushActive</strong> <em>(boolean)</em> : Active or not the brush zoom </li>
+                <li><strong>verticalLine</strong> <em>(integer)</em> : Add or not the vertical line following the mouse
+                </li>
+            </ul>
+            <p>The brush zoom will allow you to select a part of the sequence to zoom in. <br>
+                It may happen that the div is too small to display the sequence, but a zoom will make it appears.<br>
+            To zoom out, just do a right click.
+        </div>
+        <form>
+            <textarea id="code1" name="code1" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
+//Create a new Feature Viewer and add some rendering options
+   var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
+    	"KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div1", {
+    	showAxis: true,
+    	showSequence: true,
+    	brushActive: true,
+    	verticalLine:true
+                });
+    </textarea>
+        </form>
+        <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
+                onclick=executeCode("#protein-sequence-viewer2",simpleRender)>Execute
+        </button>
+    </div>
+    <div id="div1" class="col-md-4 col-md-offset-1 col-xs-10 col-xs-offset-1"
+         style="height:250px;vertical-align:top;margin-top:15px;"></div>
+
+</div>
+<div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
+    <div class="panel panel-default col-md-5 col-xs-10 col-md-offset-1 col-xs-offset-1 pull-left">
+        <div class="row panel-heading">
+            <h4 class="text-center">Add some features</h4>
+        </div>
+        <div class="panel-body">
+            <p>To add a feature to the SVG you have to pass an object as parameter.<br>
+                This object will take :</p>
+            <ul>
+                <li><strong>data</strong> <em>(array of objects)</em> : An array of data(objects) with "x" as the first position and "y"the last position</li>
+                <li><strong>name</strong> <em>(string)</em> : The name of theses features, which will be display as a label on the Y-axis </li>
+                <li><strong>className</strong> <em>(string)</em> : a class name, for further personnal computing </li>
+                <li><strong>color</strong> <em>(string)</em> : The color of the features </li>
+                <li><strong>type</strong> <em>("rect","multipleRect","unique","path")</em> : The type of feature, for a specific rendering</li>
+            </ul>
+        </div>
+        <form>
+            <textarea id="code2" name="code2" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
+//Create a new Feature Viewer and add some rendering options
+   var ft2 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
+    	"KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div2", {
+    	showAxis: true,
+    	showSequence: true,
+    	brushActive: true,
+    	verticalLine:false
+                });
+
+//Add some features
+    ft2.addFeature({
+        data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
+        name: "test feature 0",
+        className: "test0",
+        color: "#0F8292",
+        type: "rect"
+    });
+    ft2.addFeature({
+        data: [{x:32,y:47},{x:58,y:72}],
+        name: "test feature 1",
+        className: "test1",
+        color: "#066B78",
+        type: "rect"
+    });
+    ft2.addFeature({
+        data: [{x:52,y:52},{x:92,y:92}],
+        name: "test feature 2",
+        className: "test2",
+        color: "#007800",
+        type: "unique"
+    });
+    ft2.addFeature({
+        data: [{x:130,y:184},{x:40,y:142},{x:80,y:110}],
+        name: "test feature 3",
+        className: "test3",
+        color: "#780C43",
+        type: "path"
+    });
+    ft2.addFeature({
+        data: [{x:120,y:154},{x:22,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
+        name: "test feature 4",
+        className: "test4",
+        color: "#C50063",
+        type: "multipleRect"
+    });
+    ft2.addFeature({
+        data: [{x:5,y:12},{x:41,y:87},{x:133,y:172}],
+        name: "test feature 5",
+        className: "test5",
+        color: "#CFB915",
+        type: "rect"
+    })
+            </textarea>
+        </form>
+        <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
+                onclick=executeCode("#protein-sequence-viewer2",highlightCode)>Execute
+        </button>
+    </div>
+    <div id="div2" class="col-md-4 col-md-offset-1 col-xs-10 col-xs-offset-1"
+         style="height:250px;vertical-align:top;margin-top:15px;"></div>
+</div>
+<div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
+    <div class="panel panel-default col-md-5 col-xs-10 col-md-offset-1 col-xs-offset-1 pull-left">
+        <div class="row panel-heading">
+            <h4 class="text-center">Coverage</h4>
+        </div>
+        <div class="panel-body">
+            <p>A coverage with color codes can be apply to the sequence.<br>
+                For this, you must provide a list, mapping all the sequence with some specific colors and labels. <br>
+                With the coverage, it's also possible to give within the parameters an interval to highlight in the
+                sequence. <br>
+                An other array will be needed to display the legend of color codes.</p>
+        </div>
+        <form>
+            <textarea id="code3" name="code3" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
+//Create a new Feature Viewer and add some rendering options
+   var ft3 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
+    	"KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div3", {
+    	showAxis: true,
+    	showSequence: true,
+    	brushActive: true,
+    	verticalLine:false
+                });
+    </textarea>
+        </form>
+        <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
+                onclick=executeCode("#protein-sequence-viewer3",coverageCode)>Execute
+        </button>
+    </div>
+    <div id="div3" class="col-md-4 col-md-offset-1 col-xs-10 col-xs-offset-1"
+         style="height:250px;vertical-align:top;margin-top:15px;"></div>
+</div>
+
+<script>
+    var simpleRender;
+    var highlightCode;
+    var coverageCode;
+
+    var executeCode = function (outputDiv, mirrorCode) {
+        var code = mirrorCode.getValue();
+        eval(code);
+        $(outputDiv).animate({opacity: "100"}, 2000);
+    };
+
+    window.onload = function () {
+        simpleRender = CodeMirror.fromTextArea(code1, {
+            mode: "javascript",
+            lineNumbers: true,
+            lineWrapping: true
+        });
+        highlightCode = CodeMirror.fromTextArea(code2, {
+            mode: "javascript",
+            lineNumbers: true,
+            lineWrapping: true
+        });
+        coverageCode = CodeMirror.fromTextArea(code3, {
+            mode: "javascript",
+            lineNumbers: true,
+            lineWrapping: true
+        });
+        $(function () {
+            executeCode("#div1", simpleRender);
+            executeCode("#div2", highlightCode);
+            executeCode("#div3", coverageCode);
+        });
+    };
+</script>
+<script class="example">
+
+
+//    $(function () {
+
+        // For the example
+
+        // Classic display of the sequence
+//        var seq1 = new Sequence('MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN' +
+//        'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN');
+        // You can add some rendering options
+//        seq1.render('#protein-sequence-viewer', {
+//                    'showLineNumbers': true,
+//                    'wrapAminoAcids': true,
+//                    'charsPerLine': 50
+//                }
+//        );
+
+//        var myCodeMirror = CodeMirror($("#highlightCode")[0], {
+//            value: "var seq2 = new Sequence('MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL" +
+//            "YLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN');\n" +
+//            "seq2.render('#protein-sequence-viewer2');\n" +
+//            "seq2.selection(20, 43, 'red');",
+//            mode: "javascript"
+//        });
+
+
+        // Display the sequence with a part highlighted
+//        var seq2 = new Sequence('MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN');
+//        seq2.render('#protein-sequence-viewer2');
+//        seq2.selection(20, 43, 'red');
+
+
+        // Display the sequence with coverage and legend
+//        var seq3 = new Sequence('MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN');
+//        seq3.render('#protein-sequence-viewer3');
+//        //Coverage list
+//        var dataCoverage = [
+//            {start: 0, end: 25, color: "black", underscore: false},
+//            {start: 25, end: 47, color: "#ff0000", underscore: false},
+//            {start: 47, end: 54, color: "#ff0000", underscore: true},
+//            {start: 54, end: 55, color: "#ff0000", underscore: false},
+//            {start: 55, end: 56, color: "black", underscore: false},
+//            {start: 56, end: 89, color: "#69CC33", underscore: false},
+//            {start: 89, end: 90, color: "black", underscore: false},
+//            {start: 90, end: 110, color: "#ff0000", underscore: false}
+//        ];
+//        //IMPORTANT : You need to be sure the the Coverage array is sorted before drawing
+////        ExempleSequenceCoverage.sort(function (a, b) {
+////            return a.start - b.start;
+////        });
+//        seq3.coverage(dataCoverage);
+//        //Legend
+//        var ExempleLegend = [{
+//            name: "Mature Protein",
+//            color: "#ff0000",
+//            underscore: false
+//        }, {name: "Proteotypic peptide", color: "#69CC33", underscore: false}, {
+//            name: "Synthetic peptide",
+//            color: "#fff",
+//            underscore: true
+//        }];
+//        seq3.addLegend(ExempleLegend);
+//
+//
+//    });
+
+
+</script>
+
+
+</body>
+</html>

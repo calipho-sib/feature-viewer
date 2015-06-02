@@ -30,33 +30,16 @@
 .glycoSite{fill:#B3C2D1;}
 .lineglycoSite{stroke:#B3C2D1;stroke-width:1px;}
 */
-body{
-    background:#F3F3F4 !important;
-    overflow-y:scroll;
-}
-.active {
-    z-index: 1 !important;
-}
+
 .brush .extent{
     stroke: #fff;
     fill-opacity: .125;
     shape-rendering: crispEdges;
 }
 
-
-.point {
-    fill: #2f225d;
-    stroke: #afa2dc;
-}
-
 .selected {
     fill: #afa2dc;
     stroke: #2f225d;
-}
-
-.clear-button {
-    font: 14px sans-serif;
-    cursor: pointer;
 }
 
 .axis path,
@@ -68,14 +51,6 @@ body{
 
 .axis {
     font: 10px sans-serif;
-}
-.d3-tip {
-  line-height: 1;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 2px;
 }
 
  /*Creates a small triangle extender for the tooltip */
@@ -92,25 +67,6 @@ body{
   margin: -1px 0 0 0;
   top: 98%;
   left: 27px;
-}
-.tableHighlight {
-    background-color:rgba(197, 0, 99, 0.2) !important;
-}
-
-#navAside a{
-  color:#D0D0D0 !important;
-  padding:5px 5px 5px 30px;
-}
-#navAside a:hover{
-  color:#E4E4E4 !important;
-  background-color:#666666 !important;
-}
-#navAside li.active{
-  border-left:5px solid #C50063!important;
-}
-#navAside li.active a{
-  color:#E4E4E4 !important;
-  background-color:#666666 !important;
 }
 
 /* Style northward tooltips differently */

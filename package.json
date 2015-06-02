@@ -1,0 +1,29 @@
+{
+  "name": "testD3",
+  "version": "0.0.1",
+  "main": "script2.js",
+  "description": "d3 testing",
+  "keywords": [
+    "D3 testing"
+  ],
+  "author": "MatSchaeff",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "grunt": "x.x.x",
+    "grunt-bump": "^0.3.0",
+    "grunt-connect": "^0.2.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-connect": "~0.5.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-handlebars": "^0.10.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-serve": "^0.1.6",
+    "load-grunt-tasks": "^0.6.0"
+  },
+  "dependencies": {
+    "bower": "x.x.x",
+    "grunt-cli": "x.x.x"
+  }
+}
