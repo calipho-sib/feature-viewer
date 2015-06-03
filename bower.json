@@ -1,7 +1,7 @@
 {
-  "name": "D3 testing",
+  "name": "Feature-viewer",
   "version": "0.0.1",
-  "main": "script2.js",
+  "main": "src/feature-viewer.js",
   "ignore": [
     "**/.*",
     "node_modules",
