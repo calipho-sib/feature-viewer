@@ -30,7 +30,7 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
     d3.helper.tooltip = function(object){
         var tooltipDiv;
         var selectedRect;
-        var bodyNode = d3.select('body').node();
+        var bodyNode = d3.select(div).node();
 
         function tooltip(selection){
 
@@ -38,12 +38,12 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
                 // Clean up lost tooltips
                 d3.select('body').selectAll('div.tooltip').remove();
                 // Append tooltip
-                tooltipDiv = d3.select('body')
+                tooltipDiv = d3.select(div)
                                .append('div')
                                .attr('class', 'tooltip2');
                 var absoluteMousePos = d3.mouse(bodyNode);
                 tooltipDiv.style({
-                    left: (absoluteMousePos[0]-30)+'px',
+                    left: (absoluteMousePos[0]-15)+'px',
                     top: (absoluteMousePos[1]-52)+'px',
                     'background-color': 'rgba(0, 0, 0, 0.8)',
                     width: 'auto',
@@ -78,7 +78,7 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
                 // Move tooltip
                 var absoluteMousePos = d3.mouse(bodyNode);
                 tooltipDiv.style({
-                    left: (absoluteMousePos[0]-30)+'px',
+                    left: (absoluteMousePos[0]-15)+'px',
                     top: (absoluteMousePos[1] - 52)+'px'
                 });
             })
@@ -94,7 +94,7 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
                     var svgWidth=d3.select(".background").attr("width");
                     d3.select('body').selectAll('div.selectedRect').remove();
                     // Append tooltip
-                    selectedRect = d3.select('.chart')
+                    selectedRect = d3.select(div)
                         .append('div')
                         .attr('class', 'selectedRect');
                     if (object.type === "path") {
@@ -128,7 +128,7 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
                         width: widthRect+'px',
                         height: (Yposition+50)+'px',
                         position: 'absolute',
-                        'z-index': 1,
+                        'z-index': -1,
                         'box-shadow': '0 1px 2px 0 #656565'
                     });
             })
@@ -497,7 +497,7 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
                 .attr("width", rectWidth)
                 .attr("height", 8)
                 .style("fill", object.color)
-                .style("z-index", "3")
+                .style("z-index", "13")
                 .call(d3.helper.tooltip(object));
 
             forcePropagation(rects);
@@ -572,7 +572,7 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
 //}
 
     function brushend() {
-        d3.select('body').selectAll('div.selectedRect').remove();
+        d3.select(div).selectAll('div.selectedRect').remove();
         // Check if brush is big enough before zooming
         var extent = brush.extent();
         var extentLength = Math.abs(extent[0] - extent[1]);
@@ -596,10 +596,10 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
             reset_axis();
 
             //rectsPep2.classed("selected", false);
-            d3.select(".brush").call(brush.clear());
+            d3.select(div).selectAll(".brush").call(brush.clear());
         }
         else {
-            d3.select(".brush").call(brush.clear());
+            d3.select(div).selectAll(".brush").call(brush.clear());
             //resetAll();
         }
     }
@@ -725,10 +725,15 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
                 'verticalLine':false
             }
         }
+        d3.select(div)
+            .style("position","relative")
+            .style("padding","0px")
+            .style("z-index","2");
         // Create SVG
         svg = d3.select(div).append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
+            .style("z-index","2")
             .on("contextmenu", function (d,i) {
                 d3.event.preventDefault();
                 resetAll();
