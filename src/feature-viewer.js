@@ -22,7 +22,7 @@ function FeatureViewer(sequence, div,options) {
     d3.helper.tooltip = function(object){
         var tooltipDiv;
         var selectedRect;
-        var bodyNode = d3.select('body').node();
+        var bodyNode = d3.select(div).node();
 
         function tooltip(selection){
 
@@ -86,7 +86,7 @@ function FeatureViewer(sequence, div,options) {
                     var svgWidth=d3.select(".background").attr("width");
                     d3.select('body').selectAll('div.selectedRect').remove();
                     // Append tooltip
-                    selectedRect = d3.select('.chart')
+                    selectedRect = d3.select(div)
                         .append('div')
                         .attr('class', 'selectedRect');
                     if (object.type === "path") {
@@ -120,7 +120,7 @@ function FeatureViewer(sequence, div,options) {
                         width: widthRect+'px',
                         height: (Yposition+50)+'px',
                         position: 'absolute',
-                        'z-index': 1,
+                        'z-index': -1,
                         'box-shadow': '0 1px 2px 0 #656565'
                     });
             })
@@ -489,7 +489,7 @@ function FeatureViewer(sequence, div,options) {
                 .attr("width", rectWidth)
                 .attr("height", 8)
                 .style("fill", object.color)
-                .style("z-index", "3")
+                .style("z-index", "13")
                 .call(d3.helper.tooltip(object));
 
             forcePropagation(rects);
@@ -588,10 +588,10 @@ function FeatureViewer(sequence, div,options) {
             reset_axis();
 
             //rectsPep2.classed("selected", false);
-            d3.selectAll(".brush").call(brush.clear());
+            d3.select(div).selectAll(".brush").call(brush.clear());
         }
         else {
-            d3.selectAll(".brush").call(brush.clear());
+            d3.select(div).selectAll(".brush").call(brush.clear());
             //resetAll();
         }
     }
@@ -717,10 +717,15 @@ function FeatureViewer(sequence, div,options) {
                 'verticalLine':false
             }
         }
+        d3.select(div)
+            .style("position","relative")
+            .style("padding","0px")
+            .style("z-index","2");
         // Create SVG
         svg = d3.select(div).append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
+            .style("z-index","2")
             .on("contextmenu", function (d,i) {
                 d3.event.preventDefault();
                 resetAll();

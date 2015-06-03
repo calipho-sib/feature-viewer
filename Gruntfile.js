@@ -37,19 +37,6 @@ module.exports = function(grunt) {
             all: {
                 options: {livereload: true},
                 files: ['*.js']
-            },
-            handlebars: {
-                files: '*.tmpl',
-                tasks: ['handlebars:compile']
-            }
-        },
-        handlebars: {
-            compile: {
-                src: '*.tmpl',
-                dest: 'gist_templates.js',
-                options: {
-                    namespace: "HBtemplates"
-                }
             }
         }
     });
@@ -60,14 +47,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
 
     // Default task(s).
     grunt.registerTask('default', ['uglify']);
     grunt.registerTask('concating', ['concat']);
-    grunt.registerTask('hbs', ['handlebars:compile']);
     grunt.registerTask('serve', ['connect:server','watch']);
 
 };
