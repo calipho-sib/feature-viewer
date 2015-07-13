@@ -15,7 +15,8 @@
 
     <h1>Feature Viewer</h1>
 
-    <p>This javascript tool based on the library D3, will allow you to display the features covering your sequence of DNA, protein, or others.
+    <p>This javascript tool based on the library D3, will allow you to display the features covering your sequence of
+        DNA, protein, or others.
 </div>
 <div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
     <div class="panel panel-default col-md-5 col-md-offset-1 col-xs-10 col-xs-offset-1">
@@ -24,18 +25,21 @@
         </div>
         <div class="panel-body">
             <p>You will first need to create the SVG that will contains the features.<br>
-                To do so, give whithin the parameters, the sequence and the div in which the features will be display.<br>
+                To do so, give whithin the parameters, the sequence and the div in which the features will be
+                display.<br>
                 You can also adjust some rendering options :</p>
             <ul>
                 <li><strong>showAxis</strong> <em>(boolean)</em> : Display or not the x-Axis</li>
-                <li><strong>showSequence</strong> <em>(boolean)</em> : Display or not the sequence </li>
-                <li><strong>brushActive</strong> <em>(boolean)</em> : Active or not the brush zoom </li>
-                <li><strong>verticalLine</strong> <em>(integer)</em> : Add or not the vertical line following the mouse
+                <li><strong>showSequence</strong> <em>(boolean)</em> : Display or not the sequence</li>
+                <li><strong>brushActive</strong> <em>(boolean)</em> : Active or not the brush zoom</li>
+                <li><strong>verticalLine</strong> <em>(boolean)</em> : Add or not the vertical line following the mouse
+                </li>
+                <li><strong>toolbar</strong> <em>(boolean)</em> : Add a header on top of the svg, showing level of zoom & the mouse position in the sequence.
                 </li>
             </ul>
             <p>The brush zoom will allow you to select a part of the sequence to zoom in. <br>
                 It may happen that the div is too small to display the sequence, but a zoom will make it appears.<br>
-            To zoom out, just do a right click.
+                To zoom out, just do a right click.
         </div>
         <form>
             <textarea id="code1" name="code1" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
@@ -45,7 +49,8 @@
     	showAxis: true,
     	showSequence: true,
     	brushActive: true,
-    	verticalLine:true
+    	verticalLine:true,
+        toolbar:true
                 });
     </textarea>
         </form>
@@ -53,7 +58,7 @@
                 onclick=executeCode("#div1",initSVG)>Execute
         </button>
     </div>
-    <div id="div1" class="col-md-4 col-md-offset-1 col-xs-10 col-xs-offset-1"
+    <div id="div1" class="col-md-5 col-md-offset-1 col-xs-10 col-xs-offset-1"
          style="height:250px;vertical-align:top;margin-top:15px;"></div>
 
 </div>
@@ -66,11 +71,17 @@
             <p>To add a feature to the SVG you have to pass an object as parameter.<br>
                 This object will take :</p>
             <ul>
-                <li><strong>data</strong> <em>(array of objects)</em> : An array of data(objects) with "x" as the first position and "y"the last position</li>
-                <li><strong>name</strong> <em>(string)</em> : The name of theses features, which will be display as a label on the Y-axis </li>
-                <li><strong>className</strong> <em>(string)</em> : a class name, for further personnal computing </li>
-                <li><strong>color</strong> <em>(string)</em> : The color of the features </li>
-                <li><strong>type</strong> <em>("rect","multipleRect","unique","path")</em> : The type of feature, for a specific rendering</li>
+                <li><strong>data</strong> <em>(array of objects)</em> : An array of data(objects) with "x" as the first
+                    position and "y"the last position
+                </li>
+                <li><strong>name</strong> <em>(string)</em> : The name of theses features, which will be display as a
+                    label on the Y-axis
+                </li>
+                <li><strong>className</strong> <em>(string)</em> : a class name, for further personnal computing</li>
+                <li><strong>color</strong> <em>(string)</em> : The color of the features</li>
+                <li><strong>type</strong> <em>("rect","multipleRect","unique","path")</em> : The type of feature, for a
+                    specific rendering
+                </li>
             </ul>
         </div>
         <form>
@@ -81,14 +92,15 @@
     	showAxis: true,
     	showSequence: true,
     	brushActive: true,
-    	verticalLine:false
+    	verticalLine:false,
+        toolbar:true
                 });
 
 //Add some features
     ft2.addFeature({
         data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
-        name: "test feature 0",
-        className: "test0",
+        name: "test feature 1",
+        className: "test1",
         color: "#0F8292",
         type: "rect"
     });
@@ -113,13 +125,25 @@
         color: "#C50063",
         type: "multipleRect"
     });
+    ft2.addFeature({
+        data: [{x:120,y:154,description:"aaaaa"},{x:22,y:163,description:"bbbbb"},
+               {x:90,y:108,description:"ccccc"},{x:10,y:25,description:"ddddd"},
+               {x:193,y:210,description:"eeeee"},{x:78,y:85,description:"fffff"},
+               {x:96,y:143,description:"ggggg"},{x:14,y:65,description:"hhhhh"},
+               {x:56,y:167,description:"jjjjj"}],
+        name: "test feature 5",
+        className: "test5",
+        color: "#920049",
+        type: "multipleRect"
+    });
+
             </textarea>
         </form>
         <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
                 onclick=executeCode("#div2",addFeatures)>Execute
         </button>
     </div>
-    <div id="div2" class="col-md-4 col-md-offset-1 col-xs-10 col-xs-offset-1"
+    <div id="div2" class="col-md-5 col-xs-10 col-xs-offset-1"
          style="height:250px;vertical-align:top;margin-top:15px;"></div>
 </div>
 
