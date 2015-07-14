@@ -62,5 +62,6 @@ Check out this page for a better understanding of how to use the sequence viewer
 * Show sequence
 * Brush active (zoom)
 * Toolbar (current zoom & position)
+* Zoom max
 
 
