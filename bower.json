@@ -1,5 +1,5 @@
 {
-  "name": "Feature-viewer",
+  "name": "feature-viewer",
   "version": "0.0.1",
   "main": "src/feature-viewer.js",
   "ignore": [
@@ -11,5 +11,18 @@
     "jquery": "x.x.x",
     "bootstrap": "3.x.x",
     "d3" : "x.x.x"
+  },
+  "keywords": [
+    "feature",
+    "nextprot",
+    "uniprot"
+  ],
+  "license": "MIT",
+  "authors": [
+    "Mathieu Schaeffer <mat.schaeff@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/calipho-sib/feature-viewer.git"
   }
 }

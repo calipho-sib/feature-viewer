@@ -1,12 +1,14 @@
 {
-  "name": "testD3",
+  "name": "feature-viewer",
   "version": "0.0.8",
-  "main": "script2.js",
-  "description": "d3 testing",
+  "main": "src/feature-viewer.js",
   "keywords": [
-    "D3 testing"
+    "feature",
+    "nextprot",
+    "uniprot",
+    "proteins"
   ],
-  "author": "MatSchaeff",
+  "author": "Mathieu Schaeffer",
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
