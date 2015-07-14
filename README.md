@@ -12,12 +12,12 @@ bower install feature-viewer
 ```
 2) Specify a div in your html
 ```
-<div id="feature-viewer"></div>
+<div id="fv1"></div>
 ```
 3) Create an instance of FeatureViewer in javascript with the sequence, the div in which it will be display and the rendering options of your choice.
 ```
 var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLE',
-                           '#div1',
+                           '#fv1',
                             {
                                 showAxis: true,
                                 showSequence: true,
