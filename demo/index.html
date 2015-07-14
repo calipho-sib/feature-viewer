@@ -49,7 +49,6 @@
     	showAxis: true,
     	showSequence: true,
     	brushActive: true,
-    	verticalLine:true,
         toolbar:true
                 });
     </textarea>
@@ -71,8 +70,8 @@
             <p>To add a feature to the SVG you have to pass an object as parameter.<br>
                 This object will take :</p>
             <ul>
-                <li><strong>data</strong> <em>(array of objects)</em> : An array of data(objects) with "x" as the first
-                    position and "y"the last position
+                <li><strong>data</strong> <em>(array of objects)</em> : An array of objects, each containing "x":(int) as the first
+                    position and "y":(int) the last position.   (Optionally, you can also add "description":(string) and"id":(string) ).
                 </li>
                 <li><strong>name</strong> <em>(string)</em> : The name of theses features, which will be display as a
                     label on the Y-axis
@@ -92,7 +91,6 @@
     	showAxis: true,
     	showSequence: true,
     	brushActive: true,
-    	verticalLine:false,
         toolbar:true
                 });
 
@@ -125,12 +123,13 @@
         color: "#C50063",
         type: "multipleRect"
     });
+//Beside positions of each element, you can also give a specific description, which will appears in the tooltip when mouse hover, and a specific ID, for example to link a click event on the feature with something else in your project.
     ft2.addFeature({
-        data: [{x:120,y:154,description:"aaaaa"},{x:22,y:163,description:"bbbbb"},
-               {x:90,y:108,description:"ccccc"},{x:10,y:25,description:"ddddd"},
-               {x:193,y:210,description:"eeeee"},{x:78,y:85,description:"fffff"},
-               {x:96,y:143,description:"ggggg"},{x:14,y:65,description:"hhhhh"},
-               {x:56,y:167,description:"jjjjj"}],
+        data: [{x:120,y:154,description:"aaaaa",id:"a1"},{x:22,y:163,description:"bbbbb",id:"b1"},
+               {x:90,y:108,description:"ccccc",id:"c1"},{x:10,y:25,description:"ddddd",id:"d1"},
+               {x:193,y:210,description:"eeeee",id:"e1"},{x:78,y:85,description:"fffff",id:"f1"},
+               {x:96,y:143,description:"ggggg",id:"g1"},{x:14,y:65,description:"hhhhh",id:"h1"},
+               {x:56,y:167,description:"jjjjj",id:"j1"}],
         name: "test feature 5",
         className: "test5",
         color: "#920049",

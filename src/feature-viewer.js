@@ -884,11 +884,11 @@ function FeatureViewer(sequence, div, options) {
         // Create SVG
 
         if (options.toolbar === true) {
-            console.log($(div + ".svgHeader").length);
-            var headerOptions = $(div + ".svgHeader").length ? d3.select(div + ".svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
+            console.log($(div + " .svgHeader").length);
+            var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
             console.log(headerOptions);
 
-            if (!$(div + '.header-zoom').length) {
+            if (!$(div + ' .header-zoom').length) {
                 var headerZoom = headerOptions
                     .append("div")
                     .attr("class", "panel panel-default header-zoom")
@@ -921,7 +921,7 @@ function FeatureViewer(sequence, div, options) {
                     .attr("class", "zoomUnit")
                     .text("1");
             }
-            if (!$(div + '.header-position').length) {
+            if (!$(div + ' .header-position').length) {
                 var headerPosition = headerOptions
                     .append("div")
                     .attr("class", "panel panel-default header-position")
