@@ -1,6 +1,6 @@
 {
   "name": "feature-viewer",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "src/feature-viewer.js",
   "keywords": [
     "feature",
