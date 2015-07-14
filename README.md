@@ -22,7 +22,8 @@ var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLY
                                 showAxis: true,
                                 showSequence: true,
                                 brushActive: true, //zoom
-                                toolbar:true //current zoom & mouse position
+                                toolbar:true, //current zoom & mouse position
+                                zoomMax:50 //define the maximum range of the zoom
                             });
 ```
 4) Finally, add the features

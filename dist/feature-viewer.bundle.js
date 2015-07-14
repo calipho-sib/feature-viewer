@@ -26,6 +26,7 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
     var level = 0;
     var seqShift = 0;
     var zoom = false;
+    var zoomMax = 50;
 
     //Init box & scaling
     var margin = {top: 10, right: 20, bottom: 20, left: 100},
@@ -731,7 +732,7 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
         else var start = parseInt(extent[1] + 1), end = parseInt(extent[0] - 1);
 
         var seq = displaySequence(extentLength);
-        if (!brush.empty() && extentLength > 50) {
+        if (!brush.empty() && extentLength > zoomMax) {
             var zoomScale = (sequence.length / extentLength).toFixed(1);
             $(div + " .zoomUnit").text(zoomScale.toString());
 
@@ -882,7 +883,8 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
                 'showSequence': false,
                 'brushActive': false,
                 'verticalLine': false,
-                'toolbar': false
+                'toolbar': false,
+                'zoommax':50
             }
         }
         d3.select(div)
@@ -1005,6 +1007,9 @@ return i.size=function(n){return arguments.length?(l=n,i):l},i.padding=function(
         if (options.verticalLine) {
             SVGOptions.verticalLine = true;
             addVerticalLine();
+        }
+        if (options.zoomMax) {
+            zoomMax = options.zoomMax;
         }
 
         updateSVGHeight(Yposition);
