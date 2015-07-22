@@ -4,7 +4,7 @@
 
 ![Feature viewer](/assets/feature-viewer.png)
 
-Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/master/demo/index.html
+Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/master/examples/index.html
 
 ## Getting Started
 
@@ -63,10 +63,6 @@ Note: that if you choose the later approach (by just using the feature-viewer.js
  
 * beside the positions for each element, you can also give a description & an ID, allowing you to link click event on the feature to the rest of your project.
 
-
-Check out this page for a better understanding of how to use the sequence viewer and its possibilities :
-* https://cdn.rawgit.com/calipho-sib/feature-viewer/master/demo/index.html
-
 ## Options
 
 * Show axis
@@ -78,11 +74,11 @@ Check out this page for a better understanding of how to use the sequence viewer
 ## Documentation
 
 Check out this page for a better understanding of how to use the feature viewer and its possibilities :
-* https://cdn.rawgit.com/calipho-sib/feature-viewer/master/demo/index.html
+* https://cdn.rawgit.com/calipho-sib/feature-viewer/master/examples/index.html
 
 ## Support
 
-If you have any problem or suggestion please open an issue [here](https://github.com/calipho-sib/sequence-viewer/issues).
+If you have any problem or suggestion please open an issue [here](https://github.com/calipho-sib/feature-viewer/issues).
 
 ## Development
 
