@@ -1,7 +1,7 @@
 {
   "name": "feature-viewer",
   "version": "0.0.1",
-  "main": "src/feature-viewer.js",
+  "main": "dist/feature-viewer.js",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -14,12 +14,15 @@
   },
   "keywords": [
     "feature",
+    "protein",
     "nextprot",
-    "uniprot"
+    "uniprot",
+    "viewer"
   ],
-  "license": "MIT",
+  "license": "GNU GPL v2",
   "authors": [
-    "Mathieu Schaeffer <mat.schaeff@gmail.com>"
+    "Mathieu Schaeffer <mat.schaeff@gmail.com>",
+    "Calipho Team <ndu@isb-sib.ch>"
   ],
   "repository": {
     "type": "git",

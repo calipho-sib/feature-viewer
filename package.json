@@ -1,30 +1,71 @@
 {
-  "name": "feature-viewer",
-  "version": "0.0.9",
-  "main": "src/feature-viewer.js",
-  "keywords": [
-    "feature",
-    "nextprot",
-    "uniprot",
-    "proteins"
-  ],
-  "author": "Mathieu Schaeffer",
-  "license": "MIT",
-  "readmeFilename": "README.md",
-  "devDependencies": {
-    "grunt": "x.x.x",
-    "grunt-bump": "^0.3.0",
-    "grunt-connect": "^0.2.0",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-connect": "~0.5.0",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-uglify": "~0.5.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-serve": "^0.1.6",
-    "load-grunt-tasks": "^0.6.0"
-  },
-  "dependencies": {
-    "bower": "x.x.x",
-    "grunt-cli": "x.x.x"
-  }
+"name": "feature-viewer",
+"description": "A feature viewer written in javascript with D3",
+"version": "0.0.1",
+"homepage": "https://github.com/calipho-sib/feature-viewer",
+"authors": [
+"Mathieu Schaeffer <mat.schaeff@gmail.com>",
+"Calipho Team <ndu@isb-sib.ch>"
+],
+"repository": {
+"type": "git",
+"url": "https://github.com/calipho-sib/feature-viewer.git"
+},
+"licenses": [
+{
+"type": "GNU GPL v2"
+}
+],
+"main": "lib/index.js",
+"style": "css/*.css",
+"scripts": {
+"build": "mkdir -p build && browserify -r ./:feature-viewer -o build/viewer.js",
+"build-browser": "npm run build",
+"build-all": "npm run build && npm run css",
+"watch": "watchify -r ./:feature-viewer -v -o build/viewer.js",
+"w": "prunner \"npm run sniper\" \"npm run watch\" \"npm run watch-css\"",
+"sniper": "sniper .",
+"css": "parcelify ./ -c build/bundle.css",
+"watch-css": "parcelify -w ./ -c build/bundle.css --loglevel verbose",
+"dist": "grunt && grunt concating"
+},
+"dependencies": {
+"bower": "x.x.x",
+"grunt-cli": "x.x.x",
+"jquery": "x.x.x",
+"d3": "x.x.x"
+},
+"devDependencies": {
+"mkdirp": "^0.5.0",
+"browserify": "6.x",
+"sniper": "0.x",
+"watchify": "^1.0.6",
+"prunner": "1.x",
+"parcelify": "0.x",
+"grunt": "x.x.x",
+"grunt-bump": "^0.3.0",
+"grunt-connect": "^0.2.0",
+"grunt-contrib-concat": "~0.3.0",
+"grunt-contrib-connect": "~0.5.0",
+"grunt-contrib-jshint": "~0.10.0",
+"grunt-contrib-uglify": "~0.5.0",
+"grunt-contrib-watch": "~0.5.3",
+"grunt-serve": "^0.1.6",
+"load-grunt-tasks": "^0.6.0"
+},
+"sniper": {
+"js": ["/build/viewer.js"],
+"css": ["/build/bundle.css"],
+"snippets": ["snippets"],
+"first": "example_2"
+},
+"keywords": [
+"feature",
+"protein",
+"nextprot",
+"uniprot",
+"viewer",
+"biojs"
+],
+"readmeFilename": "README.md"
 }

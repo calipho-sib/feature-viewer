@@ -8,9 +8,10 @@ module.exports = function(grunt) {
                 separator: ';'
             },
             dist: {
-                src: ['bower_components/jquery/dist/jquery.min.js',
+                src: [
+                    'bower_components/jquery/dist/jquery.js',
                     'bower_components/d3/d3.min.js',
-                    'src/feature-viewer.js'
+                    'dist/feature-viewer.min.js'
                 ],
                 dest: 'dist/feature-viewer.bundle.js'
             }
@@ -38,7 +39,7 @@ module.exports = function(grunt) {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             build: {
-                src: 'src/feature-viewer.js',
+                src: 'dist/feature-viewer.js',
                 dest: 'dist/feature-viewer.min.js'
             }
         },
