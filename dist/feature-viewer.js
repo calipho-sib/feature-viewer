@@ -161,7 +161,7 @@ function FeatureViewer(sequence, div, options) {
                     }
                     selectedRect.style({
                         left: xRect + 'px',
-                        top: ($(div +" .svgHeader").length) ? 40 : 10 + 'px',
+                        top: ($(div +" .svgHeader").length) ? 60 + 'px' : 10 + 'px',
                         'background-color': 'rgba(0, 0, 0, 0.2)',
                         width: widthRect + 'px',
                         height: (Yposition + 50) + 'px',
