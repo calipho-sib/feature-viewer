@@ -71,6 +71,10 @@ Note: that if you choose the later approach (by just using the feature-viewer.js
 * Toolbar (current zoom & position)
 * Zoom max
 
+## Examples 
+
+https://search.nextprot.org/entry/NX_P01308/view/proteomics
+
 ## Documentation
 
 Check out this page for a better understanding of how to use the feature viewer and its possibilities :
