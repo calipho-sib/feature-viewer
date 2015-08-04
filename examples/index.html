@@ -163,12 +163,12 @@
     };
 
     window.onload = function () {
-        initSVG = CodeMirror.fromTextArea(code1, {
+        initSVG = CodeMirror.fromTextArea($('#code1'), {
             mode: "javascript",
             lineNumbers: true,
             lineWrapping: true
         });
-        addFeatures = CodeMirror.fromTextArea(code2, {
+        addFeatures = CodeMirror.fromTextArea($('#code2'), {
             mode: "javascript",
             lineNumbers: true,
             lineWrapping: true
