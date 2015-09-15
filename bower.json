@@ -1,6 +1,6 @@
 {
   "name": "feature-viewer",
-  "version": "0.0.1",
+  "version": "0.1.7",
   "main": "dist/feature-viewer.js",
   "ignore": [
     "**/.*",
