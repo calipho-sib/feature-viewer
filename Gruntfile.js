@@ -69,7 +69,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-bump');
 
-
     // Default task(s).
     grunt.registerTask('default', ['uglify']);
     grunt.registerTask('concating', ['concat']);

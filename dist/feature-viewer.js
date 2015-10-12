@@ -333,9 +333,9 @@ function FeatureViewer(sequence, div, options) {
         yAxisSVGgroup
             .append("text")
             .attr("class", "yaxis")
-            .attr("text-anchor", "end")
+            .attr("text-anchor", "start")
             .attr("x", function () {
-                return margin.left - 20
+                return margin.left - 92
             })
             .attr("y", function (d) {
                 return d.y + 8
@@ -1020,7 +1020,7 @@ function FeatureViewer(sequence, div, options) {
                 type: "text"
             });
             yData.push({
-                title: "sequence",
+                title: "Sequence",
                 y: Yposition - 8
             });
         }
