@@ -78,7 +78,7 @@ https://search.nextprot.org/entry/NX_P01308/view/proteomics
 ## Documentation
 
 Check out this page for a better understanding of how to use the feature viewer and its possibilities :
-* https://cdn.rawgit.com/calipho-sib/feature-viewer/master/examples/index.html
+* https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.9/examples/index.html
 
 ## Support
 
