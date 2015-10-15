@@ -4,7 +4,7 @@
 
 ![Feature viewer](/assets/feature-viewer.png)
 
-Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/master/examples/index.html
+Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/master/v0.1.9/index.html
 
 ## Getting Started
 
