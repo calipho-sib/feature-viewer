@@ -14,7 +14,7 @@
 }
 .box {
     width:70%;
-    height:300px;
+    height:auto;
     background:#FFF;
     margin:40px auto;
 }
