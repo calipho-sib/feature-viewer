@@ -27,13 +27,14 @@
     "sniper": "sniper .",
     "css": "parcelify ./ -c build/bundle.css",
     "watch-css": "parcelify -w ./ -c build/bundle.css --loglevel verbose",
-    "dist": "grunt && grunt concating"
+    "dist": "grunt && grunt concating && grunt serve"
   },
   "dependencies": {
     "bower": "x.x.x",
     "grunt-cli": "x.x.x",
     "jquery": "x.x.x",
-    "d3": "x.x.x"
+    "d3": "x.x.x",
+    "bootstrap": "x.x.x"
   },
   "devDependencies": {
     "mkdirp": "^0.5.0",

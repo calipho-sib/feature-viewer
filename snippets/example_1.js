@@ -7,5 +7,6 @@ var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKL
     showSequence: true,
     brushActive: true,
     toolbar:true,
-    zoomMax:50
+    bubbleHelp:true,
+    zoomMax:20
 });

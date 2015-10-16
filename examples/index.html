@@ -1,17 +1,19 @@
 <html>
 <head>
     <title>neXtProt protein sequence viewer</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="../css/style.css">
-    <link rel="stylesheet" type="text/css" href="bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.css">
     <link rel="stylesheet" href="index.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/mode/javascript/javascript.min.js"></script>
     <script src="../dist/feature-viewer.bundle.js"></script>
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 </head>
 
 <body>
-<div class="container col-md-10 col-xs-12 col-md-offset-1">
+<div class="container col-lg-10 col-md-12 col-xs-12 col-lg-offset-1">
     <div class="jumbotron">
         <p class="pull-right" style="display: inline-block;">
             <a href="https://search.nextprot.org/" target="_blank" alt="neXtProt">
@@ -34,7 +36,6 @@
             </div>
         </div>
     </div>
-
     <div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
         <div class="panel panel-default col-md-5 col-md-offset-1 col-xs-10 col-xs-offset-1">
             <div class="row panel-heading">
@@ -49,11 +50,10 @@
                     <li><strong>showAxis</strong> <em>(boolean)</em> : Display or not the x-Axis</li>
                     <li><strong>showSequence</strong> <em>(boolean)</em> : Display or not the sequence</li>
                     <li><strong>brushActive</strong> <em>(boolean)</em> : Active or not the brush zoom</li>
-                    <li><strong>verticalLine</strong> <em>(boolean)</em> : Add or not the vertical line following the
-                        mouse
-                    </li>
                     <li><strong>toolbar</strong> <em>(boolean)</em> : Add a header on top of the svg, showing level of
                         zoom & the mouse position in the sequence.
+                    </li>
+                    <li><strong>bubbleHelp</strong> <em>(boolean)</em> : Add a bubble help in the header to indicate how to zoom. Requires the toolbar.
                     </li>
                     <li><strong>zoomMax</strong> <em>(int)</em> : Define the maximum range of the zoom. Must be a
                         multiple of ten.
@@ -68,7 +68,8 @@
             <textarea id="code1" name="code1" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
 //Create a new Feature Viewer and add some rendering options
 var options = {showAxis: true, showSequence: true,
-               brushActive: true, toolbar:true, zoomMax:50 };
+               brushActive: true, toolbar:true,
+               bubbleHelp: true, zoomMax:20 };
 var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDDAAFJDSAKFL","#div1", options);
     </textarea>
             </form>
@@ -116,7 +117,8 @@ var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKL
     	showSequence: true,
     	brushActive: true,
         toolbar:true,
-        zoomMax:50
+        bubbleHelp:true,
+        zoomMax:20
                 });
 
 //Add some features
@@ -145,7 +147,7 @@ var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKL
         data: [{x:120,y:154},{x:22,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
         name: "test feature 4",
         className: "test4",
-        color: "#C50063",
+        color: "#79E376",
         type: "multipleRect"
     });
 //Beside positions of each element, you can also give a specific description, which will appears in the tooltip when mouse hover, and a specific ID, for example to link a click event on the feature with something else in your project.
@@ -157,7 +159,7 @@ var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKL
                {x:56,y:167,description:"jjjjj",id:"j1"}],
         name: "test feature 5",
         className: "test5",
-        color: "#920049",
+        color: "#54FEB7",
         type: "multipleRect"
     });
 
@@ -202,6 +204,7 @@ var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKL
             executeCode("#div2", addFeatures);
         });
     };
+
 </script>
 
 

@@ -1,12 +1,67 @@
+
+/*
+.pep{fill:#B3E1D1;}
+.linepep{stroke:#B3E1D1;stroke-width:1px;z-index:0}
+
+.srmPep{fill:#B3E1F0}
+.linesrmPep{stroke:#B3E1F0;stroke-width:1px;z-index:0}
+
+.mature{fill:#B3B3C2;}
+.linemature{stroke:#B3B3C2;stroke-width:1px;}
+
+.signal{fill:#B3B3E1;}
+.linesignal{stroke:#B3B3E1;stroke-width:1px;}
+
+.pro{fill:#B3B3B3;}
+.linepro{stroke:#B3B3B3;stroke-width:1px;}
+
+.antiB{fill:#B3C2F0;}
+.lineantiB{stroke:#B3C2F0;stroke-width:1px;}
+
+.initMeth{fill:#B3B3D1;}
+.lineinitMeth{stroke:#B3B3D1;stroke-width:1px;z-index:0}
+
+.modifRes{fill:#B3C2B3;}
+.linemodifRes{stroke:#B3C2B3;stroke-width:1px;z-index:0}
+
+.crossLink{fill:#B3C2C2;}
+.linecrossLink{stroke:#B3C2C2;stroke-width:1px;}
+
+.glycoSite{fill:#B3C2D1;}
+.lineglycoSite{stroke:#B3C2D1;stroke-width:1px;}
+*/
+.variant{
+    stroke:rgba(0,255,154,0.6);
+    stroke-width:1px;
+}
+
+a:focus {
+    outline:0 !important;
+}
+
+.active {
+    z-index: 1;
+}
 .brush .extent{
     stroke: #fff;
     fill-opacity: .125;
     shape-rendering: crispEdges;
 }
 
+
+.point {
+    fill: #2f225d;
+    stroke: #afa2dc;
+}
+
 .selected {
     fill: #afa2dc;
     stroke: #2f225d;
+}
+
+.clear-button {
+    font: 14px sans-serif;
+    cursor: pointer;
 }
 
 .axis path,
@@ -19,21 +74,58 @@
 .axis {
     font: 10px sans-serif;
 }
-
- /*Creates a small triangle extender for the tooltip */
-.tooltip2:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 10px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
-  position: absolute;
-  text-align: left;
-  margin: -1px 0 0 0;
-  top: 98%;
-  left: 10px;
+.d3-tip {
+    line-height: 1;
+    font-weight: bold;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 2px;
 }
 
-/* Style northward tooltips differently */
+/*Creates a small triangle extender for the tooltip */
+.tooltip2:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: left;
+    margin: -1px 0 0 0;
+    top: 98%;
+    left: 10px;
+}
+.tooltip3:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: right;
+    margin: -1px 0 0 0;
+    top: 98%;
+    right: 10px;
+}
+.yaxis{
+    background-color:green;
+}
+.header-help{
+    color: #C50063;;
+}
+.header-help:hover{
+    color: #98004C;
+    cursor: pointer;
+}
+.header-help:focus{
+    color: #98004C;
+}
+.popover-title{
+    text-align: center;
+    background-color: rgba(197, 0, 99, 0.1);
+}

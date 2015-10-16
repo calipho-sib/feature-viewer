@@ -17,6 +17,7 @@
     height:auto;
     background:#FFF;
     margin:40px auto;
+    box-shadow: 1px 0px 2px -1px #DDD;
 }
 
 /*==================================================
@@ -57,5 +58,5 @@
     left: auto;
 }
 #form1 .codeMirror{
-    height: 150px;
+    height: 200px;
 }

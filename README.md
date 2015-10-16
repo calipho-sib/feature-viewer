@@ -33,6 +33,7 @@ var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLY
                                 showSequence: true,
                                 brushActive: true, //zoom
                                 toolbar:true, //current zoom & mouse position
+                                bubbleHelp:true, 
                                 zoomMax:50 //define the maximum range of the zoom
                             });
 ```
@@ -69,6 +70,7 @@ Note: that if you choose the later approach (by just using the feature-viewer.js
 * Show sequence
 * Brush active (zoom)
 * Toolbar (current zoom & position)
+* Bubble help 
 * Zoom max
 
 ## Examples 

@@ -11,6 +11,8 @@ module.exports = function(grunt) {
                 src: [
                     'bower_components/jquery/dist/jquery.js',
                     'bower_components/d3/d3.min.js',
+                    'bower_components/bootstrap/js/tooltip.js',
+                    'bower_components/bootstrap/js/popover.js',
                     'dist/feature-viewer.min.js'
                 ],
                 dest: 'dist/feature-viewer.bundle.js'

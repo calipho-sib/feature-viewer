@@ -6,7 +6,8 @@ var ft2 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJK
     showSequence: true,
     brushActive: true,
     toolbar:true,
-    zoomMax:50
+    bubbleHelp:true,
+    zoomMax:20
 });
 
 //Add some features
@@ -35,7 +36,7 @@ ft2.addFeature({
     data: [{x:120,y:154},{x:22,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
     name: "test feature 4",
     className: "test4",
-    color: "#C50063",
+    color: "#79E376",
     type: "multipleRect"
 });
 //Beside positions of each element, you can also give a specific description, which will appears in the tooltip when mouse hover, and a specific ID, for example to link a click event on the feature with something else in your project.
@@ -47,7 +48,7 @@ ft2.addFeature({
         {x:56,y:167,description:"jjjjj",id:"j1"}],
     name: "test feature 5",
     className: "test5",
-    color: "#920049",
+    color: "#54FEB7",
     type: "multipleRect"
 });
 

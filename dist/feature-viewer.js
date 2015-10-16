@@ -902,7 +902,8 @@ function FeatureViewer(sequence, div, options) {
                 'brushActive': false,
                 'verticalLine': false,
                 'toolbar': false,
-                'zoommax': 50
+                'bubbleHelp':false,
+                'zoomMax': 50
             }
         }
         d3.select(div)
@@ -910,6 +911,9 @@ function FeatureViewer(sequence, div, options) {
             .style("padding", "0px")
             .style("z-index", "2");
         // Create SVG
+        if (options.zoomMax) {
+            zoomMax = options.zoomMax;
+        }
 
         if (options.toolbar === true) {
             //console.log($(div + " .svgHeader").length);
@@ -922,7 +926,7 @@ function FeatureViewer(sequence, div, options) {
                     .attr("class", "panel panel-default header-zoom")
                     .style("display", "inline-block")
                     .style("width", "150px")
-                    .style("margin", "0px")
+                    .style("margin", "20px 0px 0px")
                     .style("padding", "0px");
                 headerZoom
                     .append("div")
@@ -955,7 +959,7 @@ function FeatureViewer(sequence, div, options) {
                     .attr("class", "panel panel-default header-position")
                     .style("display", "inline-block")
                     .style("width", "175px")
-                    .style("margin", "0px 20px")
+                    .style("margin", "20px 20px 0px")
                     .style("padding", "0px");
                 headerPosition
                     .append("div")
@@ -979,6 +983,35 @@ function FeatureViewer(sequence, div, options) {
                     .append("span")
                     .attr("id", "zoomPosition")
                     .text("0");
+            }
+            if (options.bubbleHelp === true) {
+                if (!$(div + ' .header-help').length) {
+                    var helpContent = "<div><strong>To zoom in :</strong> Left click to select area of interest</div>" +
+                        "<div><strong>To zoom out :</strong> Right click to reset the scale</div>" +
+                        "<div><strong>Zoom max  :</strong> Defined at <strong>" + zoomMax.toString() + "</strong></div>";
+                    var headerHelp = headerOptions
+                        .append("div")
+                        .attr("class", "pull-right")
+                        .style("display", "inline-block")
+                        .style("margin", "20px 0px 0px")
+                        .style("padding", "0px");
+                    var buttonHelp = headerHelp
+                        .append("a")
+                        .attr("type", "button")
+                        .attr("class", "header-help")
+                        .attr("data-toggle", "popover")
+                        .attr("data-placement", "left")
+                        .attr("title", "Help")
+                        .attr("data-content", helpContent)
+                        .style("font-size", "1.5em");
+                    buttonHelp
+                        .append("span")
+                        .attr("class", "glyphicon glyphicon-info-sign")
+                        .attr("aria-hidden", "true");
+                    $(function () {
+                        $('[data-toggle="popover"]').popover({html: true});
+                    })
+                }
             }
         }
         svg = d3.select(div).append("svg")
@@ -1034,9 +1067,6 @@ function FeatureViewer(sequence, div, options) {
         if (options.verticalLine) {
             SVGOptions.verticalLine = true;
             addVerticalLine();
-        }
-        if (options.zoomMax) {
-            zoomMax = options.zoomMax;
         }
 
         updateSVGHeight(Yposition);
