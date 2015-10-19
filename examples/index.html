@@ -37,140 +37,148 @@
         </div>
     </div>
     <div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
-        <div class="panel panel-default col-md-5 col-md-offset-1 col-xs-10 col-xs-offset-1">
-            <div class="row panel-heading">
-                <h4 class="text-center">Step 1 - Initialize the Feature Viewer</h4>
+        <div class="col-md-5 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="text-center">Step 1 - Initialize the Feature Viewer</h4>
+                </div>
+                <div class="panel-body">
+                    <p>You will first need to create the SVG that will contains the features.<br>
+                        To do so, give whithin the parameters, the sequence and the div in which the features will be
+                        display.<br>
+                        You can also adjust some rendering options :</p>
+                    <ul>
+                        <li><strong>showAxis</strong> <em>(boolean)</em> : Display or not the x-Axis</li>
+                        <li><strong>showSequence</strong> <em>(boolean)</em> : Display or not the sequence</li>
+                        <li><strong>brushActive</strong> <em>(boolean)</em> : Active or not the brush zoom</li>
+                        <li><strong>toolbar</strong> <em>(boolean)</em> : Add a header on top of the svg, showing level of
+                            zoom & the mouse position in the sequence.
+                        </li>
+                        <li><strong>bubbleHelp</strong> <em>(boolean)</em> : Add a bubble help in the header to indicate how to zoom. Requires the toolbar.
+                        </li>
+                        <li><strong>zoomMax</strong> <em>(int)</em> : Define the maximum range of the zoom. Must be a
+                            multiple of ten.
+                        </li>
+                    </ul>
+                    <p>The brush zoom will allow you to select a part of the sequence to zoom in. <br>
+                        It may happen that the div is too small to display the sequence, but a zoom will make it
+                        appears.<br>
+                        To zoom out, just do a right click.
+                </div>
+                <form id="form1">
+                <textarea id="code1" name="code1" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
+    //Create a new Feature Viewer and add some rendering options
+    var options = {showAxis: true, showSequence: true,
+                   brushActive: true, toolbar:true,
+                   bubbleHelp: true, zoomMax:20 };
+    var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDDAAFJDSAKFL","#div1", options);
+        </textarea>
+                </form>
+                <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
+                        onclick=executeCode("#div1",initSVG)>Execute
+                </button>
             </div>
-            <div class="panel-body">
-                <p>You will first need to create the SVG that will contains the features.<br>
-                    To do so, give whithin the parameters, the sequence and the div in which the features will be
-                    display.<br>
-                    You can also adjust some rendering options :</p>
-                <ul>
-                    <li><strong>showAxis</strong> <em>(boolean)</em> : Display or not the x-Axis</li>
-                    <li><strong>showSequence</strong> <em>(boolean)</em> : Display or not the sequence</li>
-                    <li><strong>brushActive</strong> <em>(boolean)</em> : Active or not the brush zoom</li>
-                    <li><strong>toolbar</strong> <em>(boolean)</em> : Add a header on top of the svg, showing level of
-                        zoom & the mouse position in the sequence.
-                    </li>
-                    <li><strong>bubbleHelp</strong> <em>(boolean)</em> : Add a bubble help in the header to indicate how to zoom. Requires the toolbar.
-                    </li>
-                    <li><strong>zoomMax</strong> <em>(int)</em> : Define the maximum range of the zoom. Must be a
-                        multiple of ten.
-                    </li>
-                </ul>
-                <p>The brush zoom will allow you to select a part of the sequence to zoom in. <br>
-                    It may happen that the div is too small to display the sequence, but a zoom will make it
-                    appears.<br>
-                    To zoom out, just do a right click.
-            </div>
-            <form id="form1">
-            <textarea id="code1" name="code1" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
-//Create a new Feature Viewer and add some rendering options
-var options = {showAxis: true, showSequence: true,
-               brushActive: true, toolbar:true,
-               bubbleHelp: true, zoomMax:20 };
-var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDDAAFJDSAKFL","#div1", options);
-    </textarea>
-            </form>
-            <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
-                    onclick=executeCode("#div1",initSVG)>Execute
-            </button>
         </div>
-        <div id="div1" class="col-md-5 col-md-offset-1 col-xs-10 col-xs-offset-1"
-             style="height:250px;vertical-align:top;margin-top:15px;"></div>
+        <div class="col-md-6 col-md-offset-1 col-xs-12"
+             style="height:250px;vertical-align:top;margin-top:15px;">
+            <div id="div1"></div>
+        </div>
 
     </div>
     <div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
-        <div class="panel panel-default col-md-5 col-xs-10 col-md-offset-1 col-xs-offset-1 pull-left">
-            <div class="row panel-heading">
-                <h4 class="text-center">Step 2 - Add some features</h4>
-            </div>
-            <div class="panel-body">
-                <p>To add a feature to the SVG you have to pass an object as parameter.<br>
-                    This object will take :</p>
-                <ul>
-                    <li><strong>data</strong> <em>(array of objects)</em> : An array of objects, each containing
-                        "x":(int) as the first
-                        position and "y":(int) the last position. (Optionally, you can also add "description":(string)
-                        and"id":(string) ).
-                    </li>
-                    <li><strong>name</strong> <em>(string)</em> : The name of theses features, which will be display as
-                        a
-                        label on the Y-axis
-                    </li>
-                    <li><strong>className</strong> <em>(string)</em> : a class name, for further personnal computing
-                    </li>
-                    <li><strong>color</strong> <em>(string)</em> : The color of the features</li>
-                    <li><strong>type</strong> <em>("rect","multipleRect","unique","path")</em> : The type of feature,
-                        for a
-                        specific rendering
-                    </li>
-                </ul>
-            </div>
-            <form>
-            <textarea id="code2" name="code2" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
-//Create a new Feature Viewer and add some rendering options
-   var ft2 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
-    	"KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div2", {
-    	showAxis: true,
-    	showSequence: true,
-    	brushActive: true,
-        toolbar:true,
-        bubbleHelp:true,
-        zoomMax:20
-                });
+        <div class="col-md-5 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="text-center">Step 2 - Add some features</h4>
+                </div>
+                <div class="panel-body">
+                    <p>To add a feature to the SVG you have to pass an object as parameter.<br>
+                        This object will take :</p>
+                    <ul>
+                        <li><strong>data</strong> <em>(array of objects)</em> : An array of objects, each containing
+                            "x":(int) as the first
+                            position and "y":(int) the last position. (Optionally, you can also add "description":(string)
+                            and"id":(string) ).
+                        </li>
+                        <li><strong>name</strong> <em>(string)</em> : The name of theses features, which will be display as
+                            a
+                            label on the Y-axis
+                        </li>
+                        <li><strong>className</strong> <em>(string)</em> : a class name, for further personnal computing
+                        </li>
+                        <li><strong>color</strong> <em>(string)</em> : The color of the features</li>
+                        <li><strong>type</strong> <em>("rect","multipleRect","unique","path")</em> : The type of feature,
+                            for a
+                            specific rendering
+                        </li>
+                    </ul>
+                </div>
+                <form>
+                <textarea id="code2" name="code2" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
+    //Create a new Feature Viewer and add some rendering options
+       var ft2 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
+            "KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div2", {
+            showAxis: true,
+            showSequence: true,
+            brushActive: true,
+            toolbar:true,
+            bubbleHelp:true,
+            zoomMax:20
+                    });
 
-//Add some features
-    ft2.addFeature({
-        data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
-        name: "test feature 1",
-        className: "test1",
-        color: "#0F8292",
-        type: "rect"
-    });
-    ft2.addFeature({
-        data: [{x:52,y:52},{x:92,y:92}],
-        name: "test feature 2",
-        className: "test2",
-        color: "#007800",
-        type: "unique"
-    });
-    ft2.addFeature({
-        data: [{x:130,y:184},{x:40,y:142},{x:80,y:110}],
-        name: "test feature 3",
-        className: "test3",
-        color: "#CFB915",
-        type: "path"
-    });
-    ft2.addFeature({
-        data: [{x:120,y:154},{x:22,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
-        name: "test feature 4",
-        className: "test4",
-        color: "#79E376",
-        type: "multipleRect"
-    });
-//Beside positions of each element, you can also give a specific description, which will appears in the tooltip when mouse hover, and a specific ID, for example to link a click event on the feature with something else in your project.
-    ft2.addFeature({
-        data: [{x:120,y:154,description:"aaaaa",id:"a1"},{x:22,y:163,description:"bbbbb",id:"b1"},
-               {x:90,y:108,description:"ccccc",id:"c1"},{x:10,y:25,description:"ddddd",id:"d1"},
-               {x:193,y:210,description:"eeeee",id:"e1"},{x:78,y:85,description:"fffff",id:"f1"},
-               {x:96,y:143,description:"ggggg",id:"g1"},{x:14,y:65,description:"hhhhh",id:"h1"},
-               {x:56,y:167,description:"jjjjj",id:"j1"}],
-        name: "test feature 5",
-        className: "test5",
-        color: "#54FEB7",
-        type: "multipleRect"
-    });
+    //Add some features
+        ft2.addFeature({
+            data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
+            name: "test feature 1",
+            className: "test1",
+            color: "#0F8292",
+            type: "rect"
+        });
+        ft2.addFeature({
+            data: [{x:52,y:52},{x:92,y:92}],
+            name: "test feature 2",
+            className: "test2",
+            color: "#007800",
+            type: "unique"
+        });
+        ft2.addFeature({
+            data: [{x:130,y:184},{x:40,y:142},{x:80,y:110}],
+            name: "test feature 3",
+            className: "test3",
+            color: "#CFB915",
+            type: "path"
+        });
+        ft2.addFeature({
+            data: [{x:120,y:154},{x:22,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
+            name: "test feature 4",
+            className: "test4",
+            color: "#79E376",
+            type: "multipleRect"
+        });
+    //Beside positions of each element, you can also give a specific description, which will appears in the tooltip when mouse hover, and a specific ID, for example to link a click event on the feature with something else in your project.
+        ft2.addFeature({
+            data: [{x:120,y:154,description:"aaaaa",id:"a1"},{x:22,y:163,description:"bbbbb",id:"b1"},
+                   {x:90,y:108,description:"ccccc",id:"c1"},{x:10,y:25,description:"ddddd",id:"d1"},
+                   {x:193,y:210,description:"eeeee",id:"e1"},{x:78,y:85,description:"fffff",id:"f1"},
+                   {x:96,y:143,description:"ggggg",id:"g1"},{x:14,y:65,description:"hhhhh",id:"h1"},
+                   {x:56,y:167,description:"jjjjj",id:"j1"}],
+            name: "test feature 5",
+            className: "test5",
+            color: "#54FEB7",
+            type: "multipleRect"
+        });
 
-            </textarea>
-            </form>
-            <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
-                    onclick=executeCode("#div2",addFeatures)>Execute
-            </button>
+                </textarea>
+                </form>
+                <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
+                        onclick=executeCode("#div2",addFeatures)>Execute
+                </button>
+            </div>
         </div>
-        <div id="div2" class="col-md-5 col-xs-10 col-xs-offset-1"
-             style="height:250px;vertical-align:top;margin-top:15px;"></div>
+        <div class="col-md-6 col-md-offset-1 col-xs-12"
+             style="height:250px;vertical-align:top;margin-top:15px;">
+            <div id="div2"></div>
+        </div>
     </div>
 </div>
 <a href="https://github.com/calipho-sib/feature-viewer"  target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;"

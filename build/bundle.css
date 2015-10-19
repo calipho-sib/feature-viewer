@@ -13716,11 +13716,12 @@ a:focus {
     background-color:green;
 }
 .header-help{
-    color: #C50063;;
+    color: #C50063;
 }
 .header-help:hover{
     color: #98004C;
     cursor: pointer;
+    text-decoration: none;
 }
 .header-help:focus{
     color: #98004C;
@@ -13728,4 +13729,9 @@ a:focus {
 .popover-title{
     text-align: center;
     background-color: rgba(197, 0, 99, 0.1);
+}
+.label-as-badge {
+    border-radius: 1em;
+    font-size:0.7em;
+    background-color: #C50063;
 }

@@ -19783,6 +19783,11 @@ module.exports = FeatureViewer = function(sequence, div, options) {
      */
 
     //Init box & scaling
+    d3.select(div)
+        .style("position", "relative")
+        .style("padding", "0px")
+        .style("z-index", "2");
+
     var margin = {
             top: 10,
             right: 20,
@@ -20668,10 +20673,6 @@ module.exports = FeatureViewer = function(sequence, div, options) {
                 'zoomMax': 50
             }
         }
-        d3.select(div)
-            .style("position", "relative")
-            .style("padding", "0px")
-            .style("z-index", "2");
         // Create SVG
         if (options.zoomMax) {
             zoomMax = options.zoomMax;
@@ -20755,7 +20756,7 @@ module.exports = FeatureViewer = function(sequence, div, options) {
                         .append("div")
                         .attr("class", "pull-right")
                         .style("display", "inline-block")
-                        .style("margin", "20px 0px 0px")
+                        .style("margin", "25px 35px 0px 0px")
                         .style("padding", "0px");
                     var buttonHelp = headerHelp
                         .append("a")
@@ -20768,8 +20769,8 @@ module.exports = FeatureViewer = function(sequence, div, options) {
                         .style("font-size", "1.5em");
                     buttonHelp
                         .append("span")
-                        .attr("class", "glyphicon glyphicon-info-sign")
-                        .attr("aria-hidden", "true");
+                        .attr("class", "label label-as-badge")
+                        .text("?");
                     $(function () {
                         $('[data-toggle="popover"]').popover({html: true});
                     })

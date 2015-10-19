@@ -21,6 +21,11 @@ function FeatureViewer(sequence, div, options) {
     var zoomMax = 50;
 
     //Init box & scaling
+    d3.select(div)
+        .style("position", "relative")
+        .style("padding", "0px")
+        .style("z-index", "2");
+
     var margin = {
             top: 10,
             right: 20,
@@ -906,10 +911,6 @@ function FeatureViewer(sequence, div, options) {
                 'zoomMax': 50
             }
         }
-        d3.select(div)
-            .style("position", "relative")
-            .style("padding", "0px")
-            .style("z-index", "2");
         // Create SVG
         if (options.zoomMax) {
             zoomMax = options.zoomMax;
@@ -993,7 +994,7 @@ function FeatureViewer(sequence, div, options) {
                         .append("div")
                         .attr("class", "pull-right")
                         .style("display", "inline-block")
-                        .style("margin", "20px 0px 0px")
+                        .style("margin", "25px 35px 0px 0px")
                         .style("padding", "0px");
                     var buttonHelp = headerHelp
                         .append("a")
