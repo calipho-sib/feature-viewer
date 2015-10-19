@@ -900,6 +900,7 @@ function FeatureViewer(sequence, div, options) {
     }
 
     function initSVG(div, options) {
+        
         if (typeof options === 'undefined') {
             var options = {
                 'showAxis': false,
@@ -911,6 +912,12 @@ function FeatureViewer(sequence, div, options) {
                 'zoomMax': 50
             }
         }
+        
+        if(!$.fn.popover){
+            options.bubbleHelp = false;
+            console.warn("The bubble help requires tooltip and popover bootrstrap js libraries. The feature viewer will continue to work, but without the info bubble");
+        }
+
         // Create SVG
         if (options.zoomMax) {
             zoomMax = options.zoomMax;
