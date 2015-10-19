@@ -1,4 +1,9 @@
 function FeatureViewer(sequence, div, options) {
+    
+    var events = {
+        FEATURE_SELECTED_EVENT : "feature-viewer-position-selected";
+    };
+    
     // if (!div) var div = window;
     var div = div;
     var sequence = sequence;
@@ -169,6 +174,14 @@ function FeatureViewer(sequence, div, options) {
                         'z-index': -1,
                         'box-shadow': '0 1px 2px 0 #656565'
                     });
+                    
+                    if(CustomEvent){
+                        var event = new CustomEvent(events.FEATURE_SELECTED_EVENT, {detail: {start: pD.x, end: pD.y}});
+                        document.dispatchEvent(event);
+                    }else {
+                        console.warn("CustomEvent is not defined....");
+                    }
+                    
                 });
 
         }
@@ -188,6 +201,7 @@ function FeatureViewer(sequence, div, options) {
         return tooltip;
     };
 
+    
     //COMPUTING FUNCTION
     var X = function (d) {
         return scaling(d.x);
@@ -201,6 +215,10 @@ function FeatureViewer(sequence, div, options) {
     var uniqueWidth = function (d) {
         return (scaling(1));
     };
+    
+    function onFeatureSelected(listener) {
+        document.addEventListener(events.FEATURE_SELECTED_EVENT, listener);
+    }
 
     function addLevel(array) {
         var leveling = [];
@@ -1101,8 +1119,10 @@ function FeatureViewer(sequence, div, options) {
 
 
     return {
+        onFeatureSelected : onFeatureSelected,
         create: initSVG,
         addFeature: addFeature,
-        selection: addRectSelection
+        selection: addRectSelection,
+        events: events
     }
 }
