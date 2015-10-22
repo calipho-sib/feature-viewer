@@ -1,4 +1,308 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/bootstrap/js/popover.js":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/biojs-events/index.js":[function(require,module,exports){
+var events = require("backbone-events-standalone");
+
+events.onAll = function(callback,context){
+  this.on("all", callback,context);
+  return this;
+};
+
+// Mixin utility
+events.oldMixin = events.mixin;
+events.mixin = function(proto) {
+  events.oldMixin(proto);
+  // add custom onAll
+  var exports = ['onAll'];
+  for(var i=0; i < exports.length;i++){
+    var name = exports[i];
+    proto[name] = this[name];
+  }
+  return proto;
+};
+
+module.exports = events;
+
+},{"backbone-events-standalone":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/biojs-events/node_modules/backbone-events-standalone/index.js"}],"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/biojs-events/node_modules/backbone-events-standalone/backbone-events-standalone.js":[function(require,module,exports){
+/**
+ * Standalone extraction of Backbone.Events, no external dependency required.
+ * Degrades nicely when Backone/underscore are already available in the current
+ * global context.
+ *
+ * Note that docs suggest to use underscore's `_.extend()` method to add Events
+ * support to some given object. A `mixin()` method has been added to the Events
+ * prototype to avoid using underscore for that sole purpose:
+ *
+ *     var myEventEmitter = BackboneEvents.mixin({});
+ *
+ * Or for a function constructor:
+ *
+ *     function MyConstructor(){}
+ *     MyConstructor.prototype.foo = function(){}
+ *     BackboneEvents.mixin(MyConstructor.prototype);
+ *
+ * (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
+ * (c) 2013 Nicolas Perriault
+ */
+/* global exports:true, define, module */
+(function() {
+  var root = this,
+      nativeForEach = Array.prototype.forEach,
+      hasOwnProperty = Object.prototype.hasOwnProperty,
+      slice = Array.prototype.slice,
+      idCounter = 0;
+
+  // Returns a partial implementation matching the minimal API subset required
+  // by Backbone.Events
+  function miniscore() {
+    return {
+      keys: Object.keys || function (obj) {
+        if (typeof obj !== "object" && typeof obj !== "function" || obj === null) {
+          throw new TypeError("keys() called on a non-object");
+        }
+        var key, keys = [];
+        for (key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            keys[keys.length] = key;
+          }
+        }
+        return keys;
+      },
+
+      uniqueId: function(prefix) {
+        var id = ++idCounter + '';
+        return prefix ? prefix + id : id;
+      },
+
+      has: function(obj, key) {
+        return hasOwnProperty.call(obj, key);
+      },
+
+      each: function(obj, iterator, context) {
+        if (obj == null) return;
+        if (nativeForEach && obj.forEach === nativeForEach) {
+          obj.forEach(iterator, context);
+        } else if (obj.length === +obj.length) {
+          for (var i = 0, l = obj.length; i < l; i++) {
+            iterator.call(context, obj[i], i, obj);
+          }
+        } else {
+          for (var key in obj) {
+            if (this.has(obj, key)) {
+              iterator.call(context, obj[key], key, obj);
+            }
+          }
+        }
+      },
+
+      once: function(func) {
+        var ran = false, memo;
+        return function() {
+          if (ran) return memo;
+          ran = true;
+          memo = func.apply(this, arguments);
+          func = null;
+          return memo;
+        };
+      }
+    };
+  }
+
+  var _ = miniscore(), Events;
+
+  // Backbone.Events
+  // ---------------
+
+  // A module that can be mixed in to *any object* in order to provide it with
+  // custom events. You may bind with `on` or remove with `off` callback
+  // functions to an event; `trigger`-ing an event fires all callbacks in
+  // succession.
+  //
+  //     var object = {};
+  //     _.extend(object, Backbone.Events);
+  //     object.on('expand', function(){ alert('expanded'); });
+  //     object.trigger('expand');
+  //
+  Events = {
+
+    // Bind an event to a `callback` function. Passing `"all"` will bind
+    // the callback to all events fired.
+    on: function(name, callback, context) {
+      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
+      this._events || (this._events = {});
+      var events = this._events[name] || (this._events[name] = []);
+      events.push({callback: callback, context: context, ctx: context || this});
+      return this;
+    },
+
+    // Bind an event to only be triggered a single time. After the first time
+    // the callback is invoked, it will be removed.
+    once: function(name, callback, context) {
+      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
+      var self = this;
+      var once = _.once(function() {
+        self.off(name, once);
+        callback.apply(this, arguments);
+      });
+      once._callback = callback;
+      return this.on(name, once, context);
+    },
+
+    // Remove one or many callbacks. If `context` is null, removes all
+    // callbacks with that function. If `callback` is null, removes all
+    // callbacks for the event. If `name` is null, removes all bound
+    // callbacks for all events.
+    off: function(name, callback, context) {
+      var retain, ev, events, names, i, l, j, k;
+      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+      if (!name && !callback && !context) {
+        this._events = {};
+        return this;
+      }
+
+      names = name ? [name] : _.keys(this._events);
+      for (i = 0, l = names.length; i < l; i++) {
+        name = names[i];
+        if (events = this._events[name]) {
+          this._events[name] = retain = [];
+          if (callback || context) {
+            for (j = 0, k = events.length; j < k; j++) {
+              ev = events[j];
+              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
+                  (context && context !== ev.context)) {
+                retain.push(ev);
+              }
+            }
+          }
+          if (!retain.length) delete this._events[name];
+        }
+      }
+
+      return this;
+    },
+
+    // Trigger one or many events, firing all bound callbacks. Callbacks are
+    // passed the same arguments as `trigger` is, apart from the event name
+    // (unless you're listening on `"all"`, which will cause your callback to
+    // receive the true name of the event as the first argument).
+    trigger: function(name) {
+      if (!this._events) return this;
+      var args = slice.call(arguments, 1);
+      if (!eventsApi(this, 'trigger', name, args)) return this;
+      var events = this._events[name];
+      var allEvents = this._events.all;
+      if (events) triggerEvents(events, args);
+      if (allEvents) triggerEvents(allEvents, arguments);
+      return this;
+    },
+
+    // Tell this object to stop listening to either specific events ... or
+    // to every object it's currently listening to.
+    stopListening: function(obj, name, callback) {
+      var listeners = this._listeners;
+      if (!listeners) return this;
+      var deleteListener = !name && !callback;
+      if (typeof name === 'object') callback = this;
+      if (obj) (listeners = {})[obj._listenerId] = obj;
+      for (var id in listeners) {
+        listeners[id].off(name, callback, this);
+        if (deleteListener) delete this._listeners[id];
+      }
+      return this;
+    }
+
+  };
+
+  // Regular expression used to split event strings.
+  var eventSplitter = /\s+/;
+
+  // Implement fancy features of the Events API such as multiple event
+  // names `"change blur"` and jQuery-style event maps `{change: action}`
+  // in terms of the existing API.
+  var eventsApi = function(obj, action, name, rest) {
+    if (!name) return true;
+
+    // Handle event maps.
+    if (typeof name === 'object') {
+      for (var key in name) {
+        obj[action].apply(obj, [key, name[key]].concat(rest));
+      }
+      return false;
+    }
+
+    // Handle space separated event names.
+    if (eventSplitter.test(name)) {
+      var names = name.split(eventSplitter);
+      for (var i = 0, l = names.length; i < l; i++) {
+        obj[action].apply(obj, [names[i]].concat(rest));
+      }
+      return false;
+    }
+
+    return true;
+  };
+
+  // A difficult-to-believe, but optimized internal dispatch function for
+  // triggering events. Tries to keep the usual cases speedy (most internal
+  // Backbone events have 3 arguments).
+  var triggerEvents = function(events, args) {
+    var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
+    switch (args.length) {
+      case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
+      case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
+      case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
+      case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
+      default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
+    }
+  };
+
+  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
+
+  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
+  // listen to an event in another object ... keeping track of what it's
+  // listening to.
+  _.each(listenMethods, function(implementation, method) {
+    Events[method] = function(obj, name, callback) {
+      var listeners = this._listeners || (this._listeners = {});
+      var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
+      listeners[id] = obj;
+      if (typeof name === 'object') callback = this;
+      obj[implementation](name, callback, this);
+      return this;
+    };
+  });
+
+  // Aliases for backwards compatibility.
+  Events.bind   = Events.on;
+  Events.unbind = Events.off;
+
+  // Mixin utility
+  Events.mixin = function(proto) {
+    var exports = ['on', 'once', 'off', 'trigger', 'stopListening', 'listenTo',
+                   'listenToOnce', 'bind', 'unbind'];
+    _.each(exports, function(name) {
+      proto[name] = this[name];
+    }, this);
+    return proto;
+  };
+
+  // Export Events as BackboneEvents depending on current context
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = Events;
+    }
+    exports.BackboneEvents = Events;
+  }else if (typeof define === "function"  && typeof define.amd == "object") {
+    define(function() {
+      return Events;
+    });
+  } else {
+    root.BackboneEvents = Events;
+  }
+})(this);
+
+},{}],"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/biojs-events/node_modules/backbone-events-standalone/index.js":[function(require,module,exports){
+module.exports = require('./backbone-events-standalone');
+
+},{"./backbone-events-standalone":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/biojs-events/node_modules/backbone-events-standalone/backbone-events-standalone.js"}],"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/bootstrap/js/popover.js":[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: popover.js v3.3.5
  * http://getbootstrap.com/javascript/#popovers
@@ -19754,9 +20058,13 @@ var d3 = require("d3");
 require("bootstrap/js/tooltip.js");
 require("bootstrap/js/popover.js");
 
-
 var FeatureViewer;
-module.exports = FeatureViewer = function(sequence, div, options) {
+FeatureViewer = function (sequence, div, options) {
+    // if (!div) var div = window;
+    var events = {
+        FEATURE_SELECTED_EVENT: "feature-viewer-position-selected"
+    };
+
     // if (!div) var div = window;
     var div = div;
     var sequence = sequence;
@@ -19782,7 +20090,7 @@ module.exports = FeatureViewer = function(sequence, div, options) {
      * Private Methods
      */
 
-    //Init box & scaling
+        //Init box & scaling
     d3.select(div)
         .style("position", "relative")
         .style("padding", "0px")
@@ -19931,8 +20239,15 @@ module.exports = FeatureViewer = function(sequence, div, options) {
                         'z-index': -1,
                         'box-shadow': '0 1px 2px 0 #656565'
                     });
-                });
 
+                    if (CustomEvent) {
+                        var event = new CustomEvent(events.FEATURE_SELECTED_EVENT, {detail: {start: pD.x, end: pD.y}});
+                        document.dispatchEvent(event);
+                    } else {
+                        console.warn("CustomEvent is not defined....");
+                    }
+
+                });
         }
 
         tooltip.attr = function (_x) {
@@ -19950,6 +20265,7 @@ module.exports = FeatureViewer = function(sequence, div, options) {
         return tooltip;
     };
 
+
     //COMPUTING FUNCTION
     var X = function (d) {
         return scaling(d.x);
@@ -19963,6 +20279,10 @@ module.exports = FeatureViewer = function(sequence, div, options) {
     var uniqueWidth = function (d) {
         return (scaling(1));
     };
+
+    function onFeatureSelected(listener) {
+        document.addEventListener(events.FEATURE_SELECTED_EVENT, listener);
+    }
 
     function addLevel(array) {
         var leveling = [];
@@ -20662,6 +20982,7 @@ module.exports = FeatureViewer = function(sequence, div, options) {
     }
 
     function initSVG(div, options) {
+
         if (typeof options === 'undefined') {
             var options = {
                 'showAxis': false,
@@ -20669,10 +20990,16 @@ module.exports = FeatureViewer = function(sequence, div, options) {
                 'brushActive': false,
                 'verticalLine': false,
                 'toolbar': false,
-                'bubbleHelp':false,
+                'bubbleHelp': false,
                 'zoomMax': 50
             }
         }
+
+        if (!$.fn.popover) {
+            options.bubbleHelp = false;
+            console.warn("The bubble help requires tooltip and popover bootrstrap js libraries. The feature viewer will continue to work, but without the info bubble");
+        }
+
         // Create SVG
         if (options.zoomMax) {
             zoomMax = options.zoomMax;
@@ -20854,15 +21181,17 @@ module.exports = FeatureViewer = function(sequence, div, options) {
 
     }
 
-    /**
-     * Public Methods
-     */
 
     return {
+        onFeatureSelected: onFeatureSelected,
+        onAll : onFeatureSelected,
         create: initSVG,
         addFeature: addFeature,
-        selection: addRectSelection
+        selection: addRectSelection,
+        events: events
     }
 };
+require('biojs-events').mixin(FeatureViewer.prototype);
+module.exports = FeatureViewer;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"bootstrap/js/popover.js":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/bootstrap/js/popover.js","bootstrap/js/tooltip.js":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/bootstrap/js/tooltip.js","d3":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/d3/d3.js","jquery":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/jquery/dist/jquery.js"}]},{},[]);
+},{"biojs-events":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/biojs-events/index.js","bootstrap/js/popover.js":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/bootstrap/js/popover.js","bootstrap/js/tooltip.js":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/bootstrap/js/tooltip.js","d3":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/d3/d3.js","jquery":"/Users/mschaeff/Documents/workspace-javascript/feature-viewer/node_modules/jquery/dist/jquery.js"}]},{},[]);

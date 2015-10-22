@@ -1,7 +1,7 @@
 function FeatureViewer(sequence, div, options) {
     
     var events = {
-        FEATURE_SELECTED_EVENT : "feature-viewer-position-selected";
+        FEATURE_SELECTED_EVENT : "feature-viewer-position-selected"
     };
     
     // if (!div) var div = window;
