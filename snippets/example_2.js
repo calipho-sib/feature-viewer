@@ -52,12 +52,7 @@ ft2.addFeature({
     type: "multipleRect"
 });
 
-//@biojs-instance=ft2
 
-//ft2.onFeatureSelected(function (d) {
-//    console.log(d.detail);
-//});
-
-ft2.onAll(function (d) {
+ft2.onFeatureSelected(function (d) {
     console.log(d.detail);
 });
