@@ -34,7 +34,8 @@
     "grunt-cli": "x.x.x",
     "jquery": "x.x.x",
     "d3": "x.x.x",
-    "bootstrap": "x.x.x"
+    "bootstrap": "x.x.x",
+    "biojs-events":"x.x.x"
   },
   "devDependencies": {
     "mkdirp": "^0.5.0",
