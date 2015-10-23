@@ -1,7 +1,7 @@
 {
   "name": "feature-viewer",
   "description": "A feature viewer written in javascript with D3",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "homepage": "https://github.com/calipho-sib/feature-viewer",
   "authors": [
     "Mathieu Schaeffer <mat.schaeff@gmail.com>",
@@ -34,7 +34,8 @@
     "grunt-cli": "x.x.x",
     "jquery": "x.x.x",
     "d3": "x.x.x",
-    "bootstrap": "x.x.x"
+    "bootstrap": "x.x.x",
+    "biojs-events": "x.x.x"
   },
   "devDependencies": {
     "mkdirp": "^0.5.0",
