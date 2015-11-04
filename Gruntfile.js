@@ -41,7 +41,7 @@ module.exports = function(grunt) {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             build: {
-                src: 'dist/feature-viewer.js',
+                src: 'src/feature-viewer.js',
                 dest: 'dist/feature-viewer.min.js'
             }
         },
