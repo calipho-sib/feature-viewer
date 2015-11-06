@@ -58,11 +58,11 @@ var FeatureViewer = (function () {
             width = $(div).width() - margin.left - margin.right - 17,
             height = 600 - margin.top - margin.bottom;
         var scaling = d3.scale.linear()
-            .domain([0, sequence.length - 1])
-            .range([0, width]);
+            .domain([1, sequence.length])
+            .range([5, width-5]);
         var scalingPosition = d3.scale.linear()
             .domain([0, width])
-            .range([0, sequence.length - 1]);
+            .range([1, sequence.length]);
 
         d3.helper = {};
 
@@ -174,13 +174,14 @@ var FeatureViewer = (function () {
 
                         if (scaling(xTemp) < 0 && scaling(yTemp) > svgWidth) {
                             xRect = margin.left;
-                            widthRect = svgWidth;
+                            widthRect = parseInt(svgWidth) + 5;
                         } else if (scaling(xTemp) < 0) {
                             xRect = margin.left;
                             widthRect = (scaling(yTemp));
                         } else if (scaling(yTemp) > svgWidth) {
                             xRect = scaling(xTemp) + margin.left;
-                            widthRect = svgWidth - scaling(xTemp);
+                            widthRect = parseInt(svgWidth) - scaling(xTemp);
+                            widthRect =  widthRect + 5;
                         } else {
                             xRect = scaling(xTemp) + margin.left;
                             widthRect = (scaling(yTemp) - scaling(xTemp));
@@ -456,6 +457,7 @@ var FeatureViewer = (function () {
                         title: object.name,
                         y: Yposition
                     });
+                    scaling.range([5, width-5]);
                 } else if (object.type === "unique") {
                     fillSVG.unique(object, sequence, Yposition);
                     yData.push({
@@ -493,7 +495,7 @@ var FeatureViewer = (function () {
                     .attr("class", "AA")
                     .attr("text-anchor", "middle")
                     .attr("x", function (d, i) {
-                        return scaling.range([5, width - 5])(i + start)
+                        return scaling.range([5, width-5])(i + 1 + start)
                     })
                     .attr("y", position)
                     .attr("font-size", "10px")
@@ -773,7 +775,7 @@ var FeatureViewer = (function () {
                     //.transition()
                     //.duration(500)
                     .attr("x", function (d, i) {
-                        return scaling(i + start)
+                        return scaling(i + 1 + start)
                     });
             }
         };
@@ -847,8 +849,8 @@ var FeatureViewer = (function () {
             //reset scale
 
             $(".zoomUnit").text("1");
-            scaling.domain([0, sequence.length - 1]);
-            scalingPosition.range([0, sequence.length - 1]);
+            scaling.domain([1, sequence.length]);
+            scalingPosition.range([1, sequence.length]);
             var seq = displaySequence(sequence.length);
 
             if (seq === false && !svgContainer.selectAll(".AA").empty()) svgContainer.selectAll(".seqGroup").remove();
