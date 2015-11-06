@@ -905,15 +905,20 @@ var FeatureViewer = (function () {
         }
 
         this.addRectSelection = function (svgId) {
-            var elemSelected = d3.select(svgId).data();
+            var featSelection = d3.select(svgId);
+            var elemSelected = featSelection.data();
             var xTemp;
             var yTemp;
             var xRect;
             var widthRect;
             var svgWidth = d3.select(".background").attr("width");
             d3.select('body').selectAll('div.selectedRect').remove();
+
+            var objectSelected = {type:featSelection[0][0].tagName, color:featSelection.style("fill")};
+            colorSelectedFeat(svgId, objectSelected);
+
             // Append tooltip
-            var selectedRect = d3.select('.chart')
+            var selectedRect = d3.select(div)
                 .append('div')
                 .attr('class', 'selectedRect');
 
