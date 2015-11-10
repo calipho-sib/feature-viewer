@@ -20244,8 +20244,8 @@ var FeatureViewer = (function () {
                                 detail: {
                                     start: object.type === "path" ? pD[0].x : pD.x,
                                     end: object.type === "path" ? pD[1].x : pD.y,
-                                    id: pD.id,
-                                    description:pD.description
+                                    id: object.type === "path" ? pD[0].id : pD.id,
+                                    description:object.type === "path" ? pD[0].description : pD.description
                                 }
                             });
                             el.dispatchEvent(event);
@@ -20255,8 +20255,8 @@ var FeatureViewer = (function () {
                         if (self.trigger) self.trigger(self.events.FEATURE_SELECTED_EVENT, {
                             start: object.type === "path" ? pD[0].x : pD.x,
                             end: object.type === "path" ? pD[1].x : pD.y,
-                            id:pD.id,
-                            description: pD.description
+                            id:object.type === "path" ? pD[0].id : pD.id,
+                            description: object.type === "path" ? pD[0].description : pD.description
                         });
 
                     });
