@@ -10,7 +10,7 @@ window.onload = function() {
         brushActive: true,
         toolbar: true,
         bubbleHelp: true,
-        zoomMax: 20
+        zoomMax: 10
     });
 
 //Add some features

@@ -200,15 +200,22 @@ var FeatureViewer = (function () {
                         if (CustomEvent) {
                             var event = new CustomEvent(self.events.FEATURE_SELECTED_EVENT, {
                                 detail: {
-                                    start: pD.x,
-                                    end: pD.y
+                                    start: object.type === "path" ? pD[0].x : pD.x,
+                                    end: object.type === "path" ? pD[1].x : pD.y,
+                                    id: pD.id,
+                                    description:pD.description
                                 }
                             });
                             el.dispatchEvent(event);
                         } else {
                             console.warn("CustomEvent is not defined....");
                         }
-                        if (self.trigger) self.trigger(self.events.FEATURE_SELECTED_EVENT, {start: pD.x, end: pD.y});
+                        if (self.trigger) self.trigger(self.events.FEATURE_SELECTED_EVENT, {
+                            start: object.type === "path" ? pD[0].x : pD.x,
+                            end: object.type === "path" ? pD[1].x : pD.y,
+                            id:pD.id,
+                            description: pD.description
+                        });
 
                     });
             }
@@ -1053,7 +1060,7 @@ var FeatureViewer = (function () {
                     if (!$(div + ' .header-help').length) {
                         var helpContent = "<div><strong>To zoom in :</strong> Left click to select area of interest</div>" +
                             "<div><strong>To zoom out :</strong> Right click to reset the scale</div>" +
-                            "<div><strong>Zoom max  :</strong> Defined at <strong>" + zoomMax.toString() + "</strong></div>";
+                            "<div><strong>Zoom max  :</strong> Limited to <strong>" + zoomMax.toString() + " units</strong></div>";
                         var headerHelp = headerOptions
                             .append("div")
                             .attr("class", "pull-right")

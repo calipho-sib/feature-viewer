@@ -8,5 +8,5 @@ var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKL
     brushActive: true,
     toolbar:true,
     bubbleHelp:true,
-    zoomMax:20
+    zoomMax:10
 });

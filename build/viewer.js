@@ -20100,11 +20100,11 @@ var FeatureViewer = (function () {
             width = $(div).width() - margin.left - margin.right - 17,
             height = 600 - margin.top - margin.bottom;
         var scaling = d3.scale.linear()
-            .domain([0, sequence.length - 1])
-            .range([0, width]);
+            .domain([1, sequence.length])
+            .range([5, width-5]);
         var scalingPosition = d3.scale.linear()
             .domain([0, width])
-            .range([0, sequence.length - 1]);
+            .range([1, sequence.length]);
 
         d3.helper = {};
 
@@ -20216,13 +20216,14 @@ var FeatureViewer = (function () {
 
                         if (scaling(xTemp) < 0 && scaling(yTemp) > svgWidth) {
                             xRect = margin.left;
-                            widthRect = svgWidth;
+                            widthRect = parseInt(svgWidth) + 5;
                         } else if (scaling(xTemp) < 0) {
                             xRect = margin.left;
                             widthRect = (scaling(yTemp));
                         } else if (scaling(yTemp) > svgWidth) {
                             xRect = scaling(xTemp) + margin.left;
-                            widthRect = svgWidth - scaling(xTemp);
+                            widthRect = parseInt(svgWidth) - scaling(xTemp);
+                            widthRect =  widthRect + 5;
                         } else {
                             xRect = scaling(xTemp) + margin.left;
                             widthRect = (scaling(yTemp) - scaling(xTemp));
@@ -20241,15 +20242,22 @@ var FeatureViewer = (function () {
                         if (CustomEvent) {
                             var event = new CustomEvent(self.events.FEATURE_SELECTED_EVENT, {
                                 detail: {
-                                    start: pD.x,
-                                    end: pD.y
+                                    start: object.type === "path" ? pD[0].x : pD.x,
+                                    end: object.type === "path" ? pD[1].x : pD.y,
+                                    id: pD.id,
+                                    description:pD.description
                                 }
                             });
                             el.dispatchEvent(event);
                         } else {
                             console.warn("CustomEvent is not defined....");
                         }
-                        if (self.trigger) self.trigger(self.events.FEATURE_SELECTED_EVENT, {start: pD.x, end: pD.y});
+                        if (self.trigger) self.trigger(self.events.FEATURE_SELECTED_EVENT, {
+                            start: object.type === "path" ? pD[0].x : pD.x,
+                            end: object.type === "path" ? pD[1].x : pD.y,
+                            id:pD.id,
+                            description: pD.description
+                        });
 
                     });
             }
@@ -20498,6 +20506,7 @@ var FeatureViewer = (function () {
                         title: object.name,
                         y: Yposition
                     });
+                    scaling.range([5, width-5]);
                 } else if (object.type === "unique") {
                     fillSVG.unique(object, sequence, Yposition);
                     yData.push({
@@ -20535,7 +20544,7 @@ var FeatureViewer = (function () {
                     .attr("class", "AA")
                     .attr("text-anchor", "middle")
                     .attr("x", function (d, i) {
-                        return scaling.range([5, width - 5])(i + start)
+                        return scaling.range([5, width-5])(i + 1 + start)
                     })
                     .attr("y", position)
                     .attr("font-size", "10px")
@@ -20815,7 +20824,7 @@ var FeatureViewer = (function () {
                     //.transition()
                     //.duration(500)
                     .attr("x", function (d, i) {
-                        return scaling(i + start)
+                        return scaling(i + 1 + start)
                     });
             }
         };
@@ -20889,8 +20898,8 @@ var FeatureViewer = (function () {
             //reset scale
 
             $(".zoomUnit").text("1");
-            scaling.domain([0, sequence.length - 1]);
-            scalingPosition.range([0, sequence.length - 1]);
+            scaling.domain([1, sequence.length]);
+            scalingPosition.range([1, sequence.length]);
             var seq = displaySequence(sequence.length);
 
             if (seq === false && !svgContainer.selectAll(".AA").empty()) svgContainer.selectAll(".seqGroup").remove();
@@ -20947,15 +20956,20 @@ var FeatureViewer = (function () {
         }
 
         this.addRectSelection = function (svgId) {
-            var elemSelected = d3.select(svgId).data();
+            var featSelection = d3.select(svgId);
+            var elemSelected = featSelection.data();
             var xTemp;
             var yTemp;
             var xRect;
             var widthRect;
             var svgWidth = d3.select(".background").attr("width");
             d3.select('body').selectAll('div.selectedRect').remove();
+
+            var objectSelected = {type:featSelection[0][0].tagName, color:featSelection.style("fill")};
+            colorSelectedFeat(svgId, objectSelected);
+
             // Append tooltip
-            var selectedRect = d3.select('.chart')
+            var selectedRect = d3.select(div)
                 .append('div')
                 .attr('class', 'selectedRect');
 
@@ -21088,7 +21102,7 @@ var FeatureViewer = (function () {
                     if (!$(div + ' .header-help').length) {
                         var helpContent = "<div><strong>To zoom in :</strong> Left click to select area of interest</div>" +
                             "<div><strong>To zoom out :</strong> Right click to reset the scale</div>" +
-                            "<div><strong>Zoom max  :</strong> Defined at <strong>" + zoomMax.toString() + "</strong></div>";
+                            "<div><strong>Zoom max  :</strong> Limited to <strong>" + zoomMax.toString() + " units</strong></div>";
                         var headerHelp = headerOptions
                             .append("div")
                             .attr("class", "pull-right")
