@@ -33,7 +33,7 @@
     "bower": "x.x.x",
     "grunt-cli": "x.x.x",
     "jquery": "x.x.x",
-    "d3": "x.x.x",
+    "d3": "3.5.6",
     "bootstrap": "x.x.x",
     "biojs-events": "x.x.x"
   },

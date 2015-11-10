@@ -10,7 +10,7 @@
   "dependencies": {
     "jquery": "x.x.x",
     "bootstrap": "3.x.x",
-    "d3" : "x.x.x"
+    "d3" : "3.5.6"
   },
   "keywords": [
     "feature",
