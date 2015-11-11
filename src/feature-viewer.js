@@ -53,7 +53,7 @@ var FeatureViewer = (function () {
                 top: 10,
                 right: 20,
                 bottom: 20,
-                left: 100
+                left: 110
             },
             width = $(div).width() - margin.left - margin.right - 17,
             height = 600 - margin.top - margin.bottom;
@@ -108,7 +108,7 @@ var FeatureViewer = (function () {
                     if (object.type === "path") {
                         var first_line = '<p style="margin:2px;color:white">start : <span style="color:orangered">' + pD[0].x + '</span></p>';
                         var second_line = '<p style="margin:2px;color:white">end : <span style="color:orangered">' + pD[1].x + '</span></p>';
-                    } else if (object.type === "unique") {
+                    } else if (object.type === "unique" || pD.x === pD.y) {
                         var first_line = '<p style="margin:2px;color:orangered">' + pD.x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:white;font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
@@ -164,9 +164,9 @@ var FeatureViewer = (function () {
                         if (object.type === "path") {
                             xTemp = pD[0].x;
                             yTemp = pD[1].x;
-                        } else if (object.type === "unique") {
-                            xTemp = pD.x - 0.5;
-                            yTemp = pD.y + 0.5;
+                        } else if (object.type === "unique" || pD.x === pD.y) {
+                            xTemp = pD.x - 0.4;
+                            yTemp = pD.y + 0.4;
                         } else {
                             xTemp = pD.x;
                             yTemp = pD.y;
@@ -243,6 +243,19 @@ var FeatureViewer = (function () {
             return width / seq > 5;
         };
         var rectWidth = function (d) {
+            return (scaling(d.y) - scaling(d.x));
+        };
+        function rectX(object) {
+            if (object.x === object.y) {
+                return scaling(object.x-0.4);
+            }
+            return scaling(object.x);
+        };
+        function rectWidth2(d){
+            if (d.x === d.y) {
+                if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                else return scaling(d.x + 0.4) - scaling(d.x - 0.4);
+            }
             return (scaling(d.y) - scaling(d.x));
         };
         var uniqueWidth = function (d) {
@@ -371,6 +384,9 @@ var FeatureViewer = (function () {
                 .append("g");
             yAxisSVGgroup
                 .append("polygon") // attach a polygon
+                .attr("class", function (d) {
+                    return d.filter + "Arrow"
+                })
                 .style("stroke", "none") // colour the line
                 .style("fill", "rgba(95,46,38,0.2)") // remove any fill colour
                 .attr("points", function (d) {
@@ -379,20 +395,23 @@ var FeatureViewer = (function () {
             yAxisSVGgroup
                 .append("rect")
                 .style("fill", "rgba(95,46,38,0.2)")
+                .attr("class", function (d) {
+                    return d.filter
+                })
                 .attr("x", function () {
-                    return margin.left - 95
+                    return margin.left - 105
                 })
                 .attr("y", function (d) {
                     return d.y - 3
                 })
-                .attr("width", "80")
+                .attr("width", "90")
                 .attr("height", "15");
             yAxisSVGgroup
                 .append("text")
                 .attr("class", "yaxis")
                 .attr("text-anchor", "start")
                 .attr("x", function () {
-                    return margin.left - 92
+                    return margin.left - 102
                 })
                 .attr("y", function (d) {
                     return d.y + 8
@@ -452,31 +471,34 @@ var FeatureViewer = (function () {
             typeIdentifier: function (object) {
                 if (object.type === "rect") {
                     preComputing.multipleRect(object);
-                    fillSVG.rectangle(object, sequence, Yposition, level);
                     yData.push({
                         title: object.name,
-                        y: Yposition
+                        y: Yposition,
+                        filter: object.filter
                     });
-                    Yposition += (level - 1) * 20;
+                    fillSVG.rectangle(object, sequence, Yposition, level);
                 } else if (object.type === "text") {
                     fillSVG.sequence(object.data, Yposition);
                     yData.push({
                         title: object.name,
-                        y: Yposition
+                        y: Yposition,
+                        filter: object.filter
                     });
                     scaling.range([5, width-5]);
                 } else if (object.type === "unique") {
                     fillSVG.unique(object, sequence, Yposition);
                     yData.push({
                         title: object.name,
-                        y: Yposition
+                        y: Yposition,
+                        filter: object.filter
                     });
                 } else if (object.type === "multipleRect") {
                     preComputing.multipleRect(object);
                     fillSVG.multipleRect(object, sequence, Yposition, level);
                     yData.push({
                         title: object.name,
-                        y: Yposition
+                        y: Yposition,
+                        filter: object.filter
                     });
                     Yposition += (level - 1) * 10;
                 } else if (object.type === "path") {
@@ -485,7 +507,8 @@ var FeatureViewer = (function () {
                     Yposition += pathLevel;
                     yData.push({
                         title: object.name,
-                        y: Yposition - 10
+                        y: Yposition - 10,
+                        filter: object.filter
                     });
                 }
             },
@@ -512,8 +535,10 @@ var FeatureViewer = (function () {
                     });
             },
             rectangle: function (object, sequence, position) {
-                var rectHeight = 12;
-                var rectShift = 20;
+                //var rectShift = 20;
+                var rectHeight =(object.height) ? object.height : 12;
+                var rectShift = rectHeight + rectHeight/3;
+                var lineShift = rectHeight/2 - 6;
 
                 var rectsPro = svgContainer.append("g")
                     .attr("class", "rectangle")
@@ -523,11 +548,11 @@ var FeatureViewer = (function () {
                 for (var i = 0; i < level; i++) {
                     rectsPro.append("path")
                         .attr("d", line([{
-                            x: 0,
-                            y: (i * rectShift)
+                            x: 1,
+                            y: (i * rectShift + lineShift)
                         }, {
-                            x: sequence.length - 1,
-                            y: (i * rectShift)
+                            x: sequence.length,
+                            y: (i * rectShift + lineShift)
                         }]))
                         .attr("class", function () {
                             return "line" + object.className
@@ -543,7 +568,7 @@ var FeatureViewer = (function () {
                     .append("g")
                     .attr("class", object.className + "Group")
                     .attr("transform", function (d) {
-                        return "translate(" + scaling(d.x) + ",0)"
+                        return "translate(" + rectX(d) + ",0)"
                     });
 
                 rectsProGroup
@@ -555,8 +580,8 @@ var FeatureViewer = (function () {
                     .attr("y", function (d) {
                         return d.level * rectShift
                     })
-                    .attr("width", rectWidth)
-                    .attr("height", 12)
+                    .attr("width", rectWidth2)
+                    .attr("height", rectHeight)
                     .style("fill", object.color)
                     .style("z-index", "13")
                     .call(d3.helper.tooltip(object));
@@ -565,7 +590,7 @@ var FeatureViewer = (function () {
                     .append("text")
                     .attr("class", "element " + object.className + "Text")
                     .attr("y", function (d) {
-                        return d.level * rectShift + 6
+                        return d.level * rectShift + lineShift
                     })
                     .attr("dy", "0.35em")
                     .style("font-size", "10px")
@@ -597,6 +622,7 @@ var FeatureViewer = (function () {
                 //    .call(d3.helper.tooltip(object));
 
                 forcePropagation(rectsProGroup);
+                Yposition += (level - 1) * rectShift;
             },
             unique: function (object, sequence, position) {
                 var rectsPro = svgContainer.append("g")
@@ -605,10 +631,10 @@ var FeatureViewer = (function () {
 
                 rectsPro.append("path")
                     .attr("d", line([{
-                        x: 0,
+                        x: 1,
                         y: 0
                     }, {
-                        x: sequence.length - 1,
+                        x: sequence.length,
                         y: 0
                     }]))
                     .attr("class", function () {
@@ -628,11 +654,11 @@ var FeatureViewer = (function () {
                         return "f" + d.id
                     })
                     .attr("x", function (d) {
-                        return scaling(d.x - 0.5)
+                        return scaling(d.x - 0.4)
                     })
                     .attr("width", function (d) {
-                        if (scaling(d.x + 0.5) - scaling(d.x - 0.5) < 2) return 2;
-                        else return scaling(d.x + 0.5) - scaling(d.x - 0.5);
+                        if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                        else return scaling(d.x + 0.4) - scaling(d.x - 0.4);
                     })
                     .attr("height", 12)
                     .style("fill", object.color)
@@ -648,10 +674,10 @@ var FeatureViewer = (function () {
 
                 pathsDB.append("path")
                     .attr("d", lineBond([{
-                        x: 0,
+                        x: 1,
                         y: 0
                     }, {
-                        x: sequence.length - 1,
+                        x: sequence.length,
                         y: 0
                     }]))
                     .style("z-index", "0")
@@ -686,10 +712,10 @@ var FeatureViewer = (function () {
                 for (var i = 0; i < level; i++) {
                     rects.append("path")
                         .attr("d", line([{
-                            x: 0,
+                            x: 1,
                             y: (i * rectShift - 2)
                         }, {
-                            x: sequence.length - 1,
+                            x: sequence.length,
                             y: (i * rectShift - 2)
                         }]))
                         .attr("class", function () {
@@ -723,18 +749,94 @@ var FeatureViewer = (function () {
             }
         };
 
+        this.showFilteredFeature = function(className){
+            var featureSelected = yAxisSVG.selectAll("."+className);
+            var minY = featureSelected.attr("x");
+            var maxY = featureSelected.attr("width");
+
+            console.log(minY);
+            console.log(maxY);
+
+            var gradient = svg
+                .append("linearGradient")
+                .attr("y1", "0")
+                .attr("y2", "0")
+                .attr("x1", minY)
+                .attr("x2", maxY)
+                .attr("id", "gradient")
+                .attr("gradientUnits", "userSpaceOnUse");
+
+            gradient
+                .append("stop")
+                .attr("offset", "0.3")
+                .attr("stop-color", "#DFD5D3")
+                .attr("stop-opacity", 1);
+
+            var redGrad = gradient
+                .append("stop")
+                .attr("offset", "0.1")
+                .attr("stop-color", "#DFD5D3")
+                .attr("stop-opacity", 0);
+
+            var grayGrad = gradient
+                .append("stop")
+                .attr("offset", "1")
+                .attr("stop-color", "#DFD5D3")
+                .attr("stop-opacity", 1);
+
+            redGrad
+                .transition()
+                .duration(400)
+                .attr("offset", "1.2")
+                .attr("stop-opacity", 1)
+                .attr("stop-color", "red");
+
+            grayGrad
+                .transition()
+                .delay(400)
+                .duration(400)
+                //.attr("offset", "0.6")
+                .attr("stop-opacity", 0);
+
+
+
+
+            //gradient
+            //    .append("stop")
+            //    .attr("offset", "0.5")
+            //    .attr("stop-color", "rgba(0,0,250,0.7)");
+            //
+            //gradient
+            //    .append("stop")
+            //    .attr("offset", "1")
+            //    .attr("stop-color", "rgba(95,46,38,0.2)");
+
+
+            yAxisSVG.selectAll("."+className)
+                .style("fill", "url(#gradient)");
+            yAxisSVG.selectAll("."+className+"Arrow")
+                .transition()
+                .delay(300)
+                .duration(1)
+                .style("fill", "red");
+        }
+        this.hideFilteredFeature = function(className){
+            yAxisSVG.selectAll("."+className)
+                .style("fill", "rgba(95,46,38,0.2)");
+            yAxisSVG.selectAll("."+className+"Arrow")
+                .style("fill", "rgba(95,46,38,0.2)");
+        }
+
         var transition = {
             rectangle: function (object) {
                 svgContainer.selectAll("." + object.className + "Group")
                     .data(object.data)
                     .attr("transform", function (d) {
-                        return "translate(" + scaling(d.x) + ",0)"
+                        return "translate(" + rectX(d) + ",0)"
                     });
 
                 svgContainer.selectAll("." + object.className)
-                    .attr("width", function (d) {
-                        return scaling(d.y) - scaling(d.x)
-                    });
+                    .attr("width", rectWidth2);
                 svgContainer.selectAll("." + object.className + "Text")
                     .style("visibility", function (d) {
                         if (d.description) {
@@ -760,11 +862,11 @@ var FeatureViewer = (function () {
                     //.transition()
                     //.duration(500)
                     .attr("x", function (d) {
-                        return scaling(d.x - 0.5)
+                        return scaling(d.x - 0.4)
                     })
                     .attr("width", function (d) {
-                        if (scaling(d.x + 0.5) - scaling(d.x - 0.5) < 2) return 2;
-                        else return scaling(d.x + 0.5) - scaling(d.x - 0.5);
+                        if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                        else return scaling(d.x + 0.4) - scaling(d.x - 0.4);
                     });
             },
             path: function (object) {
@@ -1148,6 +1250,7 @@ var FeatureViewer = (function () {
         initSVG(div, options);
 
         this.addFeature = function (object) {
+            console.log(object);
             Yposition += 20;
             features.push(object);
             fillSVG.typeIdentifier(object);
@@ -1159,6 +1262,8 @@ var FeatureViewer = (function () {
                     .attr('height', Yposition + 50);
             }
             if (SVGOptions.verticalLine) d3.selectAll(".Vline").style("height", (Yposition + 50) + "px");
+            console.log(yAxisSVGgroup);
+            console.log(yData);
 
 
         }
