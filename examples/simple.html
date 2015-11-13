@@ -17,8 +17,8 @@
 <body>
     <div id="div2"> </div>
     <div>
-        <button id="showBanana" class="btn btn-default" type="submit">Button</button>
-        <button id="showRobert" class="btn btn-default" type="submit">Button</button>
+        <button id="type1" class="btn btn-default" type="submit">type 1</button>
+        <button id="type2" class="btn btn-default" type="submit">type 2</button>
     </div>
 
     <script>
@@ -40,7 +40,7 @@
             className: "test1",
             color: "#0F8292",
             type: "rect",
-            filter: "robert"
+            filter: "type1"
         });
         ft2.addFeature({
             data: [{x:52,y:52},{x:92,y:92}],
@@ -48,7 +48,7 @@
             className: "test2",
             color: "#007800",
             type: "unique",
-            filter: "banana"
+            filter: "type2"
         });
         ft2.addFeature({
             data: [{x:130,y:184},{x:40,y:142},{x:80,y:110}],
@@ -56,7 +56,7 @@
             className: "test3",
             color: "#CFB915",
             type: "path",
-            filter: "banana"
+            filter: "type2"
         });
         ft2.addFeature({
             data: [{x:120,y:154},{x:22,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
@@ -64,7 +64,7 @@
             className: "test4",
             color: "#79E376",
             type: "multipleRect",
-            filter: "robert"
+            filter: "type1"
         });
         ft2.addFeature({
             data: [{x:120,y:154},{x:21,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
@@ -73,7 +73,7 @@
             color: "orange",
             type: "rect",
             height: 8,
-            filter: "robert"
+            filter: "type1"
         });
         ft2.addFeature({
             data: [{x:120,y:154},{x:22,y:163},{x:90,y:90},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:14},{x:56,y:57}],
@@ -81,7 +81,7 @@
             className: "test6",
             color: "green",
             type: "rect",
-            filter: "banana"
+            filter: "type2"
         });
     //Beside positions of each element, you can also give a specific description, which will appears in the tooltip when mouse hover, and a specific ID, for example to link a click event on the feature with something else in your project.
         ft2.addFeature({
@@ -94,24 +94,25 @@
             className: "test7",
             color: "#54FEB7",
             type: "multipleRect",
-            filter: "banana"
+            filter: "type2"
         });
         ft2.onFeatureSelected(function (d) {
             console.log(d.detail);
         });
 
-        $("#showBanana").mouseover(function(){
-            ft2.showFilteredFeature("banana");
+
+        $("#type1").mouseover(function(){
+            ft2.showFilteredFeature("type2","#795B42");
         });
-        $("#showRobert").mouseover(function(){
-            ft2.showFilteredFeature("robert");
+        $("#type2").mouseover(function(){
+            ft2.showFilteredFeature("type1","#795B42");
         });
 
-        $("#showBanana").mouseout(function(){
-            ft2.hideFilteredFeature("banana");
+        $("#type1").mouseout(function(){
+            ft2.hideFilteredFeature("type2");
         });
-        $("#showRobert").mouseout(function(){
-            ft2.hideFilteredFeature("robert");
+        $("#type2").mouseout(function(){
+            ft2.hideFilteredFeature("type1");
         });
 
     </script>

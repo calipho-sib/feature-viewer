@@ -20,6 +20,7 @@ var FeatureViewer = (function () {
         var pathLevel = 0;
         var svg;
         var svgContainer;
+        var filter;
         var yData = [];
         var yAxisSVG;
         var yAxisSVGgroup;
@@ -387,25 +388,11 @@ var FeatureViewer = (function () {
                 .attr("class", function (d) {
                     return d.filter + "Arrow"
                 })
-                .style("stroke", "none") // colour the line
-                .style("fill", "rgba(95,46,38,0.2)") // remove any fill colour
+                .style("stroke", "") // colour the line
+                .style("fill", "#DFD5D3") // remove any fill colour
                 .attr("points", function (d) {
-                    return (margin.left - 15) + "," + (d.y - 3) + ", " + (margin.left - 15) + "," + (d.y + 12) + ", " + (margin.left - 7) + "," + (d.y + 4.5); // x,y points
+                    return (margin.left - 105) + "," + (d.y - 3) + ", " + (margin.left - 105) + "," + (d.y + 12) + ", " + (margin.left - 15) + "," + (d.y + 12) + ", " + (margin.left - 7) + "," + (d.y + 4.5) + ", " + (margin.left - 15) + "," + (d.y -3); // x,y points
                 });
-            yAxisSVGgroup
-                .append("rect")
-                .style("fill", "rgba(95,46,38,0.2)")
-                .attr("class", function (d) {
-                    return d.filter
-                })
-                .attr("x", function () {
-                    return margin.left - 105
-                })
-                .attr("y", function (d) {
-                    return d.y - 3
-                })
-                .attr("width", "90")
-                .attr("height", "15");
             yAxisSVGgroup
                 .append("text")
                 .attr("class", "yaxis")
@@ -749,13 +736,10 @@ var FeatureViewer = (function () {
             }
         };
 
-        this.showFilteredFeature = function(className){
-            var featureSelected = yAxisSVG.selectAll("."+className);
-            var minY = featureSelected.attr("x");
-            var maxY = featureSelected.attr("width");
-
-            console.log(minY);
-            console.log(maxY);
+        this.showFilteredFeature = function(className, color){
+            var featureSelected = yAxisSVG.selectAll("."+className+"Arrow");
+            var minY = margin.left - 105;
+            var maxY = margin.left - 7;
 
             var gradient = svg
                 .append("linearGradient")
@@ -764,6 +748,7 @@ var FeatureViewer = (function () {
                 .attr("x1", minY)
                 .attr("x2", maxY)
                 .attr("id", "gradient")
+                .attr("spreadMethod", "pad")
                 .attr("gradientUnits", "userSpaceOnUse");
 
             gradient
@@ -772,60 +757,36 @@ var FeatureViewer = (function () {
                 .attr("stop-color", "#DFD5D3")
                 .attr("stop-opacity", 1);
 
-            var redGrad = gradient
-                .append("stop")
-                .attr("offset", "0.1")
-                .attr("stop-color", "#DFD5D3")
-                .attr("stop-opacity", 0);
 
-            var grayGrad = gradient
+            var redgrad = gradient
                 .append("stop")
                 .attr("offset", "1")
-                .attr("stop-color", "#DFD5D3")
-                .attr("stop-opacity", 1);
-
-            redGrad
-                .transition()
-                .duration(400)
-                .attr("offset", "1.2")
                 .attr("stop-opacity", 1)
-                .attr("stop-color", "red");
+                .attr("stop-color", "#DFD5D3");
 
-            grayGrad
+            redgrad
+                .attr("stop-color", color);
+
+
+            var selection = yAxisSVG.selectAll("."+className+"Arrow")
+                .style("fill", "url(#gradient)")
+                .style("stroke", "")
+                .attr("filter", "url(#dropshadow)");
+            selection
                 .transition()
-                .delay(400)
                 .duration(400)
-                //.attr("offset", "0.6")
-                .attr("stop-opacity", 0);
-
-
-
-
-            //gradient
-            //    .append("stop")
-            //    .attr("offset", "0.5")
-            //    .attr("stop-color", "rgba(0,0,250,0.7)");
-            //
-            //gradient
-            //    .append("stop")
-            //    .attr("offset", "1")
-            //    .attr("stop-color", "rgba(95,46,38,0.2)");
-
-
-            yAxisSVG.selectAll("."+className)
-                .style("fill", "url(#gradient)");
-            yAxisSVG.selectAll("."+className+"Arrow")
-                .transition()
-                .delay(300)
-                .duration(1)
-                .style("fill", "red");
-        }
+                .attr("points", function (d) {
+                    return (margin.left - 105) + "," + (d.y - 3) + ", " + (margin.left - 105) + "," + (d.y + 12) + ", " + (margin.left - 10) + "," + (d.y + 12) + ", " + (margin.left - 2) + "," + (d.y + 4.5) + ", " + (margin.left - 10) + "," + (d.y -3); // x,y points
+                });
+        };
         this.hideFilteredFeature = function(className){
-            yAxisSVG.selectAll("."+className)
-                .style("fill", "rgba(95,46,38,0.2)");
             yAxisSVG.selectAll("."+className+"Arrow")
-                .style("fill", "rgba(95,46,38,0.2)");
-        }
+                .style("fill", "rgba(95,46,38,0.2)")
+                .attr("filter", "")
+                .attr("points", function (d) {
+                    return (margin.left - 105) + "," + (d.y - 3) + ", " + (margin.left - 105) + "," + (d.y + 12) + ", " + (margin.left - 15) + "," + (d.y + 12) + ", " + (margin.left - 7) + "," + (d.y + 4.5) + ", " + (margin.left - 15) + "," + (d.y -3); // x,y points
+                });
+        };
 
         var transition = {
             rectangle: function (object) {
@@ -1203,11 +1164,34 @@ var FeatureViewer = (function () {
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             //Create Clip-Path
-            svgContainer.append("defs").append("clipPath")
+            var defs = svgContainer.append("defs");
+
+            defs.append("clipPath")
                 .attr("id", "clip")
                 .append("rect")
                 .attr("width", width)
                 .attr("height", height);
+
+            var filter = defs.append("filter")
+                .attr("id", "dropshadow")
+                .attr("height", "200%");
+
+            filter.append("feGaussianBlur")
+                .attr("in", "SourceAlpha")
+                .attr("stdDeviation", 3)
+                .attr("result", "blur");
+            filter.append("feOffset")
+                .attr("in", "blur")
+                .attr("dx", -2)
+                .attr("dy", 2)
+                .attr("result", "offsetBlur");
+
+            var feMerge = filter.append("feMerge");
+
+            feMerge.append("feMergeNode")
+                .attr("in", "offsetBlur");
+            feMerge.append("feMergeNode")
+                .attr("in", "SourceGraphic");
 
             svgContainer.on('mousemove', function () {
                 var absoluteMousePos = d3.mouse(d3.select(".background").node());
