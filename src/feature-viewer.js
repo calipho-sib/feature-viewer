@@ -10,6 +10,7 @@ var FeatureViewer = (function () {
         // if (!div) var div = window;
         var div = div;
         var el = document.getElementById(div.substring(1));
+        var svgElement;
         var sequence = sequence;
         var features = [];
         var SVGOptions = {
@@ -154,7 +155,12 @@ var FeatureViewer = (function () {
                         var xRect;
                         var widthRect;
 
-                        colorSelectedFeat(this, object);
+                        if(this.nodeName === "text") {
+                            var rect = "#"+this.previousSibling.id;
+                            console.log(rect);
+                            if(rect.nodeName !== "#") colorSelectedFeat(rect, object);
+                        }
+                        else colorSelectedFeat(this, object);
 
                         var svgWidth = d3.select(".background").attr("width");
                         d3.select('body').selectAll('div.selectedRect').remove();
@@ -207,7 +213,7 @@ var FeatureViewer = (function () {
                                     description:object.type === "path" ? pD[0].description : pD.description
                                 }
                             });
-                            el.dispatchEvent(event);
+                            svgElement.dispatchEvent(event);
                         } else {
                             console.warn("CustomEvent is not defined....");
                         }
@@ -264,7 +270,7 @@ var FeatureViewer = (function () {
         };
 
         this.onFeatureSelected = function (listener) {
-            el.addEventListener(self.events.FEATURE_SELECTED_EVENT, listener);
+            svgElement.addEventListener(self.events.FEATURE_SELECTED_EVENT, listener);
             //$(document).on(self.events.FEATURE_SELECTED_EVENT, listener);
         };
 
@@ -386,7 +392,8 @@ var FeatureViewer = (function () {
             yAxisSVGgroup
                 .append("polygon") // attach a polygon
                 .attr("class", function (d) {
-                    return d.filter + "Arrow"
+                    if (d.filter) return d.filter.split(" ").join("_") + "Arrow";
+                    return "Arrow";
                 })
                 .style("stroke", "") // colour the line
                 .style("fill", "#DFD5D3") // remove any fill colour
@@ -577,7 +584,7 @@ var FeatureViewer = (function () {
                     .append("text")
                     .attr("class", "element " + object.className + "Text")
                     .attr("y", function (d) {
-                        return d.level * rectShift + lineShift
+                        return d.level * rectShift + rectHeight/2
                     })
                     .attr("dy", "0.35em")
                     .style("font-size", "10px")
@@ -773,8 +780,6 @@ var FeatureViewer = (function () {
                 .style("stroke", "")
                 .attr("filter", "url(#dropshadow)");
             selection
-                .transition()
-                .duration(400)
                 .attr("points", function (d) {
                     return (margin.left - 105) + "," + (d.y - 3) + ", " + (margin.left - 105) + "," + (d.y + 12) + ", " + (margin.left - 10) + "," + (d.y + 12) + ", " + (margin.left - 2) + "," + (d.y + 4.5) + ", " + (margin.left - 10) + "," + (d.y -3); // x,y points
                 });
@@ -1158,6 +1163,8 @@ var FeatureViewer = (function () {
                     resetAll();
                     // react on right-clicking
                 });
+            svgElement = el.getElementsByTagName("svg")[0];
+
 
             svgContainer = svg
                 .append("g")
@@ -1234,7 +1241,6 @@ var FeatureViewer = (function () {
         initSVG(div, options);
 
         this.addFeature = function (object) {
-            console.log(object);
             Yposition += 20;
             features.push(object);
             fillSVG.typeIdentifier(object);
@@ -1246,8 +1252,6 @@ var FeatureViewer = (function () {
                     .attr('height', Yposition + 50);
             }
             if (SVGOptions.verticalLine) d3.selectAll(".Vline").style("height", (Yposition + 50) + "px");
-            console.log(yAxisSVGgroup);
-            console.log(yData);
 
 
         }
