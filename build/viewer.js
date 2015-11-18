@@ -20052,6 +20052,7 @@ var FeatureViewer = (function () {
         // if (!div) var div = window;
         var div = div;
         var el = document.getElementById(div.substring(1));
+        var svgElement;
         var sequence = sequence;
         var features = [];
         var SVGOptions = {
@@ -20062,6 +20063,7 @@ var FeatureViewer = (function () {
         var pathLevel = 0;
         var svg;
         var svgContainer;
+        var filter;
         var yData = [];
         var yAxisSVG;
         var yAxisSVGgroup;
@@ -20095,7 +20097,7 @@ var FeatureViewer = (function () {
                 top: 10,
                 right: 20,
                 bottom: 20,
-                left: 100
+                left: 110
             },
             width = $(div).width() - margin.left - margin.right - 17,
             height = 600 - margin.top - margin.bottom;
@@ -20150,7 +20152,7 @@ var FeatureViewer = (function () {
                     if (object.type === "path") {
                         var first_line = '<p style="margin:2px;color:white">start : <span style="color:orangered">' + pD[0].x + '</span></p>';
                         var second_line = '<p style="margin:2px;color:white">end : <span style="color:orangered">' + pD[1].x + '</span></p>';
-                    } else if (object.type === "unique") {
+                    } else if (object.type === "unique" || pD.x === pD.y) {
                         var first_line = '<p style="margin:2px;color:orangered">' + pD.x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:white;font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
@@ -20195,7 +20197,12 @@ var FeatureViewer = (function () {
                         var xRect;
                         var widthRect;
 
-                        colorSelectedFeat(this, object);
+                        if(this.nodeName === "text") {
+                            var rect = "#"+this.previousSibling.id;
+                            console.log(rect);
+                            if(rect.nodeName !== "#") colorSelectedFeat(rect, object);
+                        }
+                        else colorSelectedFeat(this, object);
 
                         var svgWidth = d3.select(".background").attr("width");
                         d3.select('body').selectAll('div.selectedRect').remove();
@@ -20206,9 +20213,9 @@ var FeatureViewer = (function () {
                         if (object.type === "path") {
                             xTemp = pD[0].x;
                             yTemp = pD[1].x;
-                        } else if (object.type === "unique") {
-                            xTemp = pD.x - 0.5;
-                            yTemp = pD.y + 0.5;
+                        } else if (object.type === "unique" || pD.x === pD.y) {
+                            xTemp = pD.x - 0.4;
+                            yTemp = pD.y + 0.4;
                         } else {
                             xTemp = pD.x;
                             yTemp = pD.y;
@@ -20248,7 +20255,7 @@ var FeatureViewer = (function () {
                                     description:object.type === "path" ? pD[0].description : pD.description
                                 }
                             });
-                            el.dispatchEvent(event);
+                            svgElement.dispatchEvent(event);
                         } else {
                             console.warn("CustomEvent is not defined....");
                         }
@@ -20287,12 +20294,25 @@ var FeatureViewer = (function () {
         var rectWidth = function (d) {
             return (scaling(d.y) - scaling(d.x));
         };
+        function rectX(object) {
+            if (object.x === object.y) {
+                return scaling(object.x-0.4);
+            }
+            return scaling(object.x);
+        };
+        function rectWidth2(d){
+            if (d.x === d.y) {
+                if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                else return scaling(d.x + 0.4) - scaling(d.x - 0.4);
+            }
+            return (scaling(d.y) - scaling(d.x));
+        };
         var uniqueWidth = function (d) {
             return (scaling(1));
         };
 
         this.onFeatureSelected = function (listener) {
-            el.addEventListener(self.events.FEATURE_SELECTED_EVENT, listener);
+            svgElement.addEventListener(self.events.FEATURE_SELECTED_EVENT, listener);
             //$(document).on(self.events.FEATURE_SELECTED_EVENT, listener);
         };
 
@@ -20413,28 +20433,21 @@ var FeatureViewer = (function () {
                 .append("g");
             yAxisSVGgroup
                 .append("polygon") // attach a polygon
-                .style("stroke", "none") // colour the line
-                .style("fill", "rgba(95,46,38,0.2)") // remove any fill colour
+                .attr("class", function (d) {
+                    if (d.filter) return d.filter.split(" ").join("_") + "Arrow";
+                    return "Arrow";
+                })
+                .style("stroke", "") // colour the line
+                .style("fill", "#DFD5D3") // remove any fill colour
                 .attr("points", function (d) {
-                    return (margin.left - 15) + "," + (d.y - 3) + ", " + (margin.left - 15) + "," + (d.y + 12) + ", " + (margin.left - 7) + "," + (d.y + 4.5); // x,y points
+                    return (margin.left - 105) + "," + (d.y - 3) + ", " + (margin.left - 105) + "," + (d.y + 12) + ", " + (margin.left - 15) + "," + (d.y + 12) + ", " + (margin.left - 7) + "," + (d.y + 4.5) + ", " + (margin.left - 15) + "," + (d.y -3); // x,y points
                 });
-            yAxisSVGgroup
-                .append("rect")
-                .style("fill", "rgba(95,46,38,0.2)")
-                .attr("x", function () {
-                    return margin.left - 95
-                })
-                .attr("y", function (d) {
-                    return d.y - 3
-                })
-                .attr("width", "80")
-                .attr("height", "15");
             yAxisSVGgroup
                 .append("text")
                 .attr("class", "yaxis")
                 .attr("text-anchor", "start")
                 .attr("x", function () {
-                    return margin.left - 92
+                    return margin.left - 102
                 })
                 .attr("y", function (d) {
                     return d.y + 8
@@ -20494,31 +20507,34 @@ var FeatureViewer = (function () {
             typeIdentifier: function (object) {
                 if (object.type === "rect") {
                     preComputing.multipleRect(object);
-                    fillSVG.rectangle(object, sequence, Yposition, level);
                     yData.push({
                         title: object.name,
-                        y: Yposition
+                        y: Yposition,
+                        filter: object.filter
                     });
-                    Yposition += (level - 1) * 20;
+                    fillSVG.rectangle(object, sequence, Yposition, level);
                 } else if (object.type === "text") {
                     fillSVG.sequence(object.data, Yposition);
                     yData.push({
                         title: object.name,
-                        y: Yposition
+                        y: Yposition,
+                        filter: object.filter
                     });
                     scaling.range([5, width-5]);
                 } else if (object.type === "unique") {
                     fillSVG.unique(object, sequence, Yposition);
                     yData.push({
                         title: object.name,
-                        y: Yposition
+                        y: Yposition,
+                        filter: object.filter
                     });
                 } else if (object.type === "multipleRect") {
                     preComputing.multipleRect(object);
                     fillSVG.multipleRect(object, sequence, Yposition, level);
                     yData.push({
                         title: object.name,
-                        y: Yposition
+                        y: Yposition,
+                        filter: object.filter
                     });
                     Yposition += (level - 1) * 10;
                 } else if (object.type === "path") {
@@ -20527,7 +20543,8 @@ var FeatureViewer = (function () {
                     Yposition += pathLevel;
                     yData.push({
                         title: object.name,
-                        y: Yposition - 10
+                        y: Yposition - 10,
+                        filter: object.filter
                     });
                 }
             },
@@ -20554,8 +20571,10 @@ var FeatureViewer = (function () {
                     });
             },
             rectangle: function (object, sequence, position) {
-                var rectHeight = 12;
-                var rectShift = 20;
+                //var rectShift = 20;
+                var rectHeight =(object.height) ? object.height : 12;
+                var rectShift = rectHeight + rectHeight/3;
+                var lineShift = rectHeight/2 - 6;
 
                 var rectsPro = svgContainer.append("g")
                     .attr("class", "rectangle")
@@ -20565,11 +20584,11 @@ var FeatureViewer = (function () {
                 for (var i = 0; i < level; i++) {
                     rectsPro.append("path")
                         .attr("d", line([{
-                            x: 0,
-                            y: (i * rectShift)
+                            x: 1,
+                            y: (i * rectShift + lineShift)
                         }, {
-                            x: sequence.length - 1,
-                            y: (i * rectShift)
+                            x: sequence.length,
+                            y: (i * rectShift + lineShift)
                         }]))
                         .attr("class", function () {
                             return "line" + object.className
@@ -20585,7 +20604,7 @@ var FeatureViewer = (function () {
                     .append("g")
                     .attr("class", object.className + "Group")
                     .attr("transform", function (d) {
-                        return "translate(" + scaling(d.x) + ",0)"
+                        return "translate(" + rectX(d) + ",0)"
                     });
 
                 rectsProGroup
@@ -20597,8 +20616,8 @@ var FeatureViewer = (function () {
                     .attr("y", function (d) {
                         return d.level * rectShift
                     })
-                    .attr("width", rectWidth)
-                    .attr("height", 12)
+                    .attr("width", rectWidth2)
+                    .attr("height", rectHeight)
                     .style("fill", object.color)
                     .style("z-index", "13")
                     .call(d3.helper.tooltip(object));
@@ -20607,7 +20626,7 @@ var FeatureViewer = (function () {
                     .append("text")
                     .attr("class", "element " + object.className + "Text")
                     .attr("y", function (d) {
-                        return d.level * rectShift + 6
+                        return d.level * rectShift + rectHeight/2
                     })
                     .attr("dy", "0.35em")
                     .style("font-size", "10px")
@@ -20639,6 +20658,7 @@ var FeatureViewer = (function () {
                 //    .call(d3.helper.tooltip(object));
 
                 forcePropagation(rectsProGroup);
+                Yposition += (level - 1) * rectShift;
             },
             unique: function (object, sequence, position) {
                 var rectsPro = svgContainer.append("g")
@@ -20647,10 +20667,10 @@ var FeatureViewer = (function () {
 
                 rectsPro.append("path")
                     .attr("d", line([{
-                        x: 0,
+                        x: 1,
                         y: 0
                     }, {
-                        x: sequence.length - 1,
+                        x: sequence.length,
                         y: 0
                     }]))
                     .attr("class", function () {
@@ -20670,11 +20690,11 @@ var FeatureViewer = (function () {
                         return "f" + d.id
                     })
                     .attr("x", function (d) {
-                        return scaling(d.x - 0.5)
+                        return scaling(d.x - 0.4)
                     })
                     .attr("width", function (d) {
-                        if (scaling(d.x + 0.5) - scaling(d.x - 0.5) < 2) return 2;
-                        else return scaling(d.x + 0.5) - scaling(d.x - 0.5);
+                        if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                        else return scaling(d.x + 0.4) - scaling(d.x - 0.4);
                     })
                     .attr("height", 12)
                     .style("fill", object.color)
@@ -20690,10 +20710,10 @@ var FeatureViewer = (function () {
 
                 pathsDB.append("path")
                     .attr("d", lineBond([{
-                        x: 0,
+                        x: 1,
                         y: 0
                     }, {
-                        x: sequence.length - 1,
+                        x: sequence.length,
                         y: 0
                     }]))
                     .style("z-index", "0")
@@ -20728,10 +20748,10 @@ var FeatureViewer = (function () {
                 for (var i = 0; i < level; i++) {
                     rects.append("path")
                         .attr("d", line([{
-                            x: 0,
+                            x: 1,
                             y: (i * rectShift - 2)
                         }, {
-                            x: sequence.length - 1,
+                            x: sequence.length,
                             y: (i * rectShift - 2)
                         }]))
                         .attr("class", function () {
@@ -20765,18 +20785,66 @@ var FeatureViewer = (function () {
             }
         };
 
+        this.showFilteredFeature = function(className, color){
+            var featureSelected = yAxisSVG.selectAll("."+className+"Arrow");
+            var minY = margin.left - 105;
+            var maxY = margin.left - 7;
+
+            var gradient = svg
+                .append("linearGradient")
+                .attr("y1", "0")
+                .attr("y2", "0")
+                .attr("x1", minY)
+                .attr("x2", maxY)
+                .attr("id", "gradient")
+                .attr("spreadMethod", "pad")
+                .attr("gradientUnits", "userSpaceOnUse");
+
+            gradient
+                .append("stop")
+                .attr("offset", "0.3")
+                .attr("stop-color", "#DFD5D3")
+                .attr("stop-opacity", 1);
+
+
+            var redgrad = gradient
+                .append("stop")
+                .attr("offset", "1")
+                .attr("stop-opacity", 1)
+                .attr("stop-color", "#DFD5D3");
+
+            redgrad
+                .attr("stop-color", color);
+
+
+            var selection = yAxisSVG.selectAll("."+className+"Arrow")
+                .style("fill", "url(#gradient)")
+                .style("stroke", "")
+                .attr("filter", "url(#dropshadow)");
+            selection
+                .attr("points", function (d) {
+                    return (margin.left - 105) + "," + (d.y - 3) + ", " + (margin.left - 105) + "," + (d.y + 12) + ", " + (margin.left - 10) + "," + (d.y + 12) + ", " + (margin.left - 2) + "," + (d.y + 4.5) + ", " + (margin.left - 10) + "," + (d.y -3); // x,y points
+                });
+        };
+        this.hideFilteredFeature = function(className){
+            yAxisSVG.selectAll("."+className+"Arrow")
+                .style("fill", "rgba(95,46,38,0.2)")
+                .attr("filter", "")
+                .attr("points", function (d) {
+                    return (margin.left - 105) + "," + (d.y - 3) + ", " + (margin.left - 105) + "," + (d.y + 12) + ", " + (margin.left - 15) + "," + (d.y + 12) + ", " + (margin.left - 7) + "," + (d.y + 4.5) + ", " + (margin.left - 15) + "," + (d.y -3); // x,y points
+                });
+        };
+
         var transition = {
             rectangle: function (object) {
                 svgContainer.selectAll("." + object.className + "Group")
                     .data(object.data)
                     .attr("transform", function (d) {
-                        return "translate(" + scaling(d.x) + ",0)"
+                        return "translate(" + rectX(d) + ",0)"
                     });
 
                 svgContainer.selectAll("." + object.className)
-                    .attr("width", function (d) {
-                        return scaling(d.y) - scaling(d.x)
-                    });
+                    .attr("width", rectWidth2);
                 svgContainer.selectAll("." + object.className + "Text")
                     .style("visibility", function (d) {
                         if (d.description) {
@@ -20802,11 +20870,11 @@ var FeatureViewer = (function () {
                     //.transition()
                     //.duration(500)
                     .attr("x", function (d) {
-                        return scaling(d.x - 0.5)
+                        return scaling(d.x - 0.4)
                     })
                     .attr("width", function (d) {
-                        if (scaling(d.x + 0.5) - scaling(d.x - 0.5) < 2) return 2;
-                        else return scaling(d.x + 0.5) - scaling(d.x - 0.5);
+                        if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                        else return scaling(d.x + 0.4) - scaling(d.x - 0.4);
                     });
             },
             path: function (object) {
@@ -21137,17 +21205,42 @@ var FeatureViewer = (function () {
                     resetAll();
                     // react on right-clicking
                 });
+            svgElement = el.getElementsByTagName("svg")[0];
+
 
             svgContainer = svg
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             //Create Clip-Path
-            svgContainer.append("defs").append("clipPath")
+            var defs = svgContainer.append("defs");
+
+            defs.append("clipPath")
                 .attr("id", "clip")
                 .append("rect")
                 .attr("width", width)
                 .attr("height", height);
+
+            var filter = defs.append("filter")
+                .attr("id", "dropshadow")
+                .attr("height", "200%");
+
+            filter.append("feGaussianBlur")
+                .attr("in", "SourceAlpha")
+                .attr("stdDeviation", 3)
+                .attr("result", "blur");
+            filter.append("feOffset")
+                .attr("in", "blur")
+                .attr("dx", -2)
+                .attr("dy", 2)
+                .attr("result", "offsetBlur");
+
+            var feMerge = filter.append("feMerge");
+
+            feMerge.append("feMergeNode")
+                .attr("in", "offsetBlur");
+            feMerge.append("feMergeNode")
+                .attr("in", "SourceGraphic");
 
             svgContainer.on('mousemove', function () {
                 var absoluteMousePos = d3.mouse(d3.select(".background").node());
