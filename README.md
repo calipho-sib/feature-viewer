@@ -23,7 +23,7 @@ npm install feature-viewer
 ```
 
 3) Create an instance of FeatureViewer in javascript with the sequence, the div in which it will be display and the rendering options of your choice.
-```
+```javascript
 //For Node add before : var FeatureViewer = require("feature-viewer"); //
 
 var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLE',
@@ -39,7 +39,7 @@ var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLY
 ```
 
 4) Finally, add the features
-   ```
+   ```javascript
 ft.addFeature({
        data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
        name: "test feature 1",
