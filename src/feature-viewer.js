@@ -129,6 +129,8 @@ var FeatureViewer = (function () {
                 })
                     .on('mousemove.tooltip', function (pD, pI) {
                         // Move tooltip
+                        // IE 11 sometimes fires mousemove before mouseover
+                        if (tooltipDiv === undefined) { return; }
                         var absoluteMousePos = d3.mouse(bodyNode);
                         var rightside = (absoluteMousePos[0] > width);
                         if (rightside) {
