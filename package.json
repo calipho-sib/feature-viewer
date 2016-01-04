@@ -1,7 +1,7 @@
 {
   "name": "feature-viewer",
   "description": "A feature viewer written in javascript with D3",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "homepage": "https://github.com/calipho-sib/feature-viewer",
   "authors": [
     "Mathieu Schaeffer <mat.schaeff@gmail.com>",
