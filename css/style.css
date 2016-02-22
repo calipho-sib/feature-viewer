@@ -135,3 +135,6 @@ a:focus {
     font-size:0.7em;
     background-color: #C50063;
 }
+path{
+    fill:none;
+}

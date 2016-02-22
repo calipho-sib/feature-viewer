@@ -2,7 +2,7 @@
 
 > The feature viewer is a super easy javascript library to use in order to draw the different features covering a sequence for a better visualization.
 
-![Feature viewer](/assets/feature-viewer.png)
+![Feature viewer](/assets/FV_SCSHT.png)
 
 Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.27/examples/index.html
 
@@ -72,11 +72,51 @@ Note: that if you choose the later approach (by just using the feature-viewer.js
 * Toolbar (current zoom & position)
 * Bubble help 
 * Zoom max
+* Features height
 
 ## Examples 
 
 https://search.nextprot.org/entry/NX_P01308/view/proteomics
 
+## Use it with NeXtProt API
+
+It is possible to fill the feature viewer with protein features from [NeXtProt](https://search.nextprot.org/), the human protein database.
+First check the type of feature in the [NeXtProt API](https://api.nextprot.org/) that you would like to add to your viewer. For example, "propeptide" and "mature-protein".
+Then start coding :
+
+```javascript
+//initalize nextprot Client
+var applicationName = 'demo app'; //please provide a name for your application
+var clientInfo='calipho group at sib'; //please provide some information about you
+var nx = new Nextprot.Client(applicationName, clientInfo);
+        
+//var entry = "NX_P01308";
+var isoform = "NX_P01308-1";
+
+// feature viewer options
+var options = {showAxis: true, showSequence: true,
+brushActive: true, toolbar:true,
+bubbleHelp: true, zoomMax:20 };
+
+// Create nextprot feature viewer
+nxFeatureViewer(nx, isoform, "#div2", options).then(function(ff){
+// Add first custom feature
+ff.addFeature({
+    data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
+    name: "test feature 1",
+    className: "test1",
+    color: "#0F8292",
+    type: "rect",
+    filter: "type1"
+});
+// Add second feature from nextprot
+var styles = [
+    {name: "Propeptide",className: "pro",color: "#B3B3B3",type: "rect",filter:"Processing"}, 
+    {name: "Mature protein",className: "mat",color: "#B3B3C2",type: "rect",filter:"Processing"}
+ ]; 
+ff.addNxFeature(["propeptide","mature-protein"], styles);
+
+```
 ## Documentation
 
 Check out this page for a better understanding of how to use the feature viewer and its possibilities :

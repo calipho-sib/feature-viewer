@@ -7,7 +7,7 @@ module.exports = function(grunt) {
             options: {
                 separator: ';'
             },
-            dist: {
+            basic: {
                 src: [
                     'bower_components/jquery/dist/jquery.js',
                     'bower_components/d3/d3.min.js',
@@ -16,7 +16,17 @@ module.exports = function(grunt) {
                     'dist/feature-viewer.min.js'
                 ],
                 dest: 'dist/feature-viewer.bundle.js'
+            },
+            nextP: {
+                src: [
+                    'dist/feature-viewer.bundle.js',
+                    'bower_components/nextprot/src/nextprot-core.js',
+                    'bower_components/nextprot/src/nextprot-utils.js',
+                    'src/fv.nextprot.js'
+                ],
+                dest: 'dist/feature-viewer.nextprot.js'
             }
+            
         },
         bump: {
             options: {

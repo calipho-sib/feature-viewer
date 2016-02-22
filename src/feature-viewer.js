@@ -1,6 +1,7 @@
 var FeatureViewer = (function () {
 
     function FeatureViewer(sequence, div, options) {
+//        var nxSeq = sequence.startsWith('NX_') ? true : false;
         var self = this;
         // if (!div) var div = window;
         this.events = {
@@ -35,8 +36,8 @@ var FeatureViewer = (function () {
         function colorSelectedFeat(feat, object) {
             //change color && memorize
             if (featureSelected !== {}) d3.select(featureSelected.id).style("fill", featureSelected.originalColor);
-            if (object.type !== "path"){
-                featureSelected = {"id": feat, "originalColor": object.color};
+            if (object.type !== "path" && object.type !== "line"){
+                featureSelected = {"id": feat, "originalColor": d3.select(feat).style("fill") || object.color};
                 d3.select(feat).style("fill", "orangered");
             }
         }
@@ -66,6 +67,21 @@ var FeatureViewer = (function () {
             .domain([0, width])
             .range([1, sequence.length]);
 
+        function updateLineTooltip(mouse,pD){
+            var xP = mouse-110;
+            var elemHover = "";
+            for (var l=0; l<pD.length;l++) {
+                if (scaling(pD[l].x) < xP && scaling(pD[l+1].x) > xP) {
+                    if ((xP - scaling(pD[l].x)) < (scaling(pD[l+1].x) - xP )) {
+                        elemHover = pD[l];
+                    }
+                    else elemHover = pD[l+1];
+                    break;
+                }
+            }
+            return elemHover;
+        }
+        
         d3.helper = {};
 
         d3.helper.tooltip = function (object) {
@@ -105,11 +121,15 @@ var FeatureViewer = (function () {
                         'text-align': 'center',
                         position: 'absolute',
                         'z-index': 45,
-                        'box-shadow': '0 1px 2px 0 #656565'
+                        'box-shadow': '0 1px 2px 0 #656565' 
                     });
                     if (object.type === "path") {
                         var first_line = '<p style="margin:2px;color:white">start : <span style="color:orangered">' + pD[0].x + '</span></p>';
                         var second_line = '<p style="margin:2px;color:white">end : <span style="color:orangered">' + pD[1].x + '</span></p>';
+                    } else if (object.type === "line") {
+                        var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
+                        var first_line = '<p style="margin:2px;color:white">start : <span style="color:orangered" id="tLineX">' + elemHover.x + '</span></p>';
+                        var second_line = '<p style="margin:2px;color:white">end : <span style="color:orangered" id="tLineC">' + elemHover.y + '</span></p>';
                     } else if (object.type === "unique" || pD.x === pD.y) {
                         var first_line = '<p style="margin:2px;color:orangered">' + pD.x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:white;font-size:9px">' + pD.description + '</p>';
@@ -128,6 +148,13 @@ var FeatureViewer = (function () {
                     }
                 })
                     .on('mousemove.tooltip', function (pD, pI) {
+                    
+                        if (object.type === "line") {
+                            var absoluteMousePos = d3.mouse(bodyNode);
+                            var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
+                            $('#tLineX').text(elemHover.x);
+                            $('#tLineC').text(elemHover.y);  
+                        }
                         // Move tooltip
                         // IE 11 sometimes fires mousemove before mouseover
                         if (tooltipDiv === undefined) { return; }
@@ -156,6 +183,7 @@ var FeatureViewer = (function () {
                         var yTemp;
                         var xRect;
                         var widthRect;
+                        var elemHover;
 
                         if(this.nodeName === "text") {
                             var rect = "#"+this.previousSibling.id;
@@ -173,6 +201,11 @@ var FeatureViewer = (function () {
                         if (object.type === "path") {
                             xTemp = pD[0].x;
                             yTemp = pD[1].x;
+                        } else if (object.type === "line") {
+                            var absoluteMousePos = d3.mouse(bodyNode);
+                            elemHover = updateLineTooltip(absoluteMousePos[0],pD);
+                            xTemp = elemHover.x - 0.5;
+                            yTemp = elemHover.x + 0.5;
                         } else if (object.type === "unique" || pD.x === pD.y) {
                             xTemp = pD.x - 0.4;
                             yTemp = pD.y + 0.4;
@@ -209,10 +242,10 @@ var FeatureViewer = (function () {
                         if (CustomEvent) {
                             var event = new CustomEvent(self.events.FEATURE_SELECTED_EVENT, {
                                 detail: {
-                                    start: object.type === "path" ? pD[0].x : pD.x,
-                                    end: object.type === "path" ? pD[1].x : pD.y,
-                                    id: object.type === "path" ? pD[0].id : pD.id,
-                                    description:object.type === "path" ? pD[0].description : pD.description
+                                    start: object.type === "path" ? pD[0].x : object.type === "line" ? elemHover.x : pD.x,
+                                    end: object.type === "path" ? pD[1].x : object.type === "line" ? elemHover.y : pD.y,
+                                    id: object.type === "path" ? pD[0].id : object.type === "line" ? elemHover.id : pD.id,
+                                    description:object.type === "path" ? pD[0].description : object.type === "line" ? elemHover.description : pD.description
                                 }
                             });
                             svgElement.dispatchEvent(event);
@@ -220,10 +253,10 @@ var FeatureViewer = (function () {
                             console.warn("CustomEvent is not defined....");
                         }
                         if (self.trigger) self.trigger(self.events.FEATURE_SELECTED_EVENT, {
-                            start: object.type === "path" ? pD[0].x : pD.x,
-                            end: object.type === "path" ? pD[1].x : pD.y,
-                            id:object.type === "path" ? pD[0].id : pD.id,
-                            description: object.type === "path" ? pD[0].description : pD.description
+                            start: object.type === "path" ? pD[0].x : object.type === "line" ? elemHover.x : pD.x,
+                            end: object.type === "path" ? pD[1].x : object.type === "line" ? elemHover.y : pD.y,
+                            id: object.type === "path" ? pD[0].id : object.type === "line" ? elemHover.id : pD.id,
+                            description:object.type === "path" ? pD[0].description : object.type === "line" ? elemHover.description : pD.description
                         });
 
                     });
@@ -335,6 +368,17 @@ var FeatureViewer = (function () {
             .y(function (d) {
                 return -d.y * 10 + pathLevel;
             });
+        var lineGen = d3.svg.line()
+          .interpolate("cardinal")
+          .x(function(d) {
+            return scaling(d.x);
+          })
+          .y(function (d) {
+                return lineYscale(-d.y) * 10 + pathLevel;
+            });
+        var lineYscale = d3.scale.linear()
+            .domain([0,-30])
+            .range([0,-20]);
         var line = d3.svg.line()
             .interpolate("linear")
             .x(function (d) {
@@ -440,7 +484,9 @@ var FeatureViewer = (function () {
                     return [{
                         x: d.x,
                         y: 0,
-                        id: d.id
+                        id: d.id,
+                        description: d.description,
+                        color: d.color
                     }, {
                         x: d.y,
                         y: d.level + 1,
@@ -453,6 +499,37 @@ var FeatureViewer = (function () {
                 })
                 pathLevel = level * 10 + 5;
                 object.height = level * 10 + 5;
+            },
+            line: function (object) {
+                if (!object.height) object.height = 10;
+                var shift = parseInt(object.height);
+                object.data.sort(function (a, b) {
+                    return a.x - b.x;
+                });
+                if (object.data[0].x !== 1) {
+                    object.data.unshift({
+                        x:1,
+                        y:0
+                    })
+                }
+                if (object.data[object.data.length -1] !== sequence.length -1){
+                    object.data.push({
+                        x:sequence.length-1,
+                        y:0
+                    })
+                }
+                var level = Math.max.apply(Math,object.data.map(function(o){return o.y;}))
+                lineYscale.range([0, -(shift)]).domain([0, -(level)]);
+                
+                object.data = [object.data.map(function (d) {
+                    return {
+                        x: d.x,
+                        y: d.y,
+                        id: d.id
+                    }
+                })]
+                pathLevel = shift * 10 + shift;
+                object.shift = shift * 10 + shift;
             },
             multipleRect: function (object) {
                 object.data.sort(function (a, b) {
@@ -506,6 +583,15 @@ var FeatureViewer = (function () {
                         y: Yposition - 10,
                         filter: object.filter
                     });
+                } else if (object.type === "line") {
+                    preComputing.line(object);
+                    fillSVG.line(object, sequence, Yposition);
+                    Yposition += pathLevel;
+                    yData.push({
+                        title: object.name,
+                        y: Yposition - 10,
+                        filter: object.filter
+                    });
                 }
             },
             sequence: function (seq, position, start) {
@@ -533,8 +619,10 @@ var FeatureViewer = (function () {
             rectangle: function (object, sequence, position) {
                 //var rectShift = 20;
                 var rectHeight =(object.height) ? object.height : 12;
+                
                 var rectShift = rectHeight + rectHeight/3;
                 var lineShift = rectHeight/2 - 6;
+//                var lineShift = rectHeight/2 - 6;
 
                 var rectsPro = svgContainer.append("g")
                     .attr("class", "rectangle")
@@ -578,7 +666,7 @@ var FeatureViewer = (function () {
                     })
                     .attr("width", rectWidth2)
                     .attr("height", rectHeight)
-                    .style("fill", object.color)
+                    .style("fill", function(d) { return d.color || object.color })
                     .style("z-index", "13")
                     .call(d3.helper.tooltip(object));
 
@@ -618,7 +706,8 @@ var FeatureViewer = (function () {
                 //    .call(d3.helper.tooltip(object));
 
                 forcePropagation(rectsProGroup);
-                Yposition += (level - 1) * rectShift;
+                var uniqueShift = level < 2 ? rectHeight-15 > 0 ? rectHeight-15 : 0 : 0;
+                Yposition += (level - 1) * (rectShift + lineShift + 1) + uniqueShift;
             },
             unique: function (object, sequence, position) {
                 var rectsPro = svgContainer.append("g")
@@ -657,7 +746,7 @@ var FeatureViewer = (function () {
                         else return scaling(d.x + 0.4) - scaling(d.x - 0.4);
                     })
                     .attr("height", 12)
-                    .style("fill", object.color)
+                    .style("fill", function(d) {return d.color ||  object.color})
                     .style("z-index", "3")
                     .call(d3.helper.tooltip(object));
 
@@ -691,12 +780,45 @@ var FeatureViewer = (function () {
                     })
                     .attr("d", lineBond)
                     .style("fill", "none")
-                    .style("stroke", object.color)
+                    .style("stroke", function(d) {return d[0].color || object.color})
                     .style("z-index", "3")
                     .style("stroke-width", "2px")
                     .call(d3.helper.tooltip(object));
 
                 forcePropagation(pathsDB);
+            },
+            line: function (object, sequence, position) {
+                var histog = svgContainer.append("g")
+                    .attr("class", "lining")
+                    .attr("transform", "translate(0," + position + ")");
+
+                histog.append("path")
+                    .attr("d", lineBond([{
+                        x: 1,
+                        y: 0
+                    }, {
+                        x: sequence.length,
+                        y: 0
+                    }]))
+                    .style("z-index", "0")
+                    .style("stroke", object.color)
+                    .style("stroke-width", "1px");
+
+                histog.selectAll("." + object.className)
+                    .data(object.data)
+                    .enter()
+                    .append("path")
+                    .attr("clip-path", "url(#clip)")
+                    .attr("class", "element " + object.className)
+                    .attr("d", lineGen)
+//                    .style("fill", "none")
+                    .style("stroke", object.color)
+                    .style("z-index", "3")
+                    .style("stroke-width", "2px")
+//                    .style("shape-rendering", "crispEdges")
+                    .call(d3.helper.tooltip(object));
+
+                forcePropagation(histog);
             },
             multipleRect: function (object, sequence, position, level) {
                 var rectHeight = 8;
@@ -737,7 +859,7 @@ var FeatureViewer = (function () {
                     })
                     .attr("width", rectWidth)
                     .attr("height", rectHeight)
-                    .style("fill", object.color)
+                    .style("fill", function(d) { return d.color || object.color })
                     .style("z-index", "13")
                     .call(d3.helper.tooltip(object));
 
@@ -846,6 +968,15 @@ var FeatureViewer = (function () {
                         return -d.y * 10 + object.height;
                     }));
             },
+            line: function (object) {
+                svgContainer.selectAll("." + object.className)
+                    .data(object.data)
+                    //.transition()
+                    //.duration(500)
+                    .attr("d", lineGen.y(function (d) {
+                        return lineYscale(-d.y) * 10 + object.shift;
+                    }));
+            },
             text: function (object, start) {
                 svgContainer.selectAll("." + object.className)
                     .data(object.data)
@@ -946,6 +1077,8 @@ var FeatureViewer = (function () {
                     transition.unique(o);
                 } else if (o.type === "path") {
                     transition.path(o);
+                } else if (o.type === "line") {
+                    transition.line(o);
                 } else if (o.type === "text") {
                     transition.text(o, start);
                 }
