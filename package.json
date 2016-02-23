@@ -17,7 +17,6 @@
     }
   ],
   "main": "lib/index.js",
-  "style": "css/*.css",
   "scripts": {
     "build": "mkdir -p build && browserify -r ./:feature-viewer -o build/viewer.js",
     "build-browser": "npm run build",
