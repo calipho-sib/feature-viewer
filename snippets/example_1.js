@@ -82,4 +82,4 @@ window.onload = function() {
     ft2.onAll(function(name,data){
         console.log(arguments);
     });
-}
+};
