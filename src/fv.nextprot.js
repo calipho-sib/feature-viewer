@@ -71,7 +71,7 @@ function getFeaturesByview(nx, list, entry) {
 function addNxFeature(featuresName, featuresStyle) {
     var that = this;
     return new Promise(function(resolve, reject) {
-        Promise.all(getFeaturesByview(this.nxClient, featuresName, this.entry))
+        Promise.all(getFeaturesByview(that.nxClient, featuresName, that.entry))
             .then(function (oneData) {
                 var featuresForViewer = mergeData(oneData, featuresStyle);
                 filterFeatures(featuresForViewer, that);
@@ -83,4 +83,8 @@ function addNxFeature(featuresName, featuresStyle) {
             });
         
     });
+}
+
+if ( typeof module === "object" && typeof module.exports === "object" ) {
+    module.exports = nxFeatureViewer;
 }

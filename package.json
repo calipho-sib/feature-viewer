@@ -23,7 +23,7 @@
     "build-browser": "npm run build",
     "build-all": "npm run build && npm run css",
     "watch": "watchify -r ./:feature-viewer -v -o build/viewer.js",
-    "w": "prunner \"npm run sniper\" \"npm run watch\" \"npm run watch-css\"",
+    "w": "prunner \"npm run sniper\" \"npm run watch\"",
     "sniper": "sniper .",
     "css": "parcelify ./ -c build/bundle.css",
     "watch-css": "parcelify -w ./ -c build/bundle.css --loglevel verbose",
@@ -35,7 +35,8 @@
     "jquery": "x.x.x",
     "d3": "3.5.6",
     "bootstrap": "x.x.x",
-    "biojs-events": "x.x.x"
+    "biojs-events": "x.x.x",
+    "nextprot": "x.x.x"
   },
   "devDependencies": {
     "mkdirp": "^0.5.0",
@@ -57,9 +58,9 @@
   },
   "sniper": {
     "js": ["/build/viewer.js"],
-    "css": ["/build/bundle.css"],
+    "css": ["/css/bootstrap.css","/css/style.css"],
     "snippets": ["snippets"],
-    "first": "example_2"
+    "first": "example_1"
   },
   "keywords": [
     "sib",
