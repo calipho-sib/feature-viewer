@@ -28,12 +28,12 @@
     "dist": "grunt && grunt concating && grunt serve"
   },
   "dependencies": {
+    "biojs-events": "x.x.x",
+    "bootstrap": "x.x.x",
     "bower": "x.x.x",
+    "d3": "3.5.6",
     "grunt-cli": "x.x.x",
     "jquery": "x.x.x",
-    "d3": "3.5.6",
-    "bootstrap": "x.x.x",
-    "biojs-events": "x.x.x",
     "nextprot": "x.x.x"
   },
   "devDependencies": {
@@ -42,7 +42,6 @@
     "sniper": "0.x",
     "watchify": "^1.0.6",
     "prunner": "1.x",
-    "parcelify": "0.x",
     "grunt": "x.x.x",
     "grunt-bump": "^0.3.0",
     "grunt-connect": "^0.2.0",
@@ -55,9 +54,16 @@
     "load-grunt-tasks": "^0.6.0"
   },
   "sniper": {
-    "js": ["/build/viewer.js"],
-    "css": ["/css/bootstrap.css","/css/style.css"],
-    "snippets": ["snippets"],
+    "js": [
+      "/build/viewer.js"
+    ],
+    "css": [
+      "/css/bootstrap.css",
+      "/css/style.css"
+    ],
+    "snippets": [
+      "snippets"
+    ],
     "first": "example_1"
   },
   "keywords": [
