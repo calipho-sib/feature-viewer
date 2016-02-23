@@ -80,9 +80,12 @@ https://search.nextprot.org/entry/NX_P01308/view/proteomics
 
 ## Use it with NeXtProt API
 
-It is possible to fill the feature viewer with protein features from [NeXtProt](https://search.nextprot.org/), the human protein database.
-First check the type of feature in the [NeXtProt API](https://api.nextprot.org/) that you would like to add to your viewer. For example, "propeptide" and "mature-protein".
-Then start coding :
+It is possible to fill the feature viewer with protein features from [NeXtProt](https://search.nextprot.org/), the human protein database.   
+
+- First, find your protein of interest in NeXtProt and get the neXtProt accession (NX_...). (You can find your protein by entering an accession number of another database, like UniProt or Ensembl)   
+- Then, check the type of feature in the [NeXtProt API](https://api.nextprot.org/) that you would like to add to your viewer. For example, "propeptide" or "mature-protein".
+- Include the feature viewer bundle with nextprot to your html  : feature-viewer.nextprot.js
+- Finally, create your feature-viewer like this :
 
 ```javascript
 //initalize nextprot Client
