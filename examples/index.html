@@ -318,9 +318,12 @@ ft3.onFeatureSelected(function (d) {
                 </div>
                 <div class="panel-body">
                     <p>It is possible to fill the feature viewer with protein features from <a href="https://search.nextprot.org/">NeXtProt</a>, the human protein database.</p>
-                    <p>First include the feature viewer bundle with nextprot to your html <strong>feature-viewer.nextprot.js</strong> </p>
-                    <p>Second, check the type of feature in the <a href="https://api.nextprot.org/">NeXtProt API</a> that you would like to add to your viewer. For example, "propeptide" or "mature-protein".</p>
-                    <p>Then, start to create your feature viewer :</p>
+                    <ul>
+                        <li>First, find your protein of interest in NeXtProt and get the neXtProt accession (NX_...). (You can find your protein by entering an accession number of another database, like UniProt or Ensembl)</li>
+                        <li>Then, check the type of feature in the <a href="https://api.nextprot.org/">NeXtProt API</a> that you would like to add to your viewer. For example, "propeptide" or "mature-protein".</li>
+                        <li>Include the feature viewer bundle with nextprot to your html <strong>feature-viewer.nextprot.js</strong> </li>
+                        <li>Finally, create your feature viewer like this :</li>
+                    </ul>
                 </div>
                 <form>
                 <textarea id="code4" name="code4" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
