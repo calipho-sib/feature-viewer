@@ -21,12 +21,10 @@
   "scripts": {
     "build": "mkdir -p build && browserify -r ./:feature-viewer -o build/viewer.js",
     "build-browser": "npm run build",
-    "build-all": "npm run build && npm run css",
+    "build-all": "npm run build",
     "watch": "watchify -r ./:feature-viewer -v -o build/viewer.js",
     "w": "prunner \"npm run sniper\" \"npm run watch\"",
     "sniper": "sniper .",
-    "css": "parcelify ./ -c build/bundle.css",
-    "watch-css": "parcelify -w ./ -c build/bundle.css --loglevel verbose",
     "dist": "grunt && grunt concating && grunt serve"
   },
   "dependencies": {
