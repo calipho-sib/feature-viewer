@@ -56,7 +56,7 @@ nxFeatureViewer(nx, isoform, "#div1", options).then(function(ff){
             filter: "type1"
         });
     });
-    //@biojs-instance=ft2
+    //@biojs-instance=ff
     ff.onAll(function(name,data){
         console.log(arguments);
     });
