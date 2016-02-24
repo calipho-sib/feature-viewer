@@ -17,6 +17,8 @@ bower install feature-viewer
 npm install feature-viewer
 ```
 
+Note: that if you choose the later approach (by just using the feature-viewer.js) you should also include the dependencies :  jquery,d3 and bootstrap.js / bootstrap.min.css
+
 2) Specify a div in your html
 ```
 <div id="fv1"></div>
@@ -45,7 +47,7 @@ ft.addFeature({
        name: "test feature 1",
        className: "test1", //can be used for styling
        color: "#0F8292",
-       type: "rect" // ['rect', 'multipleRect', 'path', 'unique']
+       type: "rect" // ['rect', 'path', 'line']
    });
    ```
    
@@ -53,8 +55,6 @@ ft.addFeature({
 
 ![Feature viewer](/assets/feature-viewer.png)
 
-
-Note: that if you choose the later approach (by just using the feature-viewer.js) you should also include the dependencies :  jquery,d3 and bootstrap.js / bootstrap.min.css
 
 ## Functionalities
 
