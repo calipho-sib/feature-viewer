@@ -4,7 +4,7 @@
 
 ![Feature viewer](/assets/FV_SCSHT.png)
 
-Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.34/examples/index.html
+Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.35/examples/index.html
 
 ## Getting Started
 
@@ -123,7 +123,7 @@ ff.addNxFeature(["propeptide","mature-protein"], styles);
 ## Documentation
 
 Check out this page for a better understanding of how to use the feature viewer and its possibilities :
-* https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.34/examples/index.html
+* https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.35/examples/index.html
 
 ## Support
 
