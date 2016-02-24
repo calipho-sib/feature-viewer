@@ -128,8 +128,8 @@ var FeatureViewer = (function () {
                         var second_line = '<p style="margin:2px;color:white">end : <span style="color:orangered">' + pD[1].x + '</span></p>';
                     } else if (object.type === "line") {
                         var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
-                        var first_line = '<p style="margin:2px;color:white">start : <span style="color:orangered" id="tLineX">' + elemHover.x + '</span></p>';
-                        var second_line = '<p style="margin:2px;color:white">end : <span style="color:orangered" id="tLineC">' + elemHover.y + '</span></p>';
+                        var first_line = '<p style="margin:2px;color:white">position : <span style="color:orangered" id="tLineX">' + elemHover.x + '</span></p>';
+                        var second_line = '<p style="margin:2px;color:white">count : <span style="color:orangered" id="tLineC">' + elemHover.y + '</span></p>';
                     } else if (object.type === "unique" || pD.x === pD.y) {
                         var first_line = '<p style="margin:2px;color:orangered">' + pD.x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:white;font-size:9px">' + pD.description + '</p>';
@@ -584,6 +584,8 @@ var FeatureViewer = (function () {
                         filter: object.filter
                     });
                 } else if (object.type === "line") {
+                    var negativeNumbers = object.data.filter(function(l){ return l.y < 0});
+                    console.log(negativeNumbers);
                     preComputing.line(object);
                     fillSVG.line(object, sequence, Yposition);
                     Yposition += pathLevel;
@@ -592,6 +594,7 @@ var FeatureViewer = (function () {
                         y: Yposition - 10,
                         filter: object.filter
                     });
+                    Yposition += negativeNumbers.length ? pathLevel : 0;
                 }
             },
             sequence: function (seq, position, start) {
