@@ -15,8 +15,21 @@
 </head>
     
 <style>
-    .test7{
-        fill: rgba(19, 167, 188, 0.35);
+/*
+    .test70{
+        fill: #13a7bc;
+    }
+    .test71{
+        fill: #bc5413;
+    }
+*/
+/*
+    .test7bis{
+        fill: rgba(19, 188, 136, 0.35);
+    }
+*/
+    rect{
+        rx:2;
     }
     </style>
 <body>
@@ -51,6 +64,7 @@
             type: "rect",
             filter: "type2"
         });
+        
         ft2.addFeature({
             data: [{x:130,y:184},{x:40,y:142},{x:80,y:110}],
             name: "test feature 3",
@@ -86,22 +100,50 @@
             filter: "type2"
         });
         var dataDemo = [];
+        var dataDemo2 = [];
         for (var i=1;i<100;i++) {
-            var count = Math.floor(Math.random() * 201);
+            var count = Math.floor(Math.random() *261);
+            var count2 = Math.floor(Math.random() * 261);
             dataDemo.push({
                 x: i*2,
+                y:count2
+            })
+            dataDemo2.push({
+                x: i*2,
+                y:-count
+            })
+        };
+        console.log(dataDemo);
+        console.log(dataDemo2);
+        ft2.addFeature({
+            data: [dataDemo, dataDemo2],
+            name: "test feature 7",
+            className: "test7",
+            color: ["#13a7bc","#bc5413"],
+            type: "line",
+            filter: "type2",
+            height: "10",
+            interpolation:"step"
+        });
+        var dataDemo3 = [{x:0,y:0}];
+        for (var i=1;i<200;i++) {
+            var count = Math.floor(Math.random() * 201);
+            dataDemo3.push({
+                x: i,
                 y:count
             })
         }
         ft2.addFeature({
-            data: dataDemo,
-            name: "test feature 7",
-            className: "test7",
-            color: "#006573",
+            data: dataDemo3,    
+            name: "test feature 7bis",
+            className: "test7bis",
+            color: ["#006573","#731b00"],
             type: "line",
             filter: "type2",
-            height: "10"
+            height: "10",
+            fill: false
         });
+        
         
     //Beside positions of each element, you can also give a specific description, which will appears in the tooltip when mouse hover, and a specific ID, for example to link a click event on the feature with something else in your project.
         ft2.addFeature({
