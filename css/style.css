@@ -138,3 +138,6 @@ a:focus {
 path{
     fill:none;
 }
+rect{
+    rx:2;
+}

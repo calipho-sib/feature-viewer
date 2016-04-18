@@ -13,36 +13,20 @@
 
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 </head>
-
+    
 <body>
     <div id="div2"> </div>
 
     <script>
        //Create a new Feature Viewer and add some rendering options
-//       var ft2 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
-//            "KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div2", {
-//            showAxis: true,
-//            showSequence: true,
-//            brushActive: true,
-//            toolbar:true,
-//            bubbleHelp:true,
-//            zoomMax:10,
-//            minLengthAnim: 300
-//                    });
-        var test = "FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
-            "KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL";
-        console.log(test.length);
-        var ft2 = new FeatureViewer(test,"#div2", {
+       var ft2 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
+            "KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div2", {
             showAxis: true,
             showSequence: true,
             brushActive: true,
             toolbar:true,
             bubbleHelp:true,
             zoomMax:10,
-//                offset:{
-//                    start:40,
-//                    end:100
-//                },
             minLengthAnim: 300
                     });
         
@@ -143,7 +127,7 @@
             filter: "type2",
             height: "10",
             fill: true,
-            interpolation:"basis"
+            interpolation:"step"
         });
         
         
