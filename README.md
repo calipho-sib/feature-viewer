@@ -84,7 +84,7 @@ https://search.nextprot.org/entry/NX_P01308/view/proteomics
 
 ## Use it with NeXtProt API
 
-![Feature viewer with neXtProt](/assets/FVDemo.png)
+<img src="/assets/FVDemo.png" width="100%" />
 
 It is possible to fill the feature viewer with protein features from [NeXtProt](https://search.nextprot.org/), the human protein database.   
 
