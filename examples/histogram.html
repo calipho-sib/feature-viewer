@@ -29,10 +29,10 @@
 //            zoomMax:10,
 //            minLengthAnim: 300
 //                    });
-        var test = "FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
+        var seq = "FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
             "KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL";
-        console.log(test.length);
-        var ft2 = new FeatureViewer(test,"#div2", {
+        console.log(seq.length);
+        var ft2 = new FeatureViewer(seq,"#div2", {
             showAxis: true,
             showSequence: true,
             brushActive: true,
@@ -143,7 +143,7 @@
             filter: "type2",
             height: "10",
             fill: true,
-            interpolation:"basis"
+            interpolation:"monotone"
         });
         
         

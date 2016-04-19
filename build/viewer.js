@@ -21002,12 +21002,16 @@ var FeatureViewer = (function () {
         var el = document.getElementById(div.substring(1));
         var svgElement;
         var sequence = sequence;
+        var intLength = Number.isInteger(sequence) ? sequence : null;
+        var fvLength = intLength | sequence.length;
         var features = [];
         var SVGOptions = {
             showSequence: false,
             brushActive: false,
             verticalLine: false
         };
+        var offset = {start:1,end:fvLength};
+        if (options && options.offset) offset = options.offset;
         var pathLevel = 0;
         var svg;
         var svgContainer;
@@ -21020,7 +21024,13 @@ var FeatureViewer = (function () {
         var seqShift = 0;
         var zoom = false;
         var zoomMax = 50;
+        var current_extend = { 
+                    length : offset.end - offset.start,
+                    start : offset.start,
+                    end : offset.end
+                }
         var featureSelected = {};
+        var animation = true;
 
         function colorSelectedFeat(feat, object) {
             //change color && memorize
@@ -21050,11 +21060,14 @@ var FeatureViewer = (function () {
             width = $(div).width() - margin.left - margin.right - 17,
             height = 600 - margin.top - margin.bottom;
         var scaling = d3.scale.linear()
-            .domain([1, sequence.length])
+            .domain([offset.start, offset.end])
             .range([5, width-5]);
         var scalingPosition = d3.scale.linear()
             .domain([0, width])
-            .range([1, sequence.length]);
+            .range([offset.start, offset.end]);
+        
+        
+        
 
         function updateLineTooltip(mouse,pD){
             var xP = mouse-110;
@@ -21117,8 +21130,14 @@ var FeatureViewer = (function () {
                         var second_line = '<p style="margin:2px;color:white">end : <span style="color:orangered">' + pD[1].x + '</span></p>';
                     } else if (object.type === "line") {
                         var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
-                        var first_line = '<p style="margin:2px;color:white">start : <span style="color:orangered" id="tLineX">' + elemHover.x + '</span></p>';
-                        var second_line = '<p style="margin:2px;color:white">end : <span style="color:orangered" id="tLineC">' + elemHover.y + '</span></p>';
+                        if (elemHover.description) {
+                            var first_line = '<p style="margin:2px;color:orangered">' + elemHover.x + ' : <span style="color:#ccc"> ' + elemHover.y + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:white;font-size:9px">' + elemHover.description + '</p>';
+                        }
+                        else {
+                            var first_line = '<p style="margin:2px;color:white">position : <span style="color:orangered" id="tLineX">' + elemHover.x + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:white">count : <span style="color:orangered" id="tLineC">' + elemHover.y + '</span></p>';
+                        }
                     } else if (object.type === "unique" || pD.x === pD.y) {
                         var first_line = '<p style="margin:2px;color:orangered">' + pD.x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:white;font-size:9px">' + pD.description + '</p>';
@@ -21141,8 +21160,17 @@ var FeatureViewer = (function () {
                         if (object.type === "line") {
                             var absoluteMousePos = d3.mouse(bodyNode);
                             var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
-                            $('#tLineX').text(elemHover.x);
-                            $('#tLineC').text(elemHover.y);  
+                            if (elemHover.description) {
+                                var first_line = '<p style="margin:2px;color:orangered">' + elemHover.x + ' : <span style="color:#ccc"> ' + elemHover.y + '</span></p>';
+                                var second_line = '<p style="margin:2px;color:white;font-size:9px">' + elemHover.description + '</p>';
+                            }
+                            else {
+                                var first_line = '<p style="margin:2px;color:white">position : <span style="color:orangered" id="tLineX">' + elemHover.x + '</span></p>';
+                                var second_line = '<p style="margin:2px;color:white">count : <span style="color:orangered" id="tLineC">' + elemHover.y + '</span></p>';
+                            }
+                            tooltipDiv.html(first_line + second_line);
+//                            $('#tLineX').text(elemHover.x);
+//                            $('#tLineC').text(elemHover.y);  
                         }
                         // Move tooltip
                         // IE 11 sometimes fires mousemove before mouseover
@@ -21176,12 +21204,11 @@ var FeatureViewer = (function () {
 
                         if(this.nodeName === "text") {
                             var rect = "#"+this.previousSibling.id;
-                            console.log(rect);
                             if(rect.nodeName !== "#") colorSelectedFeat(rect, object);
                         }
                         else colorSelectedFeat(this, object);
 
-                        var svgWidth = d3.select(".background").attr("width");
+                        var svgWidth = SVGOptions.brushActive ? d3.select(".background").attr("width") : svgContainer.node().getBBox().width;
                         d3.select('body').selectAll('div.selectedRect').remove();
                         // Append tooltip
                         selectedRect = d3.select(div)
@@ -21358,7 +21385,8 @@ var FeatureViewer = (function () {
                 return -d.y * 10 + pathLevel;
             });
         var lineGen = d3.svg.line()
-          .interpolate("cardinal")
+          
+//          .interpolate("cardinal")
           .x(function(d) {
             return scaling(d.x);
           })
@@ -21382,6 +21410,26 @@ var FeatureViewer = (function () {
             .scale(scaling)
             .tickFormat(d3.format("d"))
             .orient("bottom");
+        
+        function shadeBlendConvert(p, from, to) {
+            if(typeof(p)!="number"||p<-1||p>1||typeof(from)!="string"||(from[0]!='r'&&from[0]!='#')||(typeof(to)!="string"&&typeof(to)!="undefined"))return null; //ErrorCheck
+            if(!this.sbcRip)this.sbcRip=function(d){
+                var l=d.length,RGB=new Object();
+                if(l>9){
+                    d=d.split(",");
+                    if(d.length<3||d.length>4)return null;//ErrorCheck
+                    RGB[0]=i(d[0].slice(4)),RGB[1]=i(d[1]),RGB[2]=i(d[2]),RGB[3]=d[3]?parseFloat(d[3]):-1;
+                }else{
+                    if(l==8||l==6||l<4)return null; //ErrorCheck
+                    if(l<6)d="#"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(l>4?d[4]+""+d[4]:""); //3 digit
+                    d=i(d.slice(1),16),RGB[0]=d>>16&255,RGB[1]=d>>8&255,RGB[2]=d&255,RGB[3]=l==9||l==5?r(((d>>24&255)/255)*10000)/10000:-1;
+                }
+                return RGB;}
+            var i=parseInt,r=Math.round,h=from.length>9,h=typeof(to)=="string"?to.length>9?true:to=="c"?!h:false:h,b=p<0,p=b?p*-1:p,to=to&&to!="c"?to:b?"#000000":"#FFFFFF",f=sbcRip(from),t=sbcRip(to);
+            if(!f||!t)return null; //ErrorCheck
+            if(h)return "rgb("+r((t[0]-f[0])*p+f[0])+","+r((t[1]-f[1])*p+f[1])+","+r((t[2]-f[2])*p+f[2])+(f[3]<0&&t[3]<0?")":","+(f[3]>-1&&t[3]>-1?r(((t[3]-f[3])*p+f[3])*10000)/10000:t[3]<0?f[3]:t[3])+")");
+            else return "#"+(0x100000000+(f[3]>-1&&t[3]>-1?r(((t[3]-f[3])*p+f[3])*255):t[3]>-1?r(t[3]*255):f[3]>-1?r(f[3]*255):255)*0x1000000+r((t[0]-f[0])*p+f[0])*0x10000+r((t[1]-f[1])*p+f[1])*0x100+r((t[2]-f[2])*p+f[2])).toString(16).slice(f[3]>-1||t[3]>-1?1:3);
+        }
 
         function addXAxis(position) {
             svgContainer.append("g")
@@ -21458,7 +21506,9 @@ var FeatureViewer = (function () {
                 new_click_event.clientX = d3.event.clientX;
                 new_click_event.pageY = d3.event.pageY;
                 new_click_event.clientY = d3.event.clientY;
-                brush_elm.dispatchEvent(new_click_event);
+                if (brush_elm) {
+                    brush_elm.dispatchEvent(new_click_event);
+                }
             });
         }
 
@@ -21492,33 +21542,40 @@ var FeatureViewer = (function () {
             line: function (object) {
                 if (!object.height) object.height = 10;
                 var shift = parseInt(object.height);
-                object.data.sort(function (a, b) {
-                    return a.x - b.x;
-                });
-                if (object.data[0].x !== 1) {
-                    object.data.unshift({
-                        x:1,
-                        y:0
-                    })
-                }
-                if (object.data[object.data.length -1] !== sequence.length -1){
-                    object.data.push({
-                        x:sequence.length-1,
-                        y:0
-                    })
-                }
-                var level = Math.max.apply(Math,object.data.map(function(o){return o.y;}))
-                lineYscale.range([0, -(shift)]).domain([0, -(level)]);
-                
-                object.data = [object.data.map(function (d) {
-                    return {
-                        x: d.x,
-                        y: d.y,
-                        id: d.id
+                var level = 0;
+                for (var i in object.data) {
+                    object.data[i].sort(function (a, b) {
+                        return a.x - b.x;
+                    });
+                    if (object.data[i][0].y !== 0) {
+                        object.data[i].unshift({
+                            x:object.data[i][0].x-1,
+                            y:0
+                        })
                     }
-                })]
-                pathLevel = shift * 10 + shift;
-                object.shift = shift * 10 + shift;
+                    if (object.data[i][object.data[i].length -1].y !== 0){
+                        object.data[i].push({
+                            x:object.data[i][object.data[i].length -1].x+1,
+                            y:0
+                        })
+                    }
+                    var maxValue = Math.max.apply(Math,object.data[i].map(function(o){return Math.abs(o.y);}));
+                    level = maxValue > level ? maxValue : level;
+                    
+
+                    object.data[i] = [object.data[i].map(function (d) {
+                        return {
+                            x: d.x,
+                            y: d.y,
+                            id: d.id,
+                            description: d.description
+                        }
+                    })]
+                }
+                lineYscale.range([0, -(shift)]).domain([0, -(level)]);
+                pathLevel = shift * 10 +5;
+                object.level = level;
+                object.shift = shift * 10 +5;
             },
             multipleRect: function (object) {
                 object.data.sort(function (a, b) {
@@ -21538,7 +21595,7 @@ var FeatureViewer = (function () {
                         y: Yposition,
                         filter: object.filter
                     });
-                    fillSVG.rectangle(object, sequence, Yposition, level);
+                    fillSVG.rectangle(object, Yposition);
                 } else if (object.type === "text") {
                     fillSVG.sequence(object.data, Yposition);
                     yData.push({
@@ -21548,7 +21605,7 @@ var FeatureViewer = (function () {
                     });
                     scaling.range([5, width-5]);
                 } else if (object.type === "unique") {
-                    fillSVG.unique(object, sequence, Yposition);
+                    fillSVG.unique(object, Yposition);
                     yData.push({
                         title: object.name,
                         y: Yposition,
@@ -21556,7 +21613,7 @@ var FeatureViewer = (function () {
                     });
                 } else if (object.type === "multipleRect") {
                     preComputing.multipleRect(object);
-                    fillSVG.multipleRect(object, sequence, Yposition, level);
+                    fillSVG.multipleRect(object, Yposition, level);
                     yData.push({
                         title: object.name,
                         y: Yposition,
@@ -21565,7 +21622,7 @@ var FeatureViewer = (function () {
                     Yposition += (level - 1) * 10;
                 } else if (object.type === "path") {
                     preComputing.path(object);
-                    fillSVG.path(object, sequence, Yposition);
+                    fillSVG.path(object, Yposition);
                     Yposition += pathLevel;
                     yData.push({
                         title: object.name,
@@ -21573,14 +21630,21 @@ var FeatureViewer = (function () {
                         filter: object.filter
                     });
                 } else if (object.type === "line") {
+                    if (!(Array.isArray(object.data[0]))) object.data = [object.data];
+                    if (!(Array.isArray(object.color))) object.color = [object.color];
+                    var negativeNumbers = false;
+                    object.data.forEach(function(d){
+                        if (d.filter(function(l){ return l.y < 0}).length) negativeNumbers = true;
+                    });
                     preComputing.line(object);
-                    fillSVG.line(object, sequence, Yposition);
+                    fillSVG.line(object, Yposition);
                     Yposition += pathLevel;
                     yData.push({
                         title: object.name,
                         y: Yposition - 10,
                         filter: object.filter
                     });
+                    Yposition += negativeNumbers ? pathLevel-5 : 0;
                 }
             },
             sequence: function (seq, position, start) {
@@ -21596,7 +21660,7 @@ var FeatureViewer = (function () {
                     .attr("class", "AA")
                     .attr("text-anchor", "middle")
                     .attr("x", function (d, i) {
-                        return scaling.range([5, width-5])(i + 1 + start)
+                        return scaling.range([5, width-5])(i + start)
                     })
                     .attr("y", position)
                     .attr("font-size", "10px")
@@ -21605,7 +21669,7 @@ var FeatureViewer = (function () {
                         return d
                     });
             },
-            rectangle: function (object, sequence, position) {
+            rectangle: function (object, position) {
                 //var rectShift = 20;
                 var rectHeight =(object.height) ? object.height : 12;
                 
@@ -21617,23 +21681,29 @@ var FeatureViewer = (function () {
                     .attr("class", "rectangle")
                     .attr("clip-path", "url(#clip)")
                     .attr("transform", "translate(0," + position + ")");
-
+                
+                var dataline=[];
                 for (var i = 0; i < level; i++) {
-                    rectsPro.append("path")
-                        .attr("d", line([{
+                    dataline.push([{
                             x: 1,
                             y: (i * rectShift + lineShift)
                         }, {
-                            x: sequence.length,
+                            x: fvLength,
                             y: (i * rectShift + lineShift)
-                        }]))
-                        .attr("class", function () {
-                            return "line" + object.className
-                        })
-                        .style("z-index", "0")
-                        .style("stroke", object.color)
-                        .style("stroke-width", "1px");
+                        }]);
                 }
+                rectsPro.selectAll(".line" + object.className)
+                    .data(dataline)
+                    .enter()
+                    .append("path")
+                    .attr("d", line)
+                    .attr("class", function () {
+                        return "line" + object.className
+                    })
+                    .style("z-index", "0")
+                    .style("stroke", object.color)
+                    .style("stroke-width", "1px");
+
 
                 var rectsProGroup = rectsPro.selectAll("." + object.className + "Group")
                     .data(object.data)
@@ -21698,22 +21768,27 @@ var FeatureViewer = (function () {
                 var uniqueShift = level < 2 ? rectHeight-15 > 0 ? rectHeight-15 : 0 : 0;
                 Yposition += (level - 1) * (rectShift + lineShift + 1) + uniqueShift;
             },
-            unique: function (object, sequence, position) {
+            unique: function (object, position) {
                 var rectsPro = svgContainer.append("g")
                     .attr("class", "uniquePosition")
                     .attr("transform", "translate(0," + position + ")");
 
-                rectsPro.append("path")
-                    .attr("d", line([{
+                var dataline=[];
+                dataline.push([{
                         x: 1,
                         y: 0
                     }, {
-                        x: sequence.length,
+                        x: fvLength,
                         y: 0
-                    }]))
-                    .attr("class", function () {
-                        return "line" + object.className
-                    })
+                    }]);
+                
+                rectsPro.selectAll(".line" + object.className)
+                    .data(dataline)
+                    .enter()
+                    .append("path")
+                    .attr("clip-path", "url(#clip)")
+                    .attr("d", line)
+                    .attr("class", "line" + object.className)
                     .style("z-index", "0")
                     .style("stroke", object.color)
                     .style("stroke-width", "1px");
@@ -21741,19 +21816,27 @@ var FeatureViewer = (function () {
 
                 forcePropagation(rectsPro);
             },
-            path: function (object, sequence, position) {
+            path: function (object, position) {
                 var pathsDB = svgContainer.append("g")
                     .attr("class", "pathing")
                     .attr("transform", "translate(0," + position + ")");
 
-                pathsDB.append("path")
-                    .attr("d", lineBond([{
+                var dataline=[];
+                dataline.push([{
                         x: 1,
                         y: 0
                     }, {
-                        x: sequence.length,
+                        x: fvLength,
                         y: 0
-                    }]))
+                    }]);
+                
+                pathsDB.selectAll(".line" + object.className)
+                    .data(dataline)
+                    .enter()
+                    .append("path")
+                    .attr("clip-path", "url(#clip)")
+                    .attr("d", lineBond)
+                    .attr("class", "line" + object.className)
                     .style("z-index", "0")
                     .style("stroke", object.color)
                     .style("stroke-width", "1px");
@@ -21776,40 +21859,51 @@ var FeatureViewer = (function () {
 
                 forcePropagation(pathsDB);
             },
-            line: function (object, sequence, position) {
+            line: function (object, position) {
+                if (!object.interpolation) object.interpolation = "monotone";
+                if (object.fill === undefined) object.fill = true;
                 var histog = svgContainer.append("g")
                     .attr("class", "lining")
                     .attr("transform", "translate(0," + position + ")");
 
-                histog.append("path")
-                    .attr("d", lineBond([{
+                var dataline=[];
+                dataline.push([{
                         x: 1,
                         y: 0
                     }, {
-                        x: sequence.length,
+                        x: fvLength,
                         y: 0
-                    }]))
-                    .style("z-index", "0")
-                    .style("stroke", object.color)
-                    .style("stroke-width", "1px");
-
-                histog.selectAll("." + object.className)
-                    .data(object.data)
+                    }]);
+                
+                histog.selectAll(".line" + object.className)
+                    .data(dataline)
                     .enter()
                     .append("path")
                     .attr("clip-path", "url(#clip)")
-                    .attr("class", "element " + object.className)
-                    .attr("d", lineGen)
-//                    .style("fill", "none")
-                    .style("stroke", object.color)
+                    .attr("d", lineBond)
+                    .attr("class", "line" + object.className)
+                    .style("z-index", "0")
+                    .style("stroke", "black")
+                    .style("stroke-width", "1px");
+                object.data.forEach(function(dd,i,array){
+                    histog.selectAll("." + object.className + i)
+                    .data(dd)
+                    .enter()
+                    .append("path")
+                    .attr("clip-path", "url(#clip)")
+                    .attr("class", "element " + object.className + " " + object.className + i)
+                    .attr("d", lineGen.interpolate(object.interpolation))
+                    .style("fill", object.fill ? shadeBlendConvert(0.6, object.color[i]) || shadeBlendConvert(0.6, "#000") : "none")
+                    .style("stroke", object.color[i] || "#000")
                     .style("z-index", "3")
                     .style("stroke-width", "2px")
 //                    .style("shape-rendering", "crispEdges")
                     .call(d3.helper.tooltip(object));
-
+                })
+                
                 forcePropagation(histog);
             },
-            multipleRect: function (object, sequence, position, level) {
+            multipleRect: function (object, position, level) {
                 var rectHeight = 8;
                 var rectShift = 10;
                 var rects = svgContainer.append("g")
@@ -21822,7 +21916,7 @@ var FeatureViewer = (function () {
                             x: 1,
                             y: (i * rectShift - 2)
                         }, {
-                            x: sequence.length,
+                            x: fvLength,
                             y: (i * rectShift - 2)
                         }]))
                         .attr("class", function () {
@@ -21908,13 +22002,29 @@ var FeatureViewer = (function () {
 
         var transition = {
             rectangle: function (object) {
-                svgContainer.selectAll("." + object.className + "Group")
-                    .data(object.data)
-                    .attr("transform", function (d) {
-                        return "translate(" + rectX(d) + ",0)"
-                    });
+                svgContainer.selectAll(".line" + object.className)
+                    .attr("d",line.x(function (d) {
+                    return scaling(d.x);
+                }));
+                var transit;
+                if (animation) {
+                    transit1 = svgContainer.selectAll("." + object.className + "Group")
+    //                    .data(object.data)
+                        .transition()
+                        .duration(500);
+                    transit2 = svgContainer.selectAll("." + object.className)
+                        .transition()
+                        .duration(500);
+                }
+                else {
+                    transit1 = svgContainer.selectAll("." + object.className + "Group");
+                    transit2 = svgContainer.selectAll("." + object.className);
+                }
+                transit1.attr("transform", function (d) {
+                            return "translate(" + rectX(d) + ",0)"
+                        });
 
-                svgContainer.selectAll("." + object.className)
+                transit2
                     .attr("width", rectWidth2);
                 svgContainer.selectAll("." + object.className + "Text")
                     .style("visibility", function (d) {
@@ -21925,7 +22035,7 @@ var FeatureViewer = (function () {
             },
             multiRec: function (object) {
                 svgContainer.selectAll("." + object.className)
-                    .data(object.data)
+//                    .data(object.data)
                     //.transition()
                     //.duration(500)
                     .attr("x", function (d) {
@@ -21936,8 +22046,22 @@ var FeatureViewer = (function () {
                     });
             },
             unique: function (object) {
-                svgContainer.selectAll("." + object.className)
-                    .data(object.data)
+                svgContainer.selectAll(".line" + object.className)
+                    .attr("d",line.x(function (d) {
+                    return scaling(d.x);
+                }));
+                var transit;
+                if (animation) {
+                    transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
+                        .transition()
+                        .duration(500);
+                }
+                else {
+                    transit = svgContainer.selectAll("." + object.className);
+                }
+                transit
+//                    .data(object.data)
                     //.transition()
                     //.duration(500)
                     .attr("x", function (d) {
@@ -21949,30 +22073,68 @@ var FeatureViewer = (function () {
                     });
             },
             path: function (object) {
-                svgContainer.selectAll("." + object.className)
-                    .data(object.data)
-                    //.transition()
-                    //.duration(500)
+                svgContainer.selectAll(".line" + object.className)
+                    .attr("d",lineBond.x(function (d) {
+                                            return scaling(d.x);
+                                        })
+                                      .y(function (d) {
+                                            return -d.y * 10 + object.height;
+                                        })
+                         );
+                var transit;
+                if (animation) {
+                    transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
+                        .transition()
+                        .duration(500);
+                }
+                else {
+                    transit = svgContainer.selectAll("." + object.className);
+                }
+                transit
                     .attr("d", lineBond.y(function (d) {
                         return -d.y * 10 + object.height;
                     }));
             },
             line: function (object) {
-                svgContainer.selectAll("." + object.className)
-                    .data(object.data)
-                    //.transition()
-                    //.duration(500)
+                lineYscale.range([0, -(object.height)]).domain([0, -(object.level)]);
+                svgContainer.selectAll(".line" + object.className)
                     .attr("d", lineGen.y(function (d) {
                         return lineYscale(-d.y) * 10 + object.shift;
                     }));
+                var transit;
+                if (animation) {
+                    transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
+                        .transition()
+                        .duration(500);
+                }
+                else {
+                    transit = svgContainer.selectAll("." + object.className);
+                }
+                
+                transit
+                    .attr("d", lineGen.y(function (d) {
+                        return lineYscale(-d.y) * 10 + object.shift;
+                    })
+                          .interpolate(object.interpolation)
+                         );
             },
             text: function (object, start) {
-                svgContainer.selectAll("." + object.className)
-                    .data(object.data)
-                    //.transition()
-                    //.duration(500)
+                var transit;
+                if (animation) {
+                    transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
+                        .transition()
+                        .duration(500);
+                }
+                else {
+                    transit = svgContainer.selectAll("." + object.className);
+                }
+                transit
                     .attr("x", function (d, i) {
-                        return scaling(i + 1 + start)
+//                        console.log(scaling(i+1+start));
+                        return scaling(i + start)
                     });
             }
         };
@@ -22016,20 +22178,30 @@ var FeatureViewer = (function () {
 
             var seq = displaySequence(extentLength);
             if (!brush.empty() && extentLength > zoomMax) {
-                var zoomScale = (sequence.length / extentLength).toFixed(1);
+                current_extend.length = extentLength;
+                var zoomScale = (fvLength / extentLength).toFixed(1);
                 $(div + " .zoomUnit").text(zoomScale.toString());
-
-                if (SVGOptions.showSequence && seq && svgContainer.selectAll(".AA").empty()) {
+                
+//                scaling.range([5,width-5]); 
+                if (SVGOptions.showSequence && !(intLength) && seq && svgContainer.selectAll(".AA").empty()) {
+                    current_extend = { 
+                    length : extentLength,
+                    start : start,
+                    end : end
+                    }
                     seqShift = start;
-                    fillSVG.sequence(sequence.substring(start, end), 20, seqShift);
+                    fillSVG.sequence(sequence.substring(start-1, end), 20, seqShift-1);
                 }
 
                 //modify scale
+//                scaling.range([5,width-5]);
+//                console.log(extent);
                 scaling.domain(extent);
                 scalingPosition.range(extent);
+                var currentShift = seqShift ? seqShift : offset.start;
+                
 
-
-                transition_data(features, seqShift);
+                transition_data(features, currentShift);
                 reset_axis();
 
                 //rectsPep2.classed("selected", false);
@@ -22039,6 +22211,35 @@ var FeatureViewer = (function () {
                 //resetAll();
             }
         }
+        $(window).resize(function() {updateWindow()});
+        function updateWindow(){
+//            var new_width = $(div).width() - margin.left - margin.right - 17;
+//            var width_larger = (width < new_width);
+            width = $(div).width() - margin.left - margin.right - 17;
+            d3.select(div+" svg")
+                .attr("width", width + margin.left + margin.right);
+//            console.log(d3.select(div+" clippath>rect").attr("width"));
+            d3.select(div+" clippath>rect").attr("width", width);
+            if (SVGOptions.brushActive) {
+                d3.select(div+" .background").attr("width", width);
+            }
+            d3.select(div).selectAll(".brush").call(brush.clear());
+            
+//            var currentSeqLength = svgContainer.selectAll(".AA").size();
+            var seq = displaySequence(current_extend.length);
+            if (SVGOptions.showSequence && !(intLength)){
+                if (seq === false && !svgContainer.selectAll(".AA").empty()) {svgContainer.selectAll(".seqGroup").remove();}
+                else if (seq === true && svgContainer.selectAll(".AA").empty()) {fillSVG.sequence(sequence.substring(current_extend.start-1, current_extend.end), 20, current_extend.start-1);}
+            }
+            
+//            console.log(current_extend);
+            scaling.range([5,width-5]);
+            scalingPosition.domain([0, width]);
+            
+            transition_data(features, current_extend.start);
+            reset_axis();
+            
+        }
 
         // If brush is too small, reset view as origin
         function resetAll() {
@@ -22046,14 +22247,28 @@ var FeatureViewer = (function () {
             //reset scale
 
             $(".zoomUnit").text("1");
-            scaling.domain([1, sequence.length]);
-            scalingPosition.range([1, sequence.length]);
-            var seq = displaySequence(sequence.length);
+            scaling.domain([offset.start, offset.end]);
+            scalingPosition.range([offset.start, offset.end]);
+            var seq = displaySequence(offset.end - offset.start);
+            
+            if (SVGOptions.showSequence && !(intLength)){
+                if (seq === false && !svgContainer.selectAll(".AA").empty()) svgContainer.selectAll(".seqGroup").remove();
+                else if (current_extend.length !== fvLength && seq === true && !svgContainer.selectAll(".AA").empty()) {
+                    svgContainer.selectAll(".seqGroup").remove();
+                    fillSVG.sequence(sequence.substring(offset.start-1,offset.end), 20, offset.start);
+                }
+            }
 
-            if (seq === false && !svgContainer.selectAll(".AA").empty()) svgContainer.selectAll(".seqGroup").remove();
-
-            transition_data(features, 0);
+            current_extend={ 
+                    length : offset.end-offset.start,
+                    start : offset.start,
+                    end : offset.end
+                };
+            seqShift=0;
+            
+            transition_data(features, offset.start);
             reset_axis();
+            d3.select(div).selectAll(".brush").call(brush.clear());
         }
 
         function transition_data(features, start) {
@@ -22112,7 +22327,7 @@ var FeatureViewer = (function () {
             var yTemp;
             var xRect;
             var widthRect;
-            var svgWidth = d3.select(".background").attr("width");
+            var svgWidth = SVGOptions.brushActive ? d3.select(".background").attr("width") : svgContainer.node().getBBox().width;
             d3.select('body').selectAll('div.selectedRect').remove();
 
             var objectSelected = {type:featSelection[0][0].tagName, color:featSelection.style("fill")};
@@ -22177,6 +22392,9 @@ var FeatureViewer = (function () {
             // Create SVG
             if (options.zoomMax) {
                 zoomMax = options.zoomMax;
+            }
+            if (options.animation) {
+                animation = options.animation;
             }
 
             if (options.toolbar === true) {
@@ -22325,14 +22543,14 @@ var FeatureViewer = (function () {
                 .attr("in", "SourceGraphic");
 
             svgContainer.on('mousemove', function () {
-                var absoluteMousePos = d3.mouse(d3.select(".background").node());
+                var absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());; 
                 $(div + " #zoomPosition").text(Math.round(scalingPosition(absoluteMousePos[0])));
             });
 
-            if (options.showSequence) {
+            if (options.showSequence && !(intLength)) {
                 SVGOptions.showSequence = true;
-                if (displaySequence(sequence.length)) {
-                    fillSVG.sequence(sequence, Yposition);
+                if (displaySequence(offset.end - offset.start)) {
+                    fillSVG.sequence(sequence.substring(offset.start-1, offset.end), Yposition, offset.start);
                 }
                 features.push({
                     data: sequence,
@@ -22376,6 +22594,7 @@ var FeatureViewer = (function () {
                     .attr('height', Yposition + 50);
             }
             if (SVGOptions.verticalLine) d3.selectAll(".Vline").style("height", (Yposition + 50) + "px");
+            if (d3.selectAll(".element")[0].length > 1500) animation = false;
 
 
         }

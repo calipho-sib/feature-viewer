@@ -24,9 +24,9 @@ Note: that if you choose the later approach (by just using the feature-viewer.js
 <div id="fv1"></div>
 ```
 
-3) Create an instance of FeatureViewer in javascript with the sequence, the div in which it will be display and the rendering options of your choice.
+3) Create an instance of FeatureViewer in javascript with the sequence (or a length), the div in which it will be display and the rendering options of your choice.
 ```javascript
-//For Node add before : var FeatureViewer = require("feature-viewer"); //
+//For Node add before : var FeatureViewer = require("feature-viewer");
 
 var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLE',
                            '#fv1',
@@ -38,6 +38,9 @@ var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLY
                                 bubbleHelp:true, 
                                 zoomMax:50 //define the maximum range of the zoom
                             });
+                            
+//Instead of a sequence, you can also initialize the feature viewer with a length (integer) :
+var ft = new FeatureViewer(213,'#fv1');
 ```
 
 4) Finally, add the features
@@ -73,12 +76,15 @@ ft.addFeature({
 * Bubble help 
 * Zoom max
 * Features height
+* Offset
 
 ## Examples 
 
 https://search.nextprot.org/entry/NX_P01308/view/proteomics
 
 ## Use it with NeXtProt API
+
+![Feature viewer with neXtProt](/assets/FVDemo.png)
 
 It is possible to fill the feature viewer with protein features from [NeXtProt](https://search.nextprot.org/), the human protein database.   
 

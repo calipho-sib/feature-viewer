@@ -52,9 +52,9 @@
                 </div>
                 <div class="panel-body">
                     <p>You will first need to create the SVG that will contains the features.<br>
-                        To do so, give whithin the parameters, the sequence and the div in which the features will be
+                        To do so, give whithin the parameters, the sequence (or length) and the div in which the features will be
                         display.<br>
-                        You can also adjust some rendering options :</p>
+                        You can also adjust some <strong>rendering options</strong> :</p>
                     <ul>
                         <li><strong>showAxis</strong> <em>(boolean)</em> : Display or not the x-Axis</li>
                         <li><strong>showSequence</strong> <em>(boolean)</em> : Display or not the sequence</li>
@@ -67,6 +67,8 @@
                         <li><strong>zoomMax</strong> <em>(int)</em> : Define the maximum range of the zoom. Must be a
                             multiple of ten.
                         </li>
+                        <li><strong>animation</strong> <em>(boolean)</em> : Animation during transition</li>
+                        <li><strong>offset</strong> <em>(object)</em> : Specify an offset : offset:{start:40,end:100}</li>
                     </ul>
                     <p>The brush zoom will allow you to select a part of the sequence to zoom in. <br>
                         It may happen that the div is too small to display the sequence, but a zoom will make it
@@ -80,6 +82,9 @@ var options = {showAxis: true, showSequence: true,
                brushActive: true, toolbar:true,
                bubbleHelp: true, zoomMax:20 };
 var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDDAAFJDSAKFL","#div1", options);
+
+//Or with a length instead of a sequence : 
+//var ft = new FeatureViewer(113,"#div1",options);
         </textarea>
                 </form>
                 <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
@@ -124,8 +129,11 @@ var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKL
                             for a
                             specific rendering
                         </li>
+                        <li><strong>interpolation</strong> <em>("basis","step","monotone",..)</em> : Customize the layout of a the line  <br><em style="font-weight:600">(Only for the "line" feature)</em>
+                        </li>
                     </ul>
-                    <p><strong>Note :</strong> Be carefull to specify different className for each type of feature</p>
+                    <p><strong>Note 1 :</strong> In case of <em>"line"</em> feature, you can add 2 arrays of data within an array (e.g. <em style="font-family:Courier;font-weight:500">data:[dataArray1,dataArray2]</em>), and 2 colors for each data within an array (e.g. <em style="font-family:Courier;font-weight:500">color:["#C50063","#005572"]</em>)</p>
+                    <p><strong>Note 2 :</strong> Be carefull to specify different className for each type of feature</p>
                 </div>
                 <form>
                 <textarea id="code2" name="code2" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
@@ -321,7 +329,7 @@ ft3.onFeatureSelected(function (d) {
                     <ul>
                         <li>First, find your protein of interest in NeXtProt and get the neXtProt accession (NX_...). (You can find your protein by entering an accession number of another database, like UniProt or Ensembl)</li>
                         <li>Then, check the type of feature in the <a href="https://api.nextprot.org/">NeXtProt API</a> that you would like to add to your viewer. For example, "propeptide" or "mature-protein".</li>
-                        <li>Include the feature viewer bundle with nextprot to your html <strong>feature-viewer.nextprot.js</strong> </li>
+                        <li>Include the feature viewer bundle with nextprot to your html : <strong>feature-viewer.nextprot.js</strong> </li>
                         <li>Finally, create your feature viewer like this :</li>
                     </ul>
                 </div>
