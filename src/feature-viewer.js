@@ -1554,8 +1554,10 @@ var FeatureViewer = (function () {
                 .attr("in", "SourceGraphic");
 
             svgContainer.on('mousemove', function () {
-                var absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());; 
-                $(div + " #zoomPosition").text(Math.round(scalingPosition(absoluteMousePos[0])));
+                var absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());;          
+                var pos = Math.round(scalingPosition(absoluteMousePos[0]));
+                pos += sequence[pos] || "";
+                $(div + " #zoomPosition").text(pos);
             });
 
             if (options.showSequence && !(intLength)) {
