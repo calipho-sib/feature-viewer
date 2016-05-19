@@ -5,7 +5,8 @@ var FeatureViewer = (function () {
         var self = this;
         // if (!div) var div = window;
         this.events = {
-            FEATURE_SELECTED_EVENT: "feature-viewer-position-selected"
+          FEATURE_SELECTED_EVENT: "feature-viewer-position-selected",
+          ZOOM_EVENT: "feature-viewer-zoom-altered"
         };
 
         // if (!div) var div = window;
@@ -334,6 +335,10 @@ var FeatureViewer = (function () {
         this.onFeatureSelected = function (listener) {
             svgElement.addEventListener(self.events.FEATURE_SELECTED_EVENT, listener);
             //$(document).on(self.events.FEATURE_SELECTED_EVENT, listener);
+        };
+
+      this.onZoom = function (listener) {
+            svgElement.addEventListener(self.events.ZOOM_EVENT, listener);
         };
 
         function addLevel(array) {
@@ -1215,6 +1220,13 @@ var FeatureViewer = (function () {
                 transition_data(features, currentShift);
                 reset_axis();
 
+                if (CustomEvent) {
+                  svgElement.dispatchEvent(new CustomEvent(
+                    self.events.ZOOM_EVENT,
+                    {detail: { start: start, end: end, zoom: zoomScale }}
+                    ));
+                }
+
                 //rectsPep2.classed("selected", false);
                 d3.select(div).selectAll(".brush").call(brush.clear());
             } else {
@@ -1279,6 +1291,13 @@ var FeatureViewer = (function () {
             
             transition_data(features, offset.start);
             reset_axis();
+
+            // Fire Event
+            if (CustomEvent) {
+              svgElement.dispatchEvent(new CustomEvent(self.events.ZOOM_EVENT,
+                { detail: { start: 1, end: sequence.length, zoom: 1 }}));
+            };
+
             d3.select(div).selectAll(".brush").call(brush.clear());
         }
 
