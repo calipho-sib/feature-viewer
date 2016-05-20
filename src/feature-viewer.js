@@ -1556,7 +1556,7 @@ var FeatureViewer = (function () {
             svgContainer.on('mousemove', function () {
                 var absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());;          
                 var pos = Math.round(scalingPosition(absoluteMousePos[0]));
-                pos += sequence[pos] || "";
+                pos += sequence[pos-1] || "";
                 $(div + " #zoomPosition").text(pos);
             });
 
