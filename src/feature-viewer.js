@@ -1232,6 +1232,11 @@ var FeatureViewer = (function () {
                     {detail: { start: start, end: end, zoom: zoomScale }}
                     ));
                 }
+                if (self.trigger) self.trigger(self.events.ZOOM_EVENT, {
+                            start: start,
+                            end: end,
+                            zoom: zoomScale
+                        });
 
                 //rectsPep2.classed("selected", false);
                 d3.select(div).selectAll(".brush").call(brush.clear());
@@ -1303,6 +1308,11 @@ var FeatureViewer = (function () {
               svgElement.dispatchEvent(new CustomEvent(self.events.ZOOM_EVENT,
                 { detail: { start: 1, end: sequence.length, zoom: 1 }}));
             };
+            if (self.trigger) self.trigger(self.events.ZOOM_EVENT, {
+                            start: 1,
+                            end: sequence.length,
+                            zoom: 1
+                        });
 
             d3.select(div).selectAll(".brush").call(brush.clear());
         }
