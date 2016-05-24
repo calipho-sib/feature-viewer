@@ -23,7 +23,13 @@ var FeatureViewer = (function () {
             verticalLine: false
         };
         var offset = {start:1,end:fvLength};
-        if (options && options.offset) offset = options.offset;
+        if (options && options.offset) {
+            offset = options.offset;
+            if (offset.start < 1) {
+                offset.start = 1;
+                console.warn("WARNING ! offset.start should be > 0. Thus, it has been reset to 1.");
+            }
+        }
         var pathLevel = 0;
         var svg;
         var svgContainer;
@@ -1416,7 +1422,7 @@ var FeatureViewer = (function () {
 
             if (!$.fn.popover) {
                 options.bubbleHelp = false;
-                console.warn("The bubble help requires tooltip and popover bootrstrap js libraries. The feature viewer will continue to work, but without the info bubble");
+                console.warn("The bubble help requires tooltip and popover bootstrap js libraries. The feature viewer will continue to work, but without the info bubble");
             }
 
             // Create SVG

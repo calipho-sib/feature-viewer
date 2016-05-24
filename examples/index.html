@@ -68,7 +68,7 @@
                             multiple of ten.
                         </li>
                         <li><strong>animation</strong> <em>(boolean)</em> : Animation during transition</li>
-                        <li><strong>offset</strong> <em>(object)</em> : Specify an offset : offset:{start:40,end:100}</li>
+                        <li><strong>offset</strong> <em>(object)</em> : Specify an offset (offset.start should always be > 0). <br>Ex : <span style="font-family:monospace;background-color:#eee;">offset:{start:40,end:100}</span></li>
                     </ul>
                     <p>The brush zoom will allow you to select a part of the sequence to zoom in. <br>
                         It may happen that the div is too small to display the sequence, but a zoom will make it
@@ -234,8 +234,12 @@ ft2.addFeature({
                     <h4 class="text-center">Events</h4>
                 </div>
                 <div class="panel-body">
-                    <p>You can listen for a click on a feature, and get the specific positions of this feature with the listener <strong>onFeatureSelected</strong>. <br>
-                        This method take a custom function in parameter allowing you to link this event with the rest of your application.</p>
+                    <p>You can listen for some events :</p>
+                    <ul>
+                        <li><strong>onFeatureSelected</strong> : A click on a feature, return an object with the specific positions of this feature</li>
+                        <li><strong>onZoom</strong> : When a zoom occurs, return an object with the coordinates and zoom level</li>
+                    </ul>
+                        <p>Those methods take a custom function (callback) in parameter, receiving the event object, allowing you to link the event with the rest of your application.</p>
                 </div>
                 <form>
                 <textarea id="code3" name="code3" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
@@ -303,7 +307,11 @@ ft3.addFeature({
 ft3.onFeatureSelected(function (d) {
     console.log(d.detail);
 });
-
+                        
+//Get and print in the browser console the zoom level and coordinates
+ft3.onZoom(function (d) {
+    console.log(d.detail);
+});
 
                 </textarea>
                 </form>
