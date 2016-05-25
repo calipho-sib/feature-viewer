@@ -81,6 +81,11 @@ You can also zoom programmatically with the methods **```zoom(start,end)```** an
 * Features height
 * Offset
 
+## ClearInstance()
+
+You may sometimes want to reload your feature-viewer with new parameters. To avoid memory leaks, the method **```clearInstance()```** will clear each element & listener for you before you delete the feature-viewer instance.
+
+
 ## Documentation
 
 Check out this page for a better understanding of how to use the feature viewer and its possibilities :
