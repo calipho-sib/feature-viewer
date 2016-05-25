@@ -1173,15 +1173,14 @@ var FeatureViewer = (function () {
                 .selectAll("rect")
                 .attr('height', Yposition + 50);
         }
-
-        // Show peptide selected in brush
-        //function brushmove() {
-        //    var extent = brush.extent();
-        //    rectsPep2.classed("selected", function (d) {
-        //        is_brushed = extent[0] <= d.x && d.x <= extent[1] && extent[0] <= d.y && d.y <= extent[1];
-        //        return is_brushed;
-        //    });
-        //}
+        
+        this.zoom = function(start, end){
+            brush.extent([start,end]);
+            brushend();
+        }
+        this.resetZoom = function(start, end){
+            resetAll();
+        }
 
         function brushend() {
             d3.select(div).selectAll('div.selectedRect').remove();
@@ -1644,7 +1643,18 @@ var FeatureViewer = (function () {
             if (SVGOptions.verticalLine) d3.selectAll(".Vline").style("height", (Yposition + 50) + "px");
             if (d3.selectAll(".element")[0].length > 1500) animation = false;
 
-
+        }
+        
+        this.clearInstance = function (){
+            $(window).off("resize");
+            svg = null;
+            svgElement = null;
+            svgContainer = null;
+            yAxisSVGgroup = null;
+            yAxisSVG = null;
+            features = null;
+            sbcRip = null;
+            d3.helper = {};
         }
 
     }

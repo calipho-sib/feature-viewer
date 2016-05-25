@@ -1,4 +1,4 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/backbone-events-standalone/backbone-events-standalone.js":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * Standalone extraction of Backbone.Events, no external dependency required.
  * Degrades nicely when Backone/underscore are already available in the current
@@ -276,10 +276,10 @@ require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof requ
   }
 })(this);
 
-},{}],"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/backbone-events-standalone/index.js":[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 module.exports = require('./backbone-events-standalone');
 
-},{"./backbone-events-standalone":"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/backbone-events-standalone/backbone-events-standalone.js"}],"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/biojs-events/index.js":[function(require,module,exports){
+},{"./backbone-events-standalone":1}],3:[function(require,module,exports){
 var events = require("backbone-events-standalone");
 
 events.onAll = function(callback,context){
@@ -302,7 +302,7 @@ events.mixin = function(proto) {
 
 module.exports = events;
 
-},{"backbone-events-standalone":"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/backbone-events-standalone/index.js"}],"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/bootstrap/js/popover.js":[function(require,module,exports){
+},{"backbone-events-standalone":2}],4:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: popover.js v3.3.6
  * http://getbootstrap.com/javascript/#popovers
@@ -412,7 +412,7 @@ module.exports = events;
 
 }(jQuery);
 
-},{}],"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/bootstrap/js/tooltip.js":[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /* ========================================================================
  * Bootstrap: tooltip.js v3.3.6
  * http://getbootstrap.com/javascript/#tooltip
@@ -928,7 +928,7 @@ module.exports = events;
 
 }(jQuery);
 
-},{}],"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/d3/d3.js":[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.5.6"
@@ -10433,7 +10433,7 @@ module.exports = events;
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/jquery/dist/jquery.js":[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.1
  * http://jquery.com/
@@ -20266,7 +20266,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/nextprot/src/nextprot-core.js":[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * A neXtProt js client
  */
@@ -20530,7 +20530,7 @@ return jQuery;
 
 }(this));
 
-},{}],"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/nextprot/src/nextprot-utils.js":[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 //Utility methods
 var NXUtils = {
 
@@ -20986,7 +20986,7 @@ if ( typeof module === "object" && typeof module.exports === "object" ) {
         NXViewerUtils : NXViewerUtils
     }
 }
-},{}],"/Users/mathieu/Documents/work-space/feature-viewer/src/feature-viewer.js":[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var FeatureViewer = (function () {
 
     function FeatureViewer(sequence, div, options) {
@@ -22162,15 +22162,14 @@ var FeatureViewer = (function () {
                 .selectAll("rect")
                 .attr('height', Yposition + 50);
         }
-
-        // Show peptide selected in brush
-        //function brushmove() {
-        //    var extent = brush.extent();
-        //    rectsPep2.classed("selected", function (d) {
-        //        is_brushed = extent[0] <= d.x && d.x <= extent[1] && extent[0] <= d.y && d.y <= extent[1];
-        //        return is_brushed;
-        //    });
-        //}
+        
+        this.zoom = function(start, end){
+            brush.extent([start,end]);
+            brushend();
+        }
+        this.resetZoom = function(start, end){
+            resetAll();
+        }
 
         function brushend() {
             d3.select(div).selectAll('div.selectedRect').remove();
@@ -22633,7 +22632,18 @@ var FeatureViewer = (function () {
             if (SVGOptions.verticalLine) d3.selectAll(".Vline").style("height", (Yposition + 50) + "px");
             if (d3.selectAll(".element")[0].length > 1500) animation = false;
 
-
+        }
+        
+        this.clearInstance = function (){
+            $(window).off("resize");
+            svg = null;
+            svgElement = null;
+            svgContainer = null;
+            yAxisSVGgroup = null;
+            yAxisSVG = null;
+            features = null;
+            sbcRip = null;
+            d3.helper = {};
         }
 
     }
@@ -22643,7 +22653,7 @@ var FeatureViewer = (function () {
 if ( typeof module === "object" && typeof module.exports === "object" ) {
     module.exports = FeatureViewer;
 }
-},{}],"/Users/mathieu/Documents/work-space/feature-viewer/src/fv.nextprot.js":[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 var nxClient;
 
@@ -22768,4 +22778,4 @@ nxFeatureViewer = require("../src/fv.nextprot.js");
 require("biojs-events").mixin(FeatureViewer.prototype);
 module.exports = FeatureViewer;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../src/feature-viewer.js":"/Users/mathieu/Documents/work-space/feature-viewer/src/feature-viewer.js","../src/fv.nextprot.js":"/Users/mathieu/Documents/work-space/feature-viewer/src/fv.nextprot.js","biojs-events":"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/biojs-events/index.js","bootstrap/js/popover.js":"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/bootstrap/js/popover.js","bootstrap/js/tooltip.js":"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/bootstrap/js/tooltip.js","d3":"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/d3/d3.js","jquery":"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/jquery/dist/jquery.js","nextprot/src/nextprot-core.js":"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/nextprot/src/nextprot-core.js","nextprot/src/nextprot-utils.js":"/Users/mathieu/Documents/work-space/feature-viewer/node_modules/nextprot/src/nextprot-utils.js"}]},{},[]);
+},{"../src/feature-viewer.js":10,"../src/fv.nextprot.js":11,"biojs-events":3,"bootstrap/js/popover.js":4,"bootstrap/js/tooltip.js":5,"d3":6,"jquery":7,"nextprot/src/nextprot-core.js":8,"nextprot/src/nextprot-utils.js":9}]},{},[]);
