@@ -4,7 +4,7 @@
 
 ![Feature viewer](/assets/FV_SCSHT.png)
 
-Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.36/examples/index.html
+Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.40/examples/index.html
 
 ## Getting Started
 
@@ -84,7 +84,7 @@ You can also zoom programmatically with the methods **```zoom(start,end)```** an
 ## Documentation
 
 Check out this page for a better understanding of how to use the feature viewer and its possibilities :
-* https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.36/examples/index.html
+* https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.40/examples/index.html
 
 ## Use it with NeXtProt API
 
