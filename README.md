@@ -61,9 +61,12 @@ ft.addFeature({
 
 ## Functionalities
 
-* Zoom into the Feature-viewer by selecting a part of the sequence with your mouse. Zoom out with a right-click.
+* Zoom into the Feature-viewer by selecting a part of the sequence with your mouse. Zoom out with a right-click.    
+You can also zoom programmatically with the methods **```zoom(start,end)```** and **```resetZoom()```**
+
 
 * A tooltip appears when the mouse is over a feature, giving its exact positions, and optionally, a description.
+ 
  
 * beside the positions for each element, you can also give a description & an ID, allowing you to link click event on the feature to the rest of your project.
 
@@ -78,9 +81,10 @@ ft.addFeature({
 * Features height
 * Offset
 
-## Examples 
+## Documentation
 
-https://search.nextprot.org/entry/NX_P01308/view/proteomics
+Check out this page for a better understanding of how to use the feature viewer and its possibilities :
+* https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.36/examples/index.html
 
 ## Use it with NeXtProt API
 
@@ -126,10 +130,10 @@ var styles = [
 ff.addNxFeature(["propeptide","mature-protein"], styles);
 
 ```
-## Documentation
 
-Check out this page for a better understanding of how to use the feature viewer and its possibilities :
-* https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.36/examples/index.html
+## Examples 
+
+https://search.nextprot.org/entry/NX_P01308/view/proteomics
 
 ## Support
 

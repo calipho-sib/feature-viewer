@@ -39,7 +39,7 @@ window.onload = function() {
         filter: "type2"
     });
     ft2.addFeature({
-        data: [{x:120,y:154},{x:21,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
+        data: [{x:120,y:154},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
         name: "test feature 4",
         className: "test4",
         color: "#F4D4AD",

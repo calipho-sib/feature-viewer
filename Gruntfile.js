@@ -84,6 +84,7 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask('default', ['uglify']);
     grunt.registerTask('concating', ['concat']);
+    grunt.registerTask('prod', ['uglify','concat']);
     grunt.registerTask('serve', ['connect:server','watch']);
 
 };

@@ -1175,6 +1175,10 @@ var FeatureViewer = (function () {
         }
         
         this.zoom = function(start, end){
+            var zoomInside = current_extend.start<start && current_extend.end>end;
+            if (!zoomInside) {
+                svgContainer.selectAll(".seqGroup").remove();
+            }
             brush.extent([start,end]);
             brushend();
         }
