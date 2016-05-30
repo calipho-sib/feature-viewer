@@ -21455,7 +21455,8 @@ var FeatureViewer = (function () {
         }
 
         function updateSVGHeight(position) {
-            svg.attr("height", position + 60 + "px")
+            svg.attr("height", position + 60 + "px");
+            svg.select("clippath rect").attr("height", position + 60 + "px");
         }
 
         var yAxisScale = d3.scale.ordinal()
@@ -21682,7 +21683,8 @@ var FeatureViewer = (function () {
             },
             rectangle: function (object, position) {
                 //var rectShift = 20;
-                var rectHeight =(object.height) ? object.height : 12;
+                if (!object.height) object.height = 12;
+                var rectHeight = object.height;
                 
                 var rectShift = rectHeight + rectHeight/3;
                 var lineShift = rectHeight/2 - 6;
@@ -21755,7 +21757,7 @@ var FeatureViewer = (function () {
                     .style("z-index", "15")
                     .style("visibility", function (d) {
                         if (d.description) {
-                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 ? "visible" : "hidden";
+                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
                         } else return "hidden";
                     })
                     .call(d3.helper.tooltip(object));
@@ -21776,8 +21778,8 @@ var FeatureViewer = (function () {
                 //    .call(d3.helper.tooltip(object));
 
                 forcePropagation(rectsProGroup);
-                var uniqueShift = level < 2 ? rectHeight-15 > 0 ? rectHeight-15 : 0 : 0;
-                Yposition += (level - 1) * (rectShift + lineShift + 1) + uniqueShift;
+                var uniqueShift = rectHeight > 12 ? rectHeight - 6 : 0;
+                Yposition += level < 2 ? uniqueShift : (level-1) * rectShift + uniqueShift;
             },
             unique: function (object, position) {
                 var rectsPro = svgContainer.append("g")
@@ -22040,7 +22042,7 @@ var FeatureViewer = (function () {
                 svgContainer.selectAll("." + object.className + "Text")
                     .style("visibility", function (d) {
                         if (d.description) {
-                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 ? "visible" : "hidden";
+                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && object.height > 11 ? "visible" : "hidden";
                         } else return "hidden";
                     });
             },
