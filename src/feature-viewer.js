@@ -1157,7 +1157,6 @@ var FeatureViewer = (function () {
                 }
                 transit
                     .attr("x", function (d, i) {
-//                        console.log(scaling(i+1+start));
                         return scaling(i + start)
                     });
             }
@@ -1222,7 +1221,6 @@ var FeatureViewer = (function () {
 
                 //modify scale
 //                scaling.range([5,width-5]);
-//                console.log(extent);
                 scaling.domain(extent);
                 scalingPosition.range(extent);
                 var currentShift = seqShift ? seqShift : offset.start;
@@ -1250,14 +1248,18 @@ var FeatureViewer = (function () {
                 //resetAll();
             }
         }
-        $(window).resize(function() {updateWindow()});
+//        
+        var resizeCallback = function(){
+            updateWindow();
+        }
+        $(window).on("resize", resizeCallback);
+        
         function updateWindow(){
 //            var new_width = $(div).width() - margin.left - margin.right - 17;
 //            var width_larger = (width < new_width);
             width = $(div).width() - margin.left - margin.right - 17;
             d3.select(div+" svg")
                 .attr("width", width + margin.left + margin.right);
-//            console.log(d3.select(div+" clippath>rect").attr("width"));
             d3.select(div+" clippath>rect").attr("width", width);
             if (SVGOptions.brushActive) {
                 d3.select(div+" .background").attr("width", width);
@@ -1271,7 +1273,6 @@ var FeatureViewer = (function () {
                 else if (seq === true && svgContainer.selectAll(".AA").empty()) {fillSVG.sequence(sequence.substring(current_extend.start-1, current_extend.end), 20, current_extend.start-1);}
             }
             
-//            console.log(current_extend);
             scaling.range([5,width-5]);
             scalingPosition.domain([0, width]);
             
@@ -1449,9 +1450,7 @@ var FeatureViewer = (function () {
             }
 
             if (options.toolbar === true) {
-                //console.log($(div + " .svgHeader").length);
                 var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
-                //console.log(headerOptions);
 
                 if (!$(div + ' .header-zoom').length) {
                     var headerZoom = headerOptions
@@ -1652,7 +1651,7 @@ var FeatureViewer = (function () {
         }
         
         this.clearInstance = function (){
-            $(window).off("resize");
+            $(window).off("resize", resizeCallback);
             svg = null;
             svgElement = null;
             svgContainer = null;
