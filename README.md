@@ -1,4 +1,10 @@
-# Feature viewer
+# neXtProt - The knowledge resource on human proteins
+
+This is a code repository for the SIB - Swiss Institute of Bioinformatics CALIPHO group neXtProt project
+
+See: http://www.nextprot.org/
+
+# neXtprot feature viewer
 
 > The feature viewer is a super easy javascript library to use in order to draw the different features covering a sequence for a better visualization.
 
