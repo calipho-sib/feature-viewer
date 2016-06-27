@@ -4,7 +4,7 @@ This is a code repository for the SIB - Swiss Institute of Bioinformatics CALIPH
 
 See: http://www.nextprot.org/
 
-# neXtprot feature viewer
+# neXtProt feature viewer
 
 > The feature viewer is a super easy javascript library to use in order to draw the different features covering a sequence for a better visualization.
 
