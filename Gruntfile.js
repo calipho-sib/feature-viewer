@@ -13,7 +13,7 @@ module.exports = function(grunt) {
                     'bower_components/d3/d3.min.js',
                     'bower_components/bootstrap/js/tooltip.js',
                     'bower_components/bootstrap/js/popover.js',
-                    'dist/feature-viewer.min.js'
+                    'src/feature-viewer.js'
                 ],
                 dest: 'dist/feature-viewer.bundle.js'
             },
@@ -50,9 +50,17 @@ module.exports = function(grunt) {
             options: {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
-            build: {
+            basic: {
                 src: 'src/feature-viewer.js',
                 dest: 'dist/feature-viewer.min.js'
+            },
+            nextprot: {
+                src: 'dist/feature-viewer.nextprot.js',
+                dest: 'dist/feature-viewer.nextprot.js'
+            },
+            bundle: {
+                src: 'dist/feature-viewer.bundle.js',
+                dest: 'dist/feature-viewer.bundle.js'
             }
         },
         connect: {
@@ -84,7 +92,7 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask('default', ['uglify']);
     grunt.registerTask('concating', ['concat']);
-    grunt.registerTask('prod', ['uglify','concat']);
+    grunt.registerTask('prod', ['concat','uglify']);
     grunt.registerTask('serve', ['connect:server','watch']);
 
 };
