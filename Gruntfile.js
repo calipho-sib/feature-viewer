@@ -25,6 +25,13 @@ module.exports = function(grunt) {
                     'src/fv.nextprot.js'
                 ],
                 dest: 'dist/feature-viewer.nextprot.js'
+            },
+            css: {
+                src: [
+                    'bower_components/bootstrap/dist/css/bootstrap.min.css',
+                    'css/style.css'
+                ],
+                dest: 'dist/feature-viewer.min.css'
             }
             
         },

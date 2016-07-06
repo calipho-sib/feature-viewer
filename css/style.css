@@ -1,35 +1,3 @@
-
-/*
-.pep{fill:#B3E1D1;}
-.linepep{stroke:#B3E1D1;stroke-width:1px;z-index:0}
-
-.srmPep{fill:#B3E1F0}
-.linesrmPep{stroke:#B3E1F0;stroke-width:1px;z-index:0}
-
-.mature{fill:#B3B3C2;}
-.linemature{stroke:#B3B3C2;stroke-width:1px;}
-
-.signal{fill:#B3B3E1;}
-.linesignal{stroke:#B3B3E1;stroke-width:1px;}
-
-.pro{fill:#B3B3B3;}
-.linepro{stroke:#B3B3B3;stroke-width:1px;}
-
-.antiB{fill:#B3C2F0;}
-.lineantiB{stroke:#B3C2F0;stroke-width:1px;}
-
-.initMeth{fill:#B3B3D1;}
-.lineinitMeth{stroke:#B3B3D1;stroke-width:1px;z-index:0}
-
-.modifRes{fill:#B3C2B3;}
-.linemodifRes{stroke:#B3C2B3;stroke-width:1px;z-index:0}
-
-.crossLink{fill:#B3C2C2;}
-.linecrossLink{stroke:#B3C2C2;stroke-width:1px;}
-
-.glycoSite{fill:#B3C2D1;}
-.lineglycoSite{stroke:#B3C2D1;stroke-width:1px;}
-*/
 .variant{
     stroke:rgba(0,255,154,0.6);
     stroke-width:1px;
@@ -112,32 +80,40 @@ a:focus {
     top: 98%;
     right: 10px;
 }
+
 .yaxis{
     background-color:green;
 }
+
 .header-help{
     color: #C50063;
 }
+
 .header-help:hover{
     color: #98004C;
     cursor: pointer;
     text-decoration: none;
 }
+
 .header-help:focus{
     color: #98004C;
 }
+
 .popover-title{
     text-align: center;
     background-color: rgba(197, 0, 99, 0.1);
 }
+
 .label-as-badge {
     border-radius: 1em;
     font-size:0.7em;
     background-color: #C50063;
 }
+
 path{
     fill:none;
 }
+
 rect{
     rx:2;
 }

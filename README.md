@@ -10,11 +10,11 @@ See: http://www.nextprot.org/
 
 ![Feature viewer](/assets/FV_SCSHT.png)
 
-Live demo: https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.40/examples/index.html
+**Live demo** : https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.44/examples/index.html
 
 ## Getting Started
 
-1) Include the library using bower or npm or simply by including the javascript feature-viewer.js
+1) You can get the library in your project using bower or npm
 ```
 //BOWER//
 bower install feature-viewer
@@ -23,7 +23,17 @@ bower install feature-viewer
 npm install feature-viewer
 ```
 
-Note: that if you choose the later approach (by just using the feature-viewer.js) you should also include the dependencies :  jquery,d3 and bootstrap.js / bootstrap.min.css
+Or Include the feature-viewer JS and CSS from rawgit CDN in the header of your html
+```html
+<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.44/dist/feature-viewer.min.css">
+
+<script src="https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.44/dist/feature-viewer.bundle.js"></script>
+```
+
+**NOTE** : If you already got the dependencies (D3, Bootstrap & Jquery) in your project, use the simple minified version instead of the bundle :
+```html
+<script src="https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.44/dist/feature-viewer.min.js"></script>
+```
 
 2) Specify a div in your html
 ```
@@ -95,7 +105,7 @@ You may sometimes want to reload your feature-viewer with new parameters. To avo
 ## Documentation
 
 Check out this page for a better understanding of how to use the feature viewer and its possibilities :
-* https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.40/examples/index.html
+* https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.44/examples/index.html
 
 ## Use it with NeXtProt API
 
