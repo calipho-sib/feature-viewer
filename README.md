@@ -14,7 +14,7 @@ See: http://www.nextprot.org/
 
 ## Getting Started
 
-1) You can get the library in your project using bower or npm
+**1.** You can get the library in your project using bower or npm
 ```
 //BOWER//
 bower install feature-viewer
@@ -23,7 +23,7 @@ bower install feature-viewer
 npm install feature-viewer
 ```
 
-Or Include the feature-viewer JS and CSS from rawgit CDN in the header of your html
+Or Include the feature-viewer **JS** and **CSS** from rawgit CDN in the header of your html
 ```html
 <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.44/dist/feature-viewer.min.css">
 
@@ -35,12 +35,12 @@ Or Include the feature-viewer JS and CSS from rawgit CDN in the header of your h
 <script src="https://cdn.rawgit.com/calipho-sib/feature-viewer/v0.1.44/dist/feature-viewer.min.js"></script>
 ```
 
-2) Specify a div in your html
+**2.** Specify a div in your html
 ```
 <div id="fv1"></div>
 ```
 
-3) Create an instance of FeatureViewer in javascript with the sequence (or a length), the div in which it will be display and the rendering options of your choice.
+**3.** Create an instance of FeatureViewer in javascript with the sequence (or a length), the div in which it will be display and the rendering options of your choice.
 ```javascript
 //For Node add before : var FeatureViewer = require("feature-viewer");
 
@@ -59,7 +59,7 @@ var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLY
 var ft = new FeatureViewer(213,'#fv1');
 ```
 
-4) Finally, add the features
+**4.** Finally, add the features
    ```javascript
 ft.addFeature({
        data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
@@ -70,7 +70,7 @@ ft.addFeature({
    });
    ```
    
-5) Et voila!
+**5.** Et voila!
 
 ![Feature viewer](/assets/feature-viewer.png)
 
