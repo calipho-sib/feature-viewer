@@ -974,7 +974,7 @@ var FeatureViewer = (function () {
             }
         };
 
-        this.showFilteredFeature = function(className, color){
+        this.showFilteredFeature = function(className, color, baseUrl){
             var featureSelected = yAxisSVG.selectAll("."+className+"Arrow");
             var minY = margin.left - 105;
             var maxY = margin.left - 7;
@@ -1005,11 +1005,17 @@ var FeatureViewer = (function () {
             redgrad
                 .attr("stop-color", color);
 
+            var url_gradient = "url(#gradient)";
+            var url_dropshadow = "url(#dropshadow)";
+            if (baseUrl) {
+                url_gradient = "url(" + baseUrl + "#gradient)";
+                url_dropshadow = "url(" + baseUrl +"#dropshadow)";
+            }
 
             var selection = yAxisSVG.selectAll("."+className+"Arrow")
-                .style("fill", "url(#gradient)")
+                .style("fill", url_gradient)
                 .style("stroke", "")
-                .attr("filter", "url(#dropshadow)");
+                .attr("filter", url_dropshadow);
             selection
                 .attr("points", function (d) {
                     return (margin.left - 105) + "," + (d.y - 3) + ", " + (margin.left - 105) + "," + (d.y + 12) + ", " + (margin.left - 10) + "," + (d.y + 12) + ", " + (margin.left - 2) + "," + (d.y + 4.5) + ", " + (margin.left - 10) + "," + (d.y -3); // x,y points
@@ -1450,72 +1456,135 @@ var FeatureViewer = (function () {
             }
 
             if (options.toolbar === true) {
-                var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
+                if (options.toolbarTemplate && options.toolbarTemplate === 2) {
+                    var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
 
-                if (!$(div + ' .header-zoom').length) {
-                    var headerZoom = headerOptions
-                        .append("div")
-                        .attr("class", "panel panel-default header-zoom")
-                        .style("display", "inline-block")
-                        .style("width", "150px")
-                        .style("margin", "20px 0px 0px")
-                        .style("padding", "0px");
-                    headerZoom
-                        .append("div")
-                        .attr("class", "panel-heading")
-                        .style("padding", "0px 15px")
-                        .style("border-right", "1px solid #DDD")
-                        .style("display", "inline-block")
-                        .style("width", "80px")
-                        .append("h5")
-                        .style("padding", "0px")
-                        .style("height", "10px")
-                        .style("color", "#777")
-                        .text("ZOOM");
-                    headerZoom
-                        .append("div")
-                        .attr("class", "panel-body")
-                        .style("display", "inline-block")
-                        .style("padding", "0px")
-                        .append("h5")
-                        .style("padding-left", "15px")
-                        .style("height", "10px")
-                        .text("x ")
-                        .append("span")
-                        .attr("class", "zoomUnit")
-                        .text("1");
+                    if (!$(div + ' .header-position').length) {
+                        var headerPosition = headerOptions
+                            .append("div")
+                            .attr("class", "header-position")
+                            .style("display", "inline-block")
+                            .style("margin", "15px 10px 0px")
+                            .style("padding", "0px")
+                            .style("line-height","32px");
+                        headerPosition
+                            .append("div")
+                            .attr("class", "position-label")
+                            .style("padding", "0px 5px")
+                            .style("display", "inline-block")
+                            .style("padding", "0px")
+                            .style("font-weight","700")
+                            .text("Position  :  ");
+                        headerPosition
+                            .append("div")
+                            .style("display", "inline-block")
+                            .style("padding", "0px")
+                            .style("padding-left", "5px")
+                            .append("div")
+                            .style("min-width","50px")
+                            .attr("id", "zoomPosition")
+                            .text("0");
+                    }
+                    if (!$(div + ' .header-zoom').length) {
+                        var headerZoom = headerOptions
+                            .append("div")
+                            .attr("class", "header-zoom")
+                            .style("display", "inline-block")
+                            .style("margin", "15px 0px 0px")
+                            .style("padding", "0px")
+                            .style("line-height","32px");
+                        headerZoom
+                            .append("div")
+                            .attr("class", "zoom-label")
+                            .style("padding", "0px 5px")
+                            .style("display", "inline-block")
+                            .style("padding", "0px")
+                            .style("font-weight","700")
+                            .text("Zoom : ");
+
+                        headerZoom
+                            .append("div")
+                            .style("display", "inline-block")
+                            .style("padding", "0px")
+                            .append("div")
+                            .style("min-width","50px")
+                            .style("padding-left", "5px")
+                            .append("span")
+                            .text("x ")
+                            .append("span")
+                            .attr("class", "zoomUnit")
+                            .text("1");
+                    }
                 }
-                if (!$(div + ' .header-position').length) {
-                    var headerPosition = headerOptions
-                        .append("div")
-                        .attr("class", "panel panel-default header-position")
-                        .style("display", "inline-block")
-                        .style("width", "175px")
-                        .style("margin", "20px 20px 0px")
-                        .style("padding", "0px");
-                    headerPosition
-                        .append("div")
-                        .attr("class", "panel-heading")
-                        .style("padding", "0px 15px")
-                        .style("border-right", "1px solid #DDD")
-                        .style("display", "inline-block")
-                        .append("h5")
-                        .style("padding", "0px")
-                        .style("height", "10px")
-                        .style("color", "#777")
-                        .text("POSITION");
-                    headerPosition
-                        .append("div")
-                        .attr("class", "panel-body")
-                        .style("display", "inline-block")
-                        .style("padding", "0px")
-                        .append("h5")
-                        .style("padding-left", "15px")
-                        .style("height", "10px")
-                        .append("span")
-                        .attr("id", "zoomPosition")
-                        .text("0");
+                else{
+                    var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
+
+                    if (!$(div + ' .header-zoom').length) {
+                        var headerZoom = headerOptions
+                            .append("div")
+                            .attr("class", "panel panel-default header-zoom")
+                            .style("display", "inline-block")
+                            .style("width", "150px")
+                            .style("margin", "20px 0px 0px")
+                            .style("padding", "0px");
+                        headerZoom
+                            .append("div")
+                            .attr("class", "panel-heading")
+                            .style("padding", "0px 15px")
+                            .style("border-right", "1px solid #DDD")
+                            .style("display", "inline-block")
+                            .style("width", "80px")
+                            .append("h5")
+                            .style("padding", "0px")
+                            .style("height", "10px")
+                            .style("color", "#777")
+                            .text("ZOOM");
+                        headerZoom
+                            .append("div")
+                            .attr("class", "panel-body")
+                            .style("display", "inline-block")
+                            .style("padding", "0px")
+                            .append("h5")
+                            .style("padding-left", "15px")
+                            .style("height", "10px")
+                            .text("x ")
+                            .append("span")
+                            .attr("class", "zoomUnit")
+                            .text("1");
+                    }
+                    if (!$(div + ' .header-position').length) {
+                        var headerPosition = headerOptions
+                            .append("div")
+                            .attr("class", "panel panel-default header-position")
+                            .style("display", "inline-block")
+                            .style("width", "175px")
+                            .style("margin", "20px 20px 0px")
+                            .style("padding", "0px");
+                        headerPosition
+                            .append("div")
+                            .attr("class", "panel-heading")
+                            .style("padding", "0px 15px")
+                            .style("border-right", "1px solid #DDD")
+                            .style("display", "inline-block")
+                            .append("h5")
+                            .style("padding", "0px")
+                            .style("height", "10px")
+                            .style("color", "#777")
+                            .text("POSITION");
+                        headerPosition
+                            .append("div")
+                            .attr("class", "panel-body")
+                            .style("display", "inline-block")
+                            .style("padding", "0px")
+                            .append("h5")
+                            .style("padding-left", "15px")
+                            .style("height", "10px")
+                            .append("span")
+                            .attr("id", "zoomPosition")
+                            .text("0");
+                    }
                 }
+                
                 if (options.bubbleHelp === true) {
                     if (!$(div + ' .header-help').length) {
                         var helpContent = "<div><strong>To zoom in :</strong> Left click to select area of interest</div>" +
@@ -1525,7 +1594,7 @@ var FeatureViewer = (function () {
                             .append("div")
                             .attr("class", "pull-right")
                             .style("display", "inline-block")
-                            .style("margin", "25px 35px 0px 0px")
+                            .style("margin", "15px 35px 0px 0px")
                             .style("padding", "0px");
                         var buttonHelp = headerHelp
                             .append("a")
@@ -1535,17 +1604,23 @@ var FeatureViewer = (function () {
                             .attr("data-placement", "left")
                             .attr("title", "Help")
                             .attr("data-content", helpContent)
-                            .style("font-size", "1.5em");
+                            .style("font-size", "1.2em");
                         buttonHelp
                             .append("span")
                             .attr("class", "label label-as-badge")
-                            .text("?");
+                            .style("font-weight","500")
+                            .style("border-radius","3px")
+                            .style("background-color","#f8f8f8")
+                            .style("border","1px solid #ddd")
+                            .style("color","#777")
+                            .text("Zoom help");
                         $(function () {
                             $('[data-toggle="popover"]').popover({html: true});
                         })
                     }
                 }
             }
+            
             svg = d3.select(div).append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
