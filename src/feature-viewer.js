@@ -1438,6 +1438,7 @@ var FeatureViewer = (function () {
                     'verticalLine': false,
                     'toolbar': false,
                     'bubbleHelp': false,
+                    'unit': "units",
                     'zoomMax': 50
                 }
             }
@@ -1456,8 +1457,10 @@ var FeatureViewer = (function () {
             }
 
             if (options.toolbar === true) {
+                
+                var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
+                
                 if (options.toolbarTemplate && options.toolbarTemplate === 2) {
-                    var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
 
                     if (!$(div + ' .header-position').length) {
                         var headerPosition = headerOptions
@@ -1517,8 +1520,6 @@ var FeatureViewer = (function () {
                     }
                 }
                 else{
-                    var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
-
                     if (!$(div + ' .header-zoom').length) {
                         var headerZoom = headerOptions
                             .append("div")
@@ -1584,17 +1585,23 @@ var FeatureViewer = (function () {
                             .text("0");
                     }
                 }
-                
+                var headerZoom = $(div + ' .header-zoom').length ? d3.select(div + ' .header-zoom') : headerOptions;
                 if (options.bubbleHelp === true) {
                     if (!$(div + ' .header-help').length) {
                         var helpContent = "<div><strong>To zoom in :</strong> Left click to select area of interest</div>" +
                             "<div><strong>To zoom out :</strong> Right click to reset the scale</div>" +
-                            "<div><strong>Zoom max  :</strong> Limited to <strong>" + zoomMax.toString() + " units</strong></div>";
-                        var headerHelp = headerOptions
-                            .append("div")
-                            .attr("class", "pull-right")
+                            "<div><strong>Zoom max  :</strong> Limited to <strong>" + zoomMax.toString() + " " + options.unit +"</strong></div>";
+//                        var headerHelp = headerOptions
+                        var headerHelp = headerZoom
+//                            .append("div")
+                            .insert("div",":first-child")
+//                            .attr("class", "pull-right")
                             .style("display", "inline-block")
-                            .style("margin", "15px 35px 0px 0px")
+//                            .style("margin", "15px 35px 0px 0px")
+                            .style("margin", "0px")
+                            .style("margin-right", "5px")
+                            .style("line-height","13px")
+                            .style("vertical-align","text-top")
                             .style("padding", "0px");
                         var buttonHelp = headerHelp
                             .append("a")
@@ -1609,11 +1616,13 @@ var FeatureViewer = (function () {
                             .append("span")
                             .attr("class", "label label-as-badge")
                             .style("font-weight","500")
-                            .style("border-radius","3px")
+//                            .style("border-radius","3px")
+                            .style("border-radius","15px")
                             .style("background-color","#f8f8f8")
                             .style("border","1px solid #ddd")
                             .style("color","#777")
-                            .text("Zoom help");
+                            .style("padding","1px 6px")
+                            .text("?");
                         $(function () {
                             $('[data-toggle="popover"]').popover({html: true});
                         })
