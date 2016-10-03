@@ -1593,8 +1593,8 @@ var FeatureViewer = (function () {
                             "<div><strong>Zoom max  :</strong> Limited to <strong>" + zoomMax.toString() + " " + options.unit +"</strong></div>";
 //                        var headerHelp = headerOptions
                         var headerHelp = headerZoom
-//                            .append("div")
-                            .insert("div",":first-child")
+                            .append("div")
+//                            .insert("div",":first-child")
 //                            .attr("class", "pull-right")
                             .style("display", "inline-block")
 //                            .style("margin", "15px 35px 0px 0px")
@@ -1618,9 +1618,13 @@ var FeatureViewer = (function () {
                             .style("font-weight","500")
 //                            .style("border-radius","3px")
                             .style("border-radius","15px")
-                            .style("background-color","#f8f8f8")
-                            .style("border","1px solid #ddd")
-                            .style("color","#777")
+//                            .style("background-color","#f8f8f8")
+                            .style("background-color","#108D9F")
+//                            .style("border","1px solid #ddd")
+                            .style("border","1px solid #0C6B78")
+//                            .style("color","#777")
+                            .style("box-shadow","inset 0px 0px 4px rgba(0,0,0,0.10)")
+                            .style("color","#fff")
                             .style("padding","1px 6px")
                             .text("?");
                         $(function () {
