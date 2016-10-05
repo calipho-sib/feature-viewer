@@ -86,28 +86,39 @@ a:focus {
 }
 
 .header-help{
-    color: #C50063;
+/*    color: #C50063;*/
+/*
+    color: #108D9F;
+    border-color:#0F8292;
+*/
+}
+.header-help .state{
+    min-width:26px;
+    display:inline-block;
 }
 
 .header-help:hover{
-    color: #98004C;
+/*    color: #98004C;*/
+/*    color: #0F8292;*/
     cursor: pointer;
     text-decoration: none;
 }
 
 .header-help:focus{
-    color: #98004C;
+/*    color: #0F8292;*/
 }
 
 .popover-title{
     text-align: center;
-    background-color: rgba(197, 0, 99, 0.1);
+/*    background-color: rgba(197, 0, 99, 0.1);*/
 }
 
 .label-as-badge {
+/*
     border-radius: 1em;
     font-size:0.7em;
-    background-color: #C50063;
+*/
+/*    background-color: #C50063;*/
 }
 
 path{

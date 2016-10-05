@@ -108,6 +108,7 @@ var FeatureViewer = (function () {
             var tooltipDiv;
             var selectedRect;
             var bodyNode = d3.select(div).node();
+            var tooltipColor = options.tooltipColor ? options.tooltipColor : "orangered";
 
             function tooltip(selection) {
 
@@ -144,24 +145,24 @@ var FeatureViewer = (function () {
                         'box-shadow': '0 1px 2px 0 #656565' 
                     });
                     if (object.type === "path") {
-                        var first_line = '<p style="margin:2px;color:white">start : <span style="color:orangered">' + pD[0].x + '</span></p>';
-                        var second_line = '<p style="margin:2px;color:white">end : <span style="color:orangered">' + pD[1].x + '</span></p>';
+                        var first_line = '<p style="margin:2px;color:white">start : <span style="color:' + tooltipColor +'">' + pD[0].x + '</span></p>';
+                        var second_line = '<p style="margin:2px;color:white">end : <span style="color:' + tooltipColor +'">' + pD[1].x + '</span></p>';
                     } else if (object.type === "line") {
                         var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
                         if (elemHover.description) {
-                            var first_line = '<p style="margin:2px;color:orangered">' + elemHover.x + ' : <span style="color:#ccc"> ' + elemHover.y + '</span></p>';
+                            var first_line = '<p style="margin:2px;color:' + tooltipColor +'">' + elemHover.x + ' : <span style="color:#ccc"> ' + elemHover.y + '</span></p>';
                             var second_line = '<p style="margin:2px;color:white;font-size:9px">' + elemHover.description + '</p>';
                         }
                         else {
-                            var first_line = '<p style="margin:2px;color:white">position : <span style="color:orangered" id="tLineX">' + elemHover.x + '</span></p>';
-                            var second_line = '<p style="margin:2px;color:white">count : <span style="color:orangered" id="tLineC">' + elemHover.y + '</span></p>';
+                            var first_line = '<p style="margin:2px;color:white">position : <span style="color:' + tooltipColor +'" id="tLineX">' + elemHover.x + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:white">count : <span style="color:' + tooltipColor +'" id="tLineC">' + elemHover.y + '</span></p>';
                         }
                     } else if (object.type === "unique" || pD.x === pD.y) {
-                        var first_line = '<p style="margin:2px;color:orangered">' + pD.x + '</p>';
+                        var first_line = '<p style="margin:2px;color:' + tooltipColor +'">' + pD.x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:white;font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
                     } else {
-                        var first_line = '<p style="margin:2px;color:orangered">' + pD.x + ' - ' + pD.y + '</p>';
+                        var first_line = '<p style="margin:2px;color:' + tooltipColor +'">' + pD.x + ' - ' + pD.y + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:white;font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
                     }
@@ -179,12 +180,12 @@ var FeatureViewer = (function () {
                             var absoluteMousePos = d3.mouse(bodyNode);
                             var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
                             if (elemHover.description) {
-                                var first_line = '<p style="margin:2px;color:orangered">' + elemHover.x + ' : <span style="color:#ccc"> ' + elemHover.y + '</span></p>';
+                                var first_line = '<p style="margin:2px;color:' + tooltipColor +'">' + elemHover.x + ' : <span style="color:#ccc"> ' + elemHover.y + '</span></p>';
                                 var second_line = '<p style="margin:2px;color:white;font-size:9px">' + elemHover.description + '</p>';
                             }
                             else {
-                                var first_line = '<p style="margin:2px;color:white">position : <span style="color:orangered" id="tLineX">' + elemHover.x + '</span></p>';
-                                var second_line = '<p style="margin:2px;color:white">count : <span style="color:orangered" id="tLineC">' + elemHover.y + '</span></p>';
+                                var first_line = '<p style="margin:2px;color:white">position : <span style="color:' + tooltipColor +'" id="tLineX">' + elemHover.x + '</span></p>';
+                                var second_line = '<p style="margin:2px;color:white">count : <span style="color:' + tooltipColor +'" id="tLineC">' + elemHover.y + '</span></p>';
                             }
                             tooltipDiv.html(first_line + second_line);
 //                            $('#tLineX').text(elemHover.x);
@@ -1600,8 +1601,7 @@ var FeatureViewer = (function () {
 //                            .style("margin", "15px 35px 0px 0px")
                             .style("margin", "0px")
                             .style("margin-right", "5px")
-                            .style("line-height","13px")
-                            .style("vertical-align","text-top")
+//                            .style("line-height","32px")
                             .style("padding", "0px");
                         var buttonHelp = headerHelp
                             .append("a")
@@ -1611,24 +1611,31 @@ var FeatureViewer = (function () {
                             .attr("data-placement", "left")
                             .attr("title", "Help")
                             .attr("data-content", helpContent)
-                            .style("font-size", "1.2em");
+                            .style("font-size", "14px");
+//                            .style("margin-bottom", "2px");
                         buttonHelp
                             .append("span")
-                            .attr("class", "label label-as-badge")
+                            .attr("class", "label label-as-badge label-info")
                             .style("font-weight","500")
 //                            .style("border-radius","3px")
-                            .style("border-radius","15px")
+                            .style("border-radius","3px")
 //                            .style("background-color","#f8f8f8")
-                            .style("background-color","#108D9F")
+//                            .style("background-color","#108D9F")
 //                            .style("border","1px solid #ddd")
-                            .style("border","1px solid #0C6B78")
+//                            .style("border","1px solid #0C6B78")
 //                            .style("color","#777")
                             .style("box-shadow","inset 0px 0px 4px rgba(0,0,0,0.10)")
                             .style("color","#fff")
-                            .style("padding","1px 6px")
-                            .text("?");
+//                            .style("padding","2px 6px")
+                            .html("<span class='state'>Show</span> help");
                         $(function () {
                             $('[data-toggle="popover"]').popover({html: true});
+                            $(div + ' .header-help').on('hide.bs.popover', function () {
+                              $(this).find(".state").text("Show");
+                            });
+                            $(div + ' .header-help').on('show.bs.popover', function () {
+                              $(this).find(".state").text("Hide");
+                            });
                         })
                     }
                 }
@@ -1683,7 +1690,9 @@ var FeatureViewer = (function () {
             svgContainer.on('mousemove', function () {
                 var absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());;          
                 var pos = Math.round(scalingPosition(absoluteMousePos[0]));
-                pos += sequence[pos-1] || "";
+                if (!options.positionWithoutLetter) {
+                    pos += sequence[pos-1] || "";
+                }
                 $(div + " #zoomPosition").text(pos);
             });
 
