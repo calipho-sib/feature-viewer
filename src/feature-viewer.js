@@ -132,7 +132,7 @@ var FeatureViewer = (function () {
                     }
                     tooltipDiv.style({
                         top: (absoluteMousePos[1] - 55) + 'px',
-                        'background-color': 'rgba(0, 0, 0, 0.8)',
+                        'background-color': '#eee',
                         width: 'auto',
                         'max-width': '170px',
                         height: 'auto',
@@ -145,25 +145,25 @@ var FeatureViewer = (function () {
                         'box-shadow': '0 1px 2px 0 #656565' 
                     });
                     if (object.type === "path") {
-                        var first_line = '<p style="margin:2px;color:white">start : <span style="color:' + tooltipColor +'">' + pD[0].x + '</span></p>';
-                        var second_line = '<p style="margin:2px;color:white">end : <span style="color:' + tooltipColor +'">' + pD[1].x + '</span></p>';
+                        var first_line = '<p style="margin:2px;color:' + tooltipColor +'">start : <span>' + pD[0].x + '</span></p>';
+                        var second_line = '<p style="margin:2px;color:' + tooltipColor +'">end : <span>' + pD[1].x + '</span></p>';
                     } else if (object.type === "line") {
                         var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
                         if (elemHover.description) {
-                            var first_line = '<p style="margin:2px;color:' + tooltipColor +'">' + elemHover.x + ' : <span style="color:#ccc"> ' + elemHover.y + '</span></p>';
-                            var second_line = '<p style="margin:2px;color:white;font-size:9px">' + elemHover.description + '</p>';
+                            var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + elemHover.x + ' : <span> ' + elemHover.y + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + elemHover.description + '</p>';
                         }
                         else {
-                            var first_line = '<p style="margin:2px;color:white">position : <span style="color:' + tooltipColor +'" id="tLineX">' + elemHover.x + '</span></p>';
-                            var second_line = '<p style="margin:2px;color:white">count : <span style="color:' + tooltipColor +'" id="tLineC">' + elemHover.y + '</span></p>';
+                            var first_line = '<p style="margin:2px;color:' + tooltipColor +'">position : <span id="tLineX">' + elemHover.x + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:' + tooltipColor +'">count : <span id="tLineC">' + elemHover.y + '</span></p>';
                         }
                     } else if (object.type === "unique" || pD.x === pD.y) {
-                        var first_line = '<p style="margin:2px;color:' + tooltipColor +'">' + pD.x + '</p>';
-                        if (pD.description) var second_line = '<p style="margin:2px;color:white;font-size:9px">' + pD.description + '</p>';
+                        var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + pD.x + '</p>';
+                        if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
                     } else {
-                        var first_line = '<p style="margin:2px;color:' + tooltipColor +'">' + pD.x + ' - ' + pD.y + '</p>';
-                        if (pD.description) var second_line = '<p style="margin:2px;color:white;font-size:9px">' + pD.description + '</p>';
+                        var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + pD.x + ' - ' + pD.y + '</p>';
+                        if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
                     }
 
@@ -180,12 +180,12 @@ var FeatureViewer = (function () {
                             var absoluteMousePos = d3.mouse(bodyNode);
                             var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
                             if (elemHover.description) {
-                                var first_line = '<p style="margin:2px;color:' + tooltipColor +'">' + elemHover.x + ' : <span style="color:#ccc"> ' + elemHover.y + '</span></p>';
-                                var second_line = '<p style="margin:2px;color:white;font-size:9px">' + elemHover.description + '</p>';
+                                var first_line = '<p style="margin:2px;color:' + tooltipColor +'">' + elemHover.x + ' : <span> ' + elemHover.y + '</span></p>';
+                                var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + elemHover.description + '</p>';
                             }
                             else {
-                                var first_line = '<p style="margin:2px;color:white">position : <span style="color:' + tooltipColor +'" id="tLineX">' + elemHover.x + '</span></p>';
-                                var second_line = '<p style="margin:2px;color:white">count : <span style="color:' + tooltipColor +'" id="tLineC">' + elemHover.y + '</span></p>';
+                                var first_line = '<p style="margin:2px;color:' + tooltipColor +'">position : <span id="tLineX">' + elemHover.x + '</span></p>';
+                                var second_line = '<p style="margin:2px;color:' + tooltipColor +'">count : <span id="tLineC">' + elemHover.y + '</span></p>';
                             }
                             tooltipDiv.html(first_line + second_line);
 //                            $('#tLineX').text(elemHover.x);
