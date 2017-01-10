@@ -156,7 +156,7 @@ a:focus {
 /*    background-color: #C50063;*/
 }
 
-path{
+path.domain {
     fill:none;
 }
 
