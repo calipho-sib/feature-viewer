@@ -1453,6 +1453,9 @@ var FeatureViewer = (function () {
             if (options.zoomMax) {
                 zoomMax = options.zoomMax;
             }
+            if (!options.unit) {
+                options.unit = "units";
+            }
             if (options.animation) {
                 animation = options.animation;
             }
@@ -1461,7 +1464,7 @@ var FeatureViewer = (function () {
                 
                 var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
                 
-                if (options.toolbarTemplate && options.toolbarTemplate === 2) {
+//                if (options.toolbarTemplate && options.toolbarTemplate === 2) {
 
                     if (!$(div + ' .header-position').length) {
                         var headerPosition = headerOptions
@@ -1519,73 +1522,73 @@ var FeatureViewer = (function () {
                             .attr("class", "zoomUnit")
                             .text("1");
                     }
-                }
-                else{
-                    if (!$(div + ' .header-zoom').length) {
-                        var headerZoom = headerOptions
-                            .append("div")
-                            .attr("class", "panel panel-default header-zoom")
-                            .style("display", "inline-block")
-                            .style("width", "150px")
-                            .style("margin", "20px 0px 0px")
-                            .style("padding", "0px");
-                        headerZoom
-                            .append("div")
-                            .attr("class", "panel-heading")
-                            .style("padding", "0px 15px")
-                            .style("border-right", "1px solid #DDD")
-                            .style("display", "inline-block")
-                            .style("width", "80px")
-                            .append("h5")
-                            .style("padding", "0px")
-                            .style("height", "10px")
-                            .style("color", "#777")
-                            .text("ZOOM");
-                        headerZoom
-                            .append("div")
-                            .attr("class", "panel-body")
-                            .style("display", "inline-block")
-                            .style("padding", "0px")
-                            .append("h5")
-                            .style("padding-left", "15px")
-                            .style("height", "10px")
-                            .text("x ")
-                            .append("span")
-                            .attr("class", "zoomUnit")
-                            .text("1");
-                    }
-                    if (!$(div + ' .header-position').length) {
-                        var headerPosition = headerOptions
-                            .append("div")
-                            .attr("class", "panel panel-default header-position")
-                            .style("display", "inline-block")
-                            .style("width", "175px")
-                            .style("margin", "20px 20px 0px")
-                            .style("padding", "0px");
-                        headerPosition
-                            .append("div")
-                            .attr("class", "panel-heading")
-                            .style("padding", "0px 15px")
-                            .style("border-right", "1px solid #DDD")
-                            .style("display", "inline-block")
-                            .append("h5")
-                            .style("padding", "0px")
-                            .style("height", "10px")
-                            .style("color", "#777")
-                            .text("POSITION");
-                        headerPosition
-                            .append("div")
-                            .attr("class", "panel-body")
-                            .style("display", "inline-block")
-                            .style("padding", "0px")
-                            .append("h5")
-                            .style("padding-left", "15px")
-                            .style("height", "10px")
-                            .append("span")
-                            .attr("id", "zoomPosition")
-                            .text("0");
-                    }
-                }
+//                }
+//                else{
+//                    if (!$(div + ' .header-zoom').length) {
+//                        var headerZoom = headerOptions
+//                            .append("div")
+//                            .attr("class", "panel panel-default header-zoom")
+//                            .style("display", "inline-block")
+//                            .style("width", "150px")
+//                            .style("margin", "20px 0px 0px")
+//                            .style("padding", "0px");
+//                        headerZoom
+//                            .append("div")
+//                            .attr("class", "panel-heading")
+//                            .style("padding", "0px 15px")
+//                            .style("border-right", "1px solid #DDD")
+//                            .style("display", "inline-block")
+//                            .style("width", "80px")
+//                            .append("h5")
+//                            .style("padding", "0px")
+//                            .style("height", "10px")
+//                            .style("color", "#777")
+//                            .text("ZOOM");
+//                        headerZoom
+//                            .append("div")
+//                            .attr("class", "panel-body")
+//                            .style("display", "inline-block")
+//                            .style("padding", "0px")
+//                            .append("h5")
+//                            .style("padding-left", "15px")
+//                            .style("height", "10px")
+//                            .text("x ")
+//                            .append("span")
+//                            .attr("class", "zoomUnit")
+//                            .text("1");
+//                    }
+//                    if (!$(div + ' .header-position').length) {
+//                        var headerPosition = headerOptions
+//                            .append("div")
+//                            .attr("class", "panel panel-default header-position")
+//                            .style("display", "inline-block")
+//                            .style("width", "175px")
+//                            .style("margin", "20px 20px 0px")
+//                            .style("padding", "0px");
+//                        headerPosition
+//                            .append("div")
+//                            .attr("class", "panel-heading")
+//                            .style("padding", "0px 15px")
+//                            .style("border-right", "1px solid #DDD")
+//                            .style("display", "inline-block")
+//                            .append("h5")
+//                            .style("padding", "0px")
+//                            .style("height", "10px")
+//                            .style("color", "#777")
+//                            .text("POSITION");
+//                        headerPosition
+//                            .append("div")
+//                            .attr("class", "panel-body")
+//                            .style("display", "inline-block")
+//                            .style("padding", "0px")
+//                            .append("h5")
+//                            .style("padding-left", "15px")
+//                            .style("height", "10px")
+//                            .append("span")
+//                            .attr("id", "zoomPosition")
+//                            .text("0");
+//                    }
+//                }
                 var headerZoom = $(div + ' .header-zoom').length ? d3.select(div + ' .header-zoom') : headerOptions;
                 if (options.bubbleHelp === true) {
                     if (!$(div + ' .header-help').length) {
@@ -1608,7 +1611,7 @@ var FeatureViewer = (function () {
                             .attr("type", "button")
                             .attr("class", "header-help")
                             .attr("data-toggle", "popover")
-                            .attr("data-placement", "left")
+                            .attr("data-placement", "auto left")
                             .attr("title", "Help")
                             .attr("data-content", helpContent)
                             .style("font-size", "14px");
