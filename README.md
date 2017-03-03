@@ -6,6 +6,8 @@ See: http://www.nextprot.org/
 
 # neXtProt feature viewer
 
+[![DOI](https://zenodo.org/badge/36719341.svg)](https://zenodo.org/badge/latestdoi/36719341)
+
 > The feature viewer is a super easy javascript library to use in order to draw the different features covering a sequence for a better visualization.
 
 ![Feature viewer](/assets/FV_SCSHT.png)
