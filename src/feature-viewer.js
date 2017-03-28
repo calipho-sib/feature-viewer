@@ -20,7 +20,8 @@ var FeatureViewer = (function () {
         var SVGOptions = {
             showSequence: false,
             brushActive: false,
-            verticalLine: false
+            verticalLine: false,
+            dottedSequence: true
         };
         var offset = {start:1,end:fvLength};
         if (options && options.offset) {
@@ -693,6 +694,28 @@ var FeatureViewer = (function () {
                         return d
                     });
             },
+            sequenceLine: function () {
+                //Create line to represent the sequence
+                if (SVGOptions.dottedSequence){
+                    var dottedSeqLine = svgContainer.selectAll(".sequenceLine")
+                        .data([[{x:1,y:12},{x:fvLength,y:12}]])
+                        .enter()
+                        .append("path")
+                        .attr("clip-path", "url(#clip)")
+                        .attr("d", line)
+                        .attr("class","sequenceLine")
+                        .style("z-index", "0")
+                        .style("stroke", "black")
+                        .style("stroke-dasharray","1,3")
+                        .style("stroke-width", "1px")
+                        .style("stroke-opacity",0);
+
+                    dottedSeqLine
+                        .transition()
+                        .duration(500)
+                        .style("stroke-opacity", 1);
+                }
+            },
             rectangle: function (object, position) {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
@@ -1223,6 +1246,7 @@ var FeatureViewer = (function () {
                     end : end
                     }
                     seqShift = start;
+                    svgContainer.selectAll(".sequenceLine").remove();
                     fillSVG.sequence(sequence.substring(start-1, end), 20, seqShift-1);
                 }
 
@@ -1276,8 +1300,15 @@ var FeatureViewer = (function () {
 //            var currentSeqLength = svgContainer.selectAll(".AA").size();
             var seq = displaySequence(current_extend.length);
             if (SVGOptions.showSequence && !(intLength)){
-                if (seq === false && !svgContainer.selectAll(".AA").empty()) {svgContainer.selectAll(".seqGroup").remove();}
-                else if (seq === true && svgContainer.selectAll(".AA").empty()) {fillSVG.sequence(sequence.substring(current_extend.start-1, current_extend.end), 20, current_extend.start-1);}
+                if (seq === false && !svgContainer.selectAll(".AA").empty()) {
+                    svgContainer.selectAll(".seqGroup").remove();
+                    fillSVG.sequenceLine();
+                }
+                else if (seq === true && svgContainer.selectAll(".AA").empty()){
+                    svgContainer.selectAll(".sequenceLine").remove();
+                    fillSVG.sequence(sequence.substring(current_extend.start-1, current_extend.end), 20, current_extend.start-1);
+                    
+                }
             }
             
             scaling.range([5,width-5]);
@@ -1299,7 +1330,10 @@ var FeatureViewer = (function () {
             var seq = displaySequence(offset.end - offset.start);
             
             if (SVGOptions.showSequence && !(intLength)){
-                if (seq === false && !svgContainer.selectAll(".AA").empty()) svgContainer.selectAll(".seqGroup").remove();
+                if (seq === false && !svgContainer.selectAll(".AA").empty()){
+                    svgContainer.selectAll(".seqGroup").remove();
+                    fillSVG.sequenceLine();
+                }
                 else if (current_extend.length !== fvLength && seq === true && !svgContainer.selectAll(".AA").empty()) {
                     svgContainer.selectAll(".seqGroup").remove();
                     fillSVG.sequence(sequence.substring(offset.start-1,offset.end), 20, offset.start);
@@ -1698,11 +1732,17 @@ var FeatureViewer = (function () {
                 }
                 $(div + " #zoomPosition").text(pos);
             });
-
+            
+            if (typeof options.dottedSequence !== "undefined"){
+                SVGOptions.dottedSequence = options.dottedSequence;
+            }
             if (options.showSequence && !(intLength)) {
                 SVGOptions.showSequence = true;
                 if (displaySequence(offset.end - offset.start)) {
                     fillSVG.sequence(sequence.substring(offset.start-1, offset.end), Yposition, offset.start);
+                }
+                else{
+                    fillSVG.sequenceLine();
                 }
                 features.push({
                     data: sequence,
