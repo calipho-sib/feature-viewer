@@ -99,6 +99,9 @@
         ft2.onFeatureSelected(function (d) {
             console.log(d.detail);
         });
+        ft2.onFeatureDeselected(function (d) {
+            console.log(d.detail);
+        });
 
 
         $("#type1").mouseover(function(){

@@ -6,6 +6,7 @@ var FeatureViewer = (function () {
         // if (!div) var div = window;
         this.events = {
           FEATURE_SELECTED_EVENT: "feature-viewer-position-selected",
+            FEATURE_DESELECTED_EVENT: "feature-viewer-position-deselected",
           ZOOM_EVENT: "feature-viewer-zoom-altered"
         };
 
@@ -342,7 +343,9 @@ var FeatureViewer = (function () {
 
         this.onFeatureSelected = function (listener) {
             svgElement.addEventListener(self.events.FEATURE_SELECTED_EVENT, listener);
-            //$(document).on(self.events.FEATURE_SELECTED_EVENT, listener);
+        };
+        this.onFeatureDeselected = function (listener) {
+            svgElement.addEventListener(self.events.FEATURE_DESELECTED_EVENT, listener);
         };
 
       this.onZoom = function (listener) {
@@ -1219,9 +1222,18 @@ var FeatureViewer = (function () {
 
         function brushend() {
             d3.select(div).selectAll('div.selectedRect').remove();
-            if (featureSelected !== {}) {
+            if (Object.keys(featureSelected).length !== 0 && featureSelected.constructor === Object) {
                 d3.select(featureSelected.id).style("fill", featureSelected.originalColor);
                 featureSelected = {};
+                if (CustomEvent) {
+                    var event = new CustomEvent(self.events.FEATURE_DESELECTED_EVENT, {
+                        detail: {info:"feature-deselected"}
+                    });
+                    svgElement.dispatchEvent(event);
+                } else {
+                    console.warn("CustomEvent is not defined....");
+                }
+                if (self.trigger) self.trigger(self.events.FEATURE_DESELECTED_EVENT, {info:"feature-deselected"});
             }
             // Check if brush is big enough before zooming
             var extent = brush.extent();
@@ -1281,17 +1293,20 @@ var FeatureViewer = (function () {
         }
 //        
         var resizeCallback = function(){
+            
             updateWindow();
         }
+        
         $(window).on("resize", resizeCallback);
         
         function updateWindow(){
 //            var new_width = $(div).width() - margin.left - margin.right - 17;
 //            var width_larger = (width < new_width);
+            
             width = $(div).width() - margin.left - margin.right - 17;
             d3.select(div+" svg")
                 .attr("width", width + margin.left + margin.right);
-            d3.select(div+" clippath>rect").attr("width", width);
+            d3.select(div+" #clip>rect").attr("width", width);
             if (SVGOptions.brushActive) {
                 d3.select(div+" .background").attr("width", width);
             }
