@@ -72,6 +72,7 @@ a:focus {
     margin: -1px 0 0 0;
     bottom: -8px;
     left: 10px;
+    z-index:11;
 }
 /*Creates a small triangle extender for the tooltip - left */
 .tooltip2:before {
@@ -87,6 +88,7 @@ a:focus {
     margin: -1px 0 0 0;
     bottom: -9px;
     left: 10px;
+    z-index:10;
 }
 .tooltip3:after {
     box-sizing: border-box;
@@ -101,6 +103,7 @@ a:focus {
     margin: -1px 0 0 0;
     bottom: -8px;
     right: 10px;
+    z-index:11;
 }
 .tooltip3:before {
     box-sizing: border-box;
@@ -115,6 +118,7 @@ a:focus {
     margin: -1px 0 0 0;
     bottom: -9px;
     right: 10px;
+    z-index:10;
 }
 
 .yaxis{

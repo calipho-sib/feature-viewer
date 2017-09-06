@@ -133,7 +133,7 @@ var FeatureViewer = (function () {
                         });
                     }
                     tooltipDiv.style({
-                        bottom: (bodyNode.offsetHeight - absoluteMousePos[1] + 17) + 'px',
+                        bottom: (bodyNode.offsetHeight - absoluteMousePos[1] + 16) + 'px',
                         'background-color': '#eee',
                         width: 'auto',
                         'max-width': '170px',
@@ -203,13 +203,13 @@ var FeatureViewer = (function () {
                             tooltipDiv.attr("class", "tooltip3");
                             tooltipDiv.style({
                                 left: (absoluteMousePos[0] + 10 - (tooltipDiv.node().getBoundingClientRect().width)) + 'px',
-                                bottom: (bodyNode.offsetHeight - absoluteMousePos[1] + 17) + 'px'
+                                bottom: (bodyNode.offsetHeight - absoluteMousePos[1] + 16) + 'px'
                             });
                         } else {
                             tooltipDiv.attr("class", "tooltip2");
                             tooltipDiv.style({
                                 left: (absoluteMousePos[0] - 15) + 'px',
-                                bottom: (bodyNode.offsetHeight - absoluteMousePos[1] + 17) + 'px'
+                                bottom: (bodyNode.offsetHeight - absoluteMousePos[1] + 16) + 'px'
                             })
                         }
                     })
