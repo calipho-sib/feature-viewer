@@ -133,12 +133,12 @@ var FeatureViewer = (function () {
                         });
                     }
                     tooltipDiv.style({
-                        top: (absoluteMousePos[1] - 55) + 'px',
+                        bottom: (bodyNode.offsetHeight - absoluteMousePos[1] + 17) + 'px',
                         'background-color': '#eee',
                         width: 'auto',
                         'max-width': '170px',
                         height: 'auto',
-                        'max-height': '43px',
+                        'max-height': '68px',
                         padding: '5px',
                         "font": '10px sans-serif',
                         'text-align': 'center',
@@ -147,8 +147,9 @@ var FeatureViewer = (function () {
                         'box-shadow': '0 1px 2px 0 #656565' 
                     });
                     if (object.type === "path") {
-                        var first_line = '<p style="margin:2px;color:' + tooltipColor +'">start : <span>' + pD[0].x + '</span></p>';
-                        var second_line = '<p style="margin:2px;color:' + tooltipColor +'">end : <span>' + pD[1].x + '</span></p>';
+                        var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + pD[0].x + '&#x256d;&#x256e;' + pD[1].x + '</p>';
+                        if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
+                        else var second_line = '';
                     } else if (object.type === "line") {
                         var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
                         if (elemHover.description) {
@@ -202,13 +203,13 @@ var FeatureViewer = (function () {
                             tooltipDiv.attr("class", "tooltip3");
                             tooltipDiv.style({
                                 left: (absoluteMousePos[0] + 10 - (tooltipDiv.node().getBoundingClientRect().width)) + 'px',
-                                top: (absoluteMousePos[1] - 55) + 'px'
+                                bottom: (bodyNode.offsetHeight - absoluteMousePos[1] + 17) + 'px'
                             });
                         } else {
                             tooltipDiv.attr("class", "tooltip2");
                             tooltipDiv.style({
                                 left: (absoluteMousePos[0] - 15) + 'px',
-                                top: (absoluteMousePos[1] - 55) + 'px'
+                                bottom: (bodyNode.offsetHeight - absoluteMousePos[1] + 17) + 'px'
                             })
                         }
                     })

@@ -60,13 +60,12 @@ a:focus {
     font-size: 10px;
     width: 100%;
     line-height: 1;
-/*    color: rgba(0, 0, 0, 0.8);*/
     color: #eee;
     content: "\25BC";
     position: absolute;
     text-align: left;
     margin: -1px 0 0 0;
-    top: 98%;
+    bottom: -8px;
     left: 10px;
 }
 /*Creates a small triangle extender for the tooltip - left */
@@ -77,12 +76,11 @@ a:focus {
     width: 100%;
     line-height: 1;
     color: rgba(0, 0, 0, 0.6);
-/*    color: #333;*/
     content: "\25BC";
     position: absolute;
     text-align: left;
     margin: -1px 0 0 0;
-    top: 99%;
+    bottom: -9px;
     left: 10px;
 }
 .tooltip3:after {
@@ -91,13 +89,12 @@ a:focus {
     font-size: 10px;
     width: 100%;
     line-height: 1;
-/*    color: rgba(0, 0, 0, 0.8);*/
     color: #eee;
     content: "\25BC";
     position: absolute;
     text-align: right;
     margin: -1px 0 0 0;
-    top: 98%;
+    bottom: -8px;
     right: 10px;
 }
 .tooltip3:before {
@@ -107,12 +104,11 @@ a:focus {
     width: 100%;
     line-height: 1;
     color: rgba(0, 0, 0, 0.6);
-/*    color: #eee;*/
     content: "\25BC";
     position: absolute;
     text-align: right;
     margin: -1px 0 0 0;
-    top: 99%;
+    bottom: -9px;
     right: 10px;
 }
 
