@@ -1815,7 +1815,7 @@ var FeatureViewer = (function () {
          * @param {string} [id] attributeName - name of feature's attribute,
          *  we're looking for, e.g. "id" or "name"
          */
-        this.isFeature = function(attr, attributeName) {
+        this.hasFeature = function(attr, attributeName) {
             if (!attributeName) attributeName = id;
 
             for (var i = 0; i < features.length; i++) {

@@ -13,7 +13,7 @@
 
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 </head>
-    
+
 <body>
     <div id="div2"> </div>
 
@@ -29,7 +29,7 @@
             zoomMax:10,
             minLengthAnim: 300
                     });
-        
+
     //Add some features
         ft2.addFeature({
             data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
@@ -47,7 +47,7 @@
             type: "rect",
             filter: "type2"
         });
-        
+
         ft2.addFeature({
             data: [{x:130,y:184},{x:40,y:142},{x:80,y:110}],
             name: "test feature 3",
@@ -119,7 +119,7 @@
             })
         }
         ft2.addFeature({
-            data: dataDemo3,    
+            data: dataDemo3,
             name: "test feature 7bis",
             className: "test7bis",
             color: ["#006573","#731b00"],
@@ -129,8 +129,8 @@
             fill: true,
             interpolation:"step"
         });
-        
-        
+
+
     //Beside positions of each element, you can also give a specific description, which will appears in the tooltip when mouse hover, and a specific ID, for example to link a click event on the feature with something else in your project.
         ft2.addFeature({
             data: [{x:120,y:154,description:"aaaaa",id:"a1"},{x:22,y:163,description:"bbbbb",id:"b1"},
