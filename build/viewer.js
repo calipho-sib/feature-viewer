@@ -21527,8 +21527,11 @@ var FeatureViewer = (function () {
             var tooltipDiv;
             var selectedRect;
             var bodyNode = d3.select(div).node();
+
             var tooltipColor = options.tooltipColor ? options.tooltipColor : "orangered";
             var tooltipFontSize = options.tooltipFontSize ? options.tooltipFontSize : "9px";
+            var tooltipFontWeight = options.tooltipFontWeight ? options.tooltipFontWeight : "700";
+            var tooltipFontFamily = options.tooltipFontFamily ? options.tooltipFontFamily : "sans-serif";
 
             function tooltip(selection) {
 
@@ -21558,20 +21561,20 @@ var FeatureViewer = (function () {
                         height: 'auto',
                         'max-height': '68px',
                         padding: '5px',
-                        "font": tooltipFontSize + ' sans-serif',
+                        "font": tooltipFontSize + ' ' + tooltipFontFamily,
                         'text-align': 'center',
                         position: 'absolute',
                         'z-index': 45,
                         'box-shadow': '0 1px 2px 0 #656565'
                     });
                     if (object.type === "path") {
-                        var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + pD[0].x + '&#x256d;&#x256e;' + pD[1].x + '</p>';
+                        var first_line = '<p style="margin:2px;font-weight:' + tooltipFontWeight + ';color:' + tooltipColor +'">' + pD[0].x + '&#x256d;&#x256e;' + pD[1].x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:' + tooltipFontSize + '">' + pD.description + '</p>';
                         else var second_line = '';
                     } else if (object.type === "line") {
                         var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
                         if (elemHover.description) {
-                            var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + elemHover.x + ' : <span> ' + elemHover.y + '</span></p>';
+                            var first_line = '<p style="margin:2px;font-weight:' + tooltipFontWeight + ';color:' + tooltipColor +'">' + elemHover.x + ' : <span> ' + elemHover.y + '</span></p>';
                             var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:' + tooltipFontSize + '">' + elemHover.description + '</p>';
                         }
                         else {
@@ -21579,11 +21582,11 @@ var FeatureViewer = (function () {
                             var second_line = '<p style="margin:2px;color:' + tooltipColor +'">count : <span id="tLineC">' + elemHover.y + '</span></p>';
                         }
                     } else if (object.type === "unique" || pD.x === pD.y) {
-                        var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + pD.x + '</p>';
+                        var first_line = '<p style="margin:2px;font-weight:' + tooltipFontWeight + ';color:' + tooltipColor +'">' + pD.x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:' + tooltipFontSize + '">' + pD.description + '</p>';
                         else var second_line = '';
                     } else {
-                        var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + pD.x + ' - ' + pD.y + '</p>';
+                        var first_line = '<p style="margin:2px;font-weight:' + tooltipFontWeight + ';color:' + tooltipColor +'">' + pD.x + ' - ' + pD.y + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:' + tooltipFontSize + '">' + pD.description + '</p>';
                         else var second_line = '';
                     }
