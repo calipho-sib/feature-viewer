@@ -44,7 +44,7 @@ var FeatureViewer = (function () {
         var seqShift = 0;
         var zoom = false;
         var zoomMax = 50;
-        var current_extend = { 
+        var current_extend = {
                     length : offset.end - offset.start,
                     start : offset.start,
                     end : offset.end
@@ -85,9 +85,9 @@ var FeatureViewer = (function () {
         var scalingPosition = d3.scale.linear()
             .domain([0, width])
             .range([offset.start, offset.end]);
-        
-        
-        
+
+
+
 
         function updateLineTooltip(mouse,pD){
             var xP = mouse-110;
@@ -103,7 +103,7 @@ var FeatureViewer = (function () {
             }
             return elemHover;
         }
-        
+
         d3.helper = {};
 
         d3.helper.tooltip = function (object) {
@@ -144,7 +144,7 @@ var FeatureViewer = (function () {
                         'text-align': 'center',
                         position: 'absolute',
                         'z-index': 45,
-                        'box-shadow': '0 1px 2px 0 #656565' 
+                        'box-shadow': '0 1px 2px 0 #656565'
                     });
                     if (object.type === "path") {
                         var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + pD[0].x + '&#x256d;&#x256e;' + pD[1].x + '</p>';
@@ -178,7 +178,7 @@ var FeatureViewer = (function () {
                     }
                 })
                     .on('mousemove.tooltip', function (pD, pI) {
-                    
+
                         if (object.type === "line") {
                             var absoluteMousePos = d3.mouse(bodyNode);
                             var elemHover = updateLineTooltip(absoluteMousePos[0],pD);
@@ -192,7 +192,7 @@ var FeatureViewer = (function () {
                             }
                             tooltipDiv.html(first_line + second_line);
 //                            $('#tLineX').text(elemHover.x);
-//                            $('#tLineC').text(elemHover.y);  
+//                            $('#tLineC').text(elemHover.y);
                         }
                         // Move tooltip
                         // IE 11 sometimes fires mousemove before mouseover
@@ -413,7 +413,7 @@ var FeatureViewer = (function () {
                 return -d.y * 10 + pathLevel;
             });
         var lineGen = d3.svg.line()
-          
+
 //          .interpolate("cardinal")
           .x(function(d) {
             return scaling(d.x);
@@ -438,7 +438,7 @@ var FeatureViewer = (function () {
             .scale(scaling)
             .tickFormat(d3.format("d"))
             .orient("bottom");
-        
+
         function shadeBlendConvert(p, from, to) {
             if(typeof(p)!="number"||p<-1||p>1||typeof(from)!="string"||(from[0]!='r'&&from[0]!='#')||(typeof(to)!="string"&&typeof(to)!="undefined"))return null; //ErrorCheck
             if(!this.sbcRip)this.sbcRip=function(d){
@@ -590,7 +590,7 @@ var FeatureViewer = (function () {
                     }
                     var maxValue = Math.max.apply(Math,object.data[i].map(function(o){return Math.abs(o.y);}));
                     level = maxValue > level ? maxValue : level;
-                    
+
 
                     object.data[i] = [object.data[i].map(function (d) {
                         return {
@@ -724,7 +724,7 @@ var FeatureViewer = (function () {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
                 var rectHeight = object.height;
-                
+
                 var rectShift = rectHeight + rectHeight/3;
                 var lineShift = rectHeight/2 - 6;
 //                var lineShift = rectHeight/2 - 6;
@@ -733,7 +733,7 @@ var FeatureViewer = (function () {
                     .attr("class", "rectangle")
                     .attr("clip-path", "url(#clip)")
                     .attr("transform", "translate(0," + position + ")");
-                
+
                 var dataline=[];
                 for (var i = 0; i < level; i++) {
                     dataline.push([{
@@ -833,7 +833,7 @@ var FeatureViewer = (function () {
                         x: fvLength,
                         y: 0
                     }]);
-                
+
                 rectsPro.selectAll(".line" + object.className)
                     .data(dataline)
                     .enter()
@@ -881,7 +881,7 @@ var FeatureViewer = (function () {
                         x: fvLength,
                         y: 0
                     }]);
-                
+
                 pathsDB.selectAll(".line" + object.className)
                     .data(dataline)
                     .enter()
@@ -926,7 +926,7 @@ var FeatureViewer = (function () {
                         x: fvLength,
                         y: 0
                     }]);
-                
+
                 histog.selectAll(".line" + object.className)
                     .data(dataline)
                     .enter()
@@ -952,7 +952,7 @@ var FeatureViewer = (function () {
 //                    .style("shape-rendering", "crispEdges")
                     .call(d3.helper.tooltip(object));
                 })
-                
+
                 forcePropagation(histog);
             },
             multipleRect: function (object, position, level) {
@@ -1170,7 +1170,7 @@ var FeatureViewer = (function () {
                 else {
                     transit = svgContainer.selectAll("." + object.className);
                 }
-                
+
                 transit
                     .attr("d", lineGen.y(function (d) {
                         return lineYscale(-d.y) * 10 + object.shift;
@@ -1208,7 +1208,7 @@ var FeatureViewer = (function () {
                 .selectAll("rect")
                 .attr('height', Yposition + 50);
         }
-        
+
         this.zoom = function(start, end){
             var zoomInside = current_extend.start<start && current_extend.end>end;
             if (!zoomInside) {
@@ -1250,10 +1250,10 @@ var FeatureViewer = (function () {
                 current_extend.length = extentLength;
                 var zoomScale = (fvLength / extentLength).toFixed(1);
                 $(div + " .zoomUnit").text(zoomScale.toString());
-                
-//                scaling.range([5,width-5]); 
+
+//                scaling.range([5,width-5]);
                 if (SVGOptions.showSequence && !(intLength) && seq && svgContainer.selectAll(".AA").empty()) {
-                    current_extend = { 
+                    current_extend = {
                     length : extentLength,
                     start : start,
                     end : end
@@ -1268,7 +1268,7 @@ var FeatureViewer = (function () {
                 scaling.domain(extent);
                 scalingPosition.range(extent);
                 var currentShift = seqShift ? seqShift : offset.start;
-                
+
 
                 transition_data(features, currentShift);
                 reset_axis();
@@ -1292,18 +1292,18 @@ var FeatureViewer = (function () {
                 //resetAll();
             }
         }
-//        
+//
         var resizeCallback = function(){
-            
+
             updateWindow();
         }
-        
+
         $(window).on("resize", resizeCallback);
-        
+
         function updateWindow(){
 //            var new_width = $(div).width() - margin.left - margin.right - 17;
 //            var width_larger = (width < new_width);
-            
+
             width = $(div).width() - margin.left - margin.right - 17;
             d3.select(div+" svg")
                 .attr("width", width + margin.left + margin.right);
@@ -1312,7 +1312,7 @@ var FeatureViewer = (function () {
                 d3.select(div+" .background").attr("width", width);
             }
             d3.select(div).selectAll(".brush").call(brush.clear());
-            
+
 //            var currentSeqLength = svgContainer.selectAll(".AA").size();
             var seq = displaySequence(current_extend.length);
             if (SVGOptions.showSequence && !(intLength)){
@@ -1323,16 +1323,16 @@ var FeatureViewer = (function () {
                 else if (seq === true && svgContainer.selectAll(".AA").empty()){
                     svgContainer.selectAll(".sequenceLine").remove();
                     fillSVG.sequence(sequence.substring(current_extend.start-1, current_extend.end), 20, current_extend.start-1);
-                    
+
                 }
             }
-            
+
             scaling.range([5,width-5]);
             scalingPosition.domain([0, width]);
-            
+
             transition_data(features, current_extend.start);
             reset_axis();
-            
+
         }
 
         // If brush is too small, reset view as origin
@@ -1344,7 +1344,7 @@ var FeatureViewer = (function () {
             scaling.domain([offset.start, offset.end]);
             scalingPosition.range([offset.start, offset.end]);
             var seq = displaySequence(offset.end - offset.start);
-            
+
             if (SVGOptions.showSequence && !(intLength)){
                 if (seq === false && !svgContainer.selectAll(".AA").empty()){
                     svgContainer.selectAll(".seqGroup").remove();
@@ -1356,13 +1356,13 @@ var FeatureViewer = (function () {
                 }
             }
 
-            current_extend={ 
+            current_extend={
                     length : offset.end-offset.start,
                     start : offset.start,
                     end : offset.end
                 };
             seqShift=0;
-            
+
             transition_data(features, offset.start);
             reset_axis();
 
@@ -1511,9 +1511,9 @@ var FeatureViewer = (function () {
             }
 
             if (options.toolbar === true) {
-                
+
                 var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
-                
+
 //                if (options.toolbarTemplate && options.toolbarTemplate === 2) {
 
                     if (!$(div + ' .header-position').length) {
@@ -1693,7 +1693,7 @@ var FeatureViewer = (function () {
                     }
                 }
             }
-            
+
             svg = d3.select(div).append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
@@ -1741,14 +1741,14 @@ var FeatureViewer = (function () {
                 .attr("in", "SourceGraphic");
 
             svgContainer.on('mousemove', function () {
-                var absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());;          
+                var absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());;
                 var pos = Math.round(scalingPosition(absoluteMousePos[0]));
                 if (!options.positionWithoutLetter) {
                     pos += sequence[pos-1] || "";
                 }
                 $(div + " #zoomPosition").text(pos);
             });
-            
+
             if (typeof options.dottedSequence !== "undefined"){
                 SVGOptions.dottedSequence = options.dottedSequence;
             }
@@ -1805,7 +1805,25 @@ var FeatureViewer = (function () {
             if (d3.selectAll(".element")[0].length > 1500) animation = false;
 
         }
-        
+
+        /**
+         * Check, if feature is already present in features. Look it up by
+         * certain attribute, e.g. "id" or "name".
+         *
+         * @param attr - value of feature's attribute that we're looking for,
+         *  e.g. "3D"
+         * @param {string} [id] attributeName - name of feature's attribute,
+         *  we're looking for, e.g. "id" or "name"
+         */
+        this.hasFeature = function(attr, attributeName) {
+            if (!attributeName) attributeName = id;
+
+            for (var i = 0; i < features.length; i++) {
+                if (features[i][attributeName] === attr) return true;
+            }
+            return false;
+        }
+
         this.clearInstance = function (){
             $(window).off("resize", resizeCallback);
             svg = null;
