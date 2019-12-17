@@ -10,9 +10,11 @@ See: https://www.nextprot.org/
 
 > The feature viewer is a super easy javascript library to use in order to draw the different features covering a sequence for a better visualization.
 
-![Feature viewer](/assets/FV_SCSHT.png)
+**Full documentation and live demo** : http://calipho-sib.github.io/feature-viewer/examples/   
 
-**Live demo** : https://cdn.rawgit.com/calipho-sib/feature-viewer/v1.0.0/examples/index.html
+This version is made in Javascript using the D3 library. For the TypeScript version, see : https://github.com/Lisanna/feature-viewer-typescript   
+
+![Feature viewer](/assets/FV_SCSHT.png)
 
 ## Getting Started
 
@@ -27,14 +29,14 @@ npm install feature-viewer
 
 Or Include the feature-viewer **JS** and **CSS** from rawgit CDN in the header of your html
 ```html
-<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/calipho-sib/feature-viewer/v1.0.0/dist/feature-viewer.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.6/dist/feature-viewer.min.css">
 
-<script src="https://cdn.rawgit.com/calipho-sib/feature-viewer/v1.0.0/dist/feature-viewer.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.6/dist/feature-viewer.bundle.js"></script>
 ```
 
 **NOTE** : If you already got the dependencies (D3, Bootstrap & Jquery) in your project, use the simple minified version instead of the bundle :
 ```html
-<script src="https://cdn.rawgit.com/calipho-sib/feature-viewer/v1.0.0/dist/feature-viewer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.6/dist/feature-viewer.min.js"></script>
 ```
 
 **2.** Specify a div in your html
@@ -107,7 +109,7 @@ You may sometimes want to reload your feature-viewer with new parameters. To avo
 ## Documentation
 
 Check out this page for a better understanding of how to use the feature viewer and its possibilities :
-* https://cdn.rawgit.com/calipho-sib/feature-viewer/v1.0.0/examples/index.html
+* http://calipho-sib.github.io/feature-viewer/examples/   
 
 ## Use it with NeXtProt API
 
