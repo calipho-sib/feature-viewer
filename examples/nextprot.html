@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="../css/style.css">
     <link rel="stylesheet" href="index.css">
 
-    <script src="../dist/feature-viewer.nextprot.js"></script>
+    <script src="../dist/feature-viewer.bundle.js"></script>
 </head>
 
 <body>
@@ -18,7 +18,7 @@
         //initalize nextprot Client
         var applicationName = 'demo app'; //please provide a name for your application
         var clientInfo='calipho group at sib'; //please provide some information about you
-        var nx = new Nextprot.Client(applicationName, clientInfo);
+        var nx = new FeatureViewer.Nextprot.Client(applicationName, clientInfo);
         
 //        var entry = "NX_P01308";
         var isoform = "NX_P01308-1";
@@ -27,6 +27,8 @@
         var options = {showAxis: true, showSequence: true,
            brushActive: true, toolbar:true,
            bubbleHelp: true, zoomMax:20 };
+
+        const { nxFeatureViewer, addFeature, addNxFeature } = FeatureViewer
 
         // Init nextprot feature viewer
         nxFeatureViewer(nx, isoform, "#div2", options).then(function(ff){

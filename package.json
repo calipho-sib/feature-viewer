@@ -18,15 +18,13 @@
   ],
   "main": "lib/index.js",
   "scripts": {
-    "build": "mkdir -p build && browserify -r ./:feature-viewer -o build/viewer.js",
-    "build-browser": "npm run build",
-    "build-all": "npm run build",
-    "watch": "watchify -r ./:feature-viewer -v -o build/viewer.js",
-    "w": "prunner \"npm run sniper\" \"npm run watch\"",
-    "sniper": "sniper .",
-    "dist": "grunt && grunt concating && grunt serve"
+    "build": "webpack --config webpack.config.js",
+    "dev": "webpack --mode development",
+    "start": "webpack serve",
+    "sniper": "sniper ."
   },
   "dependencies": {
+    "@popperjs/core": "^2.9.2",
     "biojs-events": "x.x.x",
     "bootstrap": "x.x.x",
     "bower": "x.x.x",
@@ -36,21 +34,13 @@
     "nextprot": "x.x.x"
   },
   "devDependencies": {
-    "mkdirp": "^0.5.0",
-    "browserify": "6.x",
-    "sniper": "0.x",
-    "watchify": "^1.0.6",
+    "html-webpack-plugin": "^5.3.1",
     "prunner": "1.x",
-    "grunt": "x.x.x",
-    "grunt-bump": "^0.3.0",
-    "grunt-connect": "^0.2.0",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-connect": "~0.5.0",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-uglify": "~0.5.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-serve": "^0.1.6",
-    "load-grunt-tasks": "^0.6.0"
+    "sniper": "0.x",
+    "terser-webpack-plugin": "^5.1.2",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "sniper": {
     "js": [

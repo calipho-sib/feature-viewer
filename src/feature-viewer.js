@@ -1,6 +1,4 @@
-var FeatureViewer = (function () {
-
-    function FeatureViewer(sequence, div, options) {
+function drawGraph(sequence, div, options) {
 //        var nxSeq = sequence.startsWith('NX_') ? true : false;
         var self = this;
         // if (!div) var div = window;
@@ -1819,8 +1817,6 @@ var FeatureViewer = (function () {
 
     }
 
-    return FeatureViewer;
-})();
 if ( typeof module === "object" && typeof module.exports === "object" ) {
-    module.exports = FeatureViewer;
+    module.exports = drawGraph;
 }
