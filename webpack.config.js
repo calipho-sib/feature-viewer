@@ -28,6 +28,18 @@ module.exports = {
       $: 'jquery',
       jQuery: 'jquery',
       d3: 'd3'
-    })
-  ]
+    }),
+  ],
+
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      },
+    ]
+  }
 };
