@@ -1,6 +1,5 @@
-var FeatureViewer = require('./feature-viewer')
+const FeatureViewer = require('./feature-viewer')
 
-//Optionnal : usage with nextprot
 const Nextprot = require("nextprot/src/nextprot-core.js");
 const NXUtils = require("nextprot/src/nextprot-utils.js")["NXUtils"];
 const NXViewerUtils = require("nextprot/src/nextprot-utils.js")["NXViewerUtils"];

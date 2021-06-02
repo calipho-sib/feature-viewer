@@ -27,15 +27,12 @@
     "@popperjs/core": "^2.9.2",
     "biojs-events": "x.x.x",
     "bootstrap": "x.x.x",
-    "bower": "x.x.x",
     "d3": "3.5.6",
-    "grunt-cli": "x.x.x",
     "jquery": "x.x.x",
     "nextprot": "x.x.x"
   },
   "devDependencies": {
     "html-webpack-plugin": "^5.3.1",
-    "prunner": "1.x",
     "sniper": "0.x",
     "terser-webpack-plugin": "^5.1.2",
     "webpack": "^5.37.1",

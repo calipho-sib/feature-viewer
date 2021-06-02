@@ -1,4 +1,4 @@
-function drawGraph(sequence, div, options) {
+function createFeature(sequence, div, options) {
 //        var nxSeq = sequence.startsWith('NX_') ? true : false;
         var self = this;
         // if (!div) var div = window;
@@ -1818,5 +1818,5 @@ function drawGraph(sequence, div, options) {
     }
 
 if ( typeof module === "object" && typeof module.exports === "object" ) {
-    module.exports = drawGraph;
+    module.exports = createFeature;
 }
