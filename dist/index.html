@@ -1,4 +1,28 @@
-<html><head><title>neXtProt protein sequence viewer</title><link rel="stylesheet" href="../css/bootstrap.css"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.css"><link rel="stylesheet" href="index.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/mode/javascript/javascript.min.js"></script><script src="../dist/feature-viewer.bundle.js"></script><script defer="defer" src="feature-viewer.bundle.js"></script></head><body><div id="div2"></div><div><button id="type1" class="btn btn-default" type="submit">type 1</button> <button id="type2" class="btn btn-default" type="submit">type 2</button></div><script>//Create a new Feature Viewer and add some rendering options
+<html>
+
+<head>
+    <title>neXtProt protein sequence viewer</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.css">
+    <link rel="stylesheet" href="index.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/mode/javascript/javascript.min.js"></script>
+    <script src="../dist/feature-viewer.bundle.js"></script>
+
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
+<script defer src="feature-viewer.bundle.js"></script></head>
+
+<body>
+    <div id="div2"> </div>
+    <div>
+        <button id="type1" class="btn btn-default" type="submit">type 1</button>
+        <button id="type2" class="btn btn-default" type="submit">type 2</button>
+    </div>
+
+    <script>
+        //Create a new Feature Viewer and add some rendering options
        var ft2 = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
             "KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div2", {
             showAxis: true,
@@ -92,4 +116,11 @@
         });
         $("#type2").mouseout(function(){
             ft2.hideFilteredFeature("type1");
-        });</script></body></html>
+        });
+
+    </script>
+
+
+</body>
+
+</html>

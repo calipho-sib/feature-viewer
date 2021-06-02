@@ -18,7 +18,10 @@
         //initalize nextprot Client
         var applicationName = 'demo app'; //please provide a name for your application
         var clientInfo='calipho group at sib'; //please provide some information about you
-        var nx = new FeatureViewer.Nextprot.Client(applicationName, clientInfo);
+
+        const { nxFeatureViewer, Nextprot } = FeatureViewer;
+
+        var nx = new Nextprot.Client(applicationName, clientInfo);
         
 //        var entry = "NX_P01308";
         var isoform = "NX_P01308-1";
@@ -27,8 +30,6 @@
         var options = {showAxis: true, showSequence: true,
            brushActive: true, toolbar:true,
            bubbleHelp: true, zoomMax:20 };
-
-        const { nxFeatureViewer, addFeature, addNxFeature } = FeatureViewer
 
         // Init nextprot feature viewer
         nxFeatureViewer(nx, isoform, "#div2", options).then(function(ff){
