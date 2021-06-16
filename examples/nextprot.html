@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="../css/style.css">
     <link rel="stylesheet" href="index.css">
 
-    <script src="../dist/feature-viewer.nextprot.js"></script>
+    <script src="../dist/feature-viewer.bundle.js"></script>
 </head>
 
 <body>
@@ -18,6 +18,9 @@
         //initalize nextprot Client
         var applicationName = 'demo app'; //please provide a name for your application
         var clientInfo='calipho group at sib'; //please provide some information about you
+
+        const { nxFeatureViewer, Nextprot } = FeatureViewer;
+
         var nx = new Nextprot.Client(applicationName, clientInfo);
         
 //        var entry = "NX_P01308";
