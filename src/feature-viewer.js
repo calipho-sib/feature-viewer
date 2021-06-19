@@ -590,14 +590,14 @@ function createFeature(sequence, div, options) {
                     level = maxValue > level ? maxValue : level;
                     
 
-                    object.data[i] = [object.data[i].map(function (d) {
+                    object.data[i] = object.data[i].map(function (d) {
                         return {
                             x: d.x,
                             y: d.y,
                             id: d.id,
                             description: d.description
                         }
-                    })]
+                    });
                 }
                 lineYscale.range([0, -(shift)]).domain([0, -(level)]);
                 pathLevel = shift * 10 +5;
@@ -936,7 +936,7 @@ function createFeature(sequence, div, options) {
                     .style("stroke-width", "1px");
                 object.data.forEach(function(dd,i,array){
                     histog.selectAll("." + object.className + i)
-                    .data(dd)
+                    .data([dd])
                     .enter()
                     .append("path")
                     .attr("clip-path", "url(#clip)")
