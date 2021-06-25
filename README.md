@@ -27,14 +27,14 @@ npm install feature-viewer
 yarn add feature-viewer
 ```
 
-Or Include the feature-viewer from rawgit CDN in the header of your html
+Or Include the feature-viewer from jsDelivr CDN in the header of your html
 ```html
-<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.8/dist/feature-viewer.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.1.0/dist/feature-viewer.bundle.js"></script>
 ```
 
 **NOTE** : If you already got the dependencies (D3, Bootstrap & Jquery) in your project, use the simple minified version instead of the bundle :
 ```html
-<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.8/dist/feature-viewer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.1.0/dist/feature-viewer.min.js"></script>
 ```
 
 **2.** Specify a div in your html
