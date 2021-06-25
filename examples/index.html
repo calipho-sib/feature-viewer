@@ -6,9 +6,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.css">
     <link rel="stylesheet" href="index.css">
 
+    <script src="jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0/mode/javascript/javascript.min.js"></script>
-    <script src="../dist/feature-viewer.nextprot.js"></script>
+    <script src="../dist/feature-viewer.bundle.js"></script>
 
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
 </head>
@@ -94,10 +95,10 @@
 var options = {showAxis: true, showSequence: true,
                brushActive: true, toolbar:true,
                bubbleHelp: true, zoomMax:20 };
-var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDDAAFJDSAKFL","#div1", options);
+var ft = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDDAAFJDSAKFL","#div1", options);
 
 //Or with a length instead of a sequence : 
-//var ft = new FeatureViewer(113,"#div1",options);
+//var ft = new FeatureViewer.createFeature(113,"#div1",options);
         </textarea>
                 </form>
                 <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
@@ -151,7 +152,7 @@ var ft = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKL
                 <form>
                 <textarea id="code2" name="code2" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
 //Create a new Feature Viewer and add some rendering options
-var ft2 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div2", {
+var ft2 = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div2", {
     showAxis: true,
     showSequence: true,
     brushActive: true,
@@ -257,7 +258,7 @@ ft2.addFeature({
                 <form>
                 <textarea id="code3" name="code3" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
 //Create a new Feature Viewer and add some rendering options
-var ft3 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
+var ft3 = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
 "KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div3", {
 showAxis: true,
 showSequence: true,
@@ -355,7 +356,7 @@ ft3.onZoom(function (d) {
                 <form>
                 <textarea id="code4" name="code4" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
 //Create a new Feature Viewer and add some rendering options
-var ft4 = new FeatureViewer("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div4", {
+var ft4 = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div4", {
             showAxis: true,
             showSequence: true,
             brushActive: true,
@@ -476,6 +477,8 @@ $("#div4").append("<p class='btnBlock'>"+buttonZoom+buttonResetZoom+"</p");
 var applicationName = 'feature viewer app';
 //please provide some information about you
 var clientInfo='calipho group at sib'; 
+
+const { nxFeatureViewer, addNxFeature, Nextprot } = FeatureViewer;
 var nx = new Nextprot.Client(applicationName, clientInfo);
 
 // var entry = "NX_P01308";

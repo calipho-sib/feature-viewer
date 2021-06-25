@@ -18,25 +18,23 @@ This version is made in Javascript using the D3 library. For the TypeScript vers
 
 ## Getting Started
 
-**1.** You can get the library in your project using bower or npm
+**1.** You can get the library in your project using NPM/Yarn
 ```
-//BOWER//
-bower install feature-viewer
-
-//NODE//
+//NPM//
 npm install feature-viewer
+
+//Yarn//
+yarn add feature-viewer
 ```
 
-Or Include the feature-viewer **JS** and **CSS** from rawgit CDN in the header of your html
+Or Include the feature-viewer from rawgit CDN in the header of your html
 ```html
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.6/dist/feature-viewer.min.css">
-
-<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.6/dist/feature-viewer.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.8/dist/feature-viewer.bundle.js"></script>
 ```
 
 **NOTE** : If you already got the dependencies (D3, Bootstrap & Jquery) in your project, use the simple minified version instead of the bundle :
 ```html
-<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.6/dist/feature-viewer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/calipho-sib/feature-viewer@v1.0.8/dist/feature-viewer.min.js"></script>
 ```
 
 **2.** Specify a div in your html
@@ -44,11 +42,10 @@ Or Include the feature-viewer **JS** and **CSS** from rawgit CDN in the header o
 <div id="fv1"></div>
 ```
 
-**3.** Create an instance of FeatureViewer in javascript with the sequence (or a length), the div in which it will be display and the rendering options of your choice.
+**3.** Create an instance of FeatureViewer in JavaScript with the sequence (or a length), the div in which it will be display and the rendering options of your choice.
 ```javascript
-//For Node add before : var FeatureViewer = require("feature-viewer");
 
-var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLE',
+var ft = new FeatureViewer.createFeature('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLE',
                            '#fv1',
                             {
                                 showAxis: true,
@@ -60,7 +57,17 @@ var ft = new FeatureViewer('MALWMRLLPLLALLALWGPGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLY
                             });
                             
 //Instead of a sequence, you can also initialize the feature viewer with a length (integer) :
-var ft = new FeatureViewer(213,'#fv1');
+var ft = new FeatureViewer.createFeature(213,'#fv1');
+```
+
+To import Feature Viewer into an ES2015 application, you can import specific symbols from specific Feature Viewer modules:
+```javascript
+import { createFeature } from "feature-viewer";
+```
+
+In Node:
+```javascript
+const { createFeature } = require("feature-viewer");
 ```
 
 **4.** Finally, add the features
@@ -126,6 +133,9 @@ It is possible to fill the feature viewer with protein features from [NeXtProt](
 //initalize nextprot Client
 var applicationName = 'demo app'; //please provide a name for your application
 var clientInfo='calipho group at sib'; //please provide some information about you
+
+const { nxFeatureViewer, Nextprot } = FeatureViewer;
+
 var nx = new Nextprot.Client(applicationName, clientInfo);
         
 //var entry = "NX_P01308";
@@ -170,15 +180,11 @@ If you have any problem or suggestion please open an issue [here](https://github
 
 `npm install`  (will install the development dependencies)
 
-`bower install`  (will install the browser dependencies)
+`npm start`  (will start the development server on localhost:8080)
 
 ...make your changes and modifications...
 
-`npm run dist` (will create the min & bundle versions in dist/)
-
-`npm run build` (will create the bundle js & css in build/ for node)
-
-`grunt bump` (will push and add a new release)
+`npm run build` (will create the bundle js & css in build/)
 
 `npm publish` (will publish in npm)
 
