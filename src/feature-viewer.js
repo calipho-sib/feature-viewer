@@ -1,11 +1,16 @@
+const { crossIcon } = require('../utils/icons')
 function createFeature(sequence, div, options) {
+        // const cross = crossIcon;
+        // console.log(cross.crossIcon)
 //        var nxSeq = sequence.startsWith('NX_') ? true : false;
         var self = this;
         // if (!div) var div = window;
         this.events = {
           FEATURE_SELECTED_EVENT: "feature-viewer-position-selected",
             FEATURE_DESELECTED_EVENT: "feature-viewer-position-deselected",
-          ZOOM_EVENT: "feature-viewer-zoom-altered"
+          ZOOM_EVENT: "feature-viewer-zoom-altered",
+          GET_PREDICTIONS_EVENT: "feature-viewer-vep-predictions",
+          VARIANT_ADDED_EVENT: "feature-viewer-variant-added"
         };
 
         // if (!div) var div = window;
@@ -20,7 +25,8 @@ function createFeature(sequence, div, options) {
             showSequence: false,
             brushActive: false,
             verticalLine: false,
-            dottedSequence: true
+            dottedSequence: true,
+            variant: false
         };
         var offset = {start:1,end:fvLength};
         if (options && options.offset) {
@@ -49,6 +55,10 @@ function createFeature(sequence, div, options) {
                 }
         var featureSelected = {};
         var animation = true;
+        
+        let seqPos; // Stores sequence + its position
+        let absoluteSeqPos; // Store only sequence position
+        let variantInputValues = []; // Entered variant values
 
         function colorSelectedFeat(feat, object) {
             //change color && memorize
@@ -347,9 +357,15 @@ function createFeature(sequence, div, options) {
             svgElement.addEventListener(self.events.FEATURE_DESELECTED_EVENT, listener);
         };
 
-      this.onZoom = function (listener) {
+        this.onZoom = function (listener) {
             svgElement.addEventListener(self.events.ZOOM_EVENT, listener);
         };
+        this.onGetPredictions = function (listener) {
+            svgElement.addEventListener(self.events.GET_PREDICTIONS_EVENT, listener);
+        }
+        this.onVariantAdded = function (listener) {
+            svgElement.addEventListener(self.events.VARIANT_ADDED_EVENT, listener);
+        }
 
         function addLevel(array) {
             var leveling = [];
@@ -677,12 +693,17 @@ function createFeature(sequence, div, options) {
             sequence: function (seq, position, start) {
                 //Create group of sequence
                 if (!start) var start = 0;
+
+                let seqSelected;
+
                 svgContainer.append("g")
                     .attr("class", "seqGroup")
                     .selectAll(".AA")
                     .data(seq)
                     .enter()
-                    .append("text")
+                    .append("text", function() {
+                        return d + '-' + i
+                    })
                     .attr("clip-path", "url(#clip)")
                     .attr("class", "AA")
                     .attr("text-anchor", "middle")
@@ -694,7 +715,112 @@ function createFeature(sequence, div, options) {
                     .attr("font-family", "monospace")
                     .text(function (d, i) {
                         return d
-                    });
+                    })
+                    .on("mouseover", function(e) {
+                        seqSelected = e;
+                        const width = $(window).width();
+                        const posX = this.getBoundingClientRect().x;
+
+                        const divPos = calculatePos(width, posX)
+                        showPopup(true, divPos)
+                    })
+
+                // Single variant popup UI
+                    
+                let optionsHeader = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
+
+                let singlePopup = optionsHeader.append("div") 
+                    .attr("class", "single-variant-popup")
+     
+                    singlePopup.append('svg')
+                    .attr("class", "cancel-icon")
+                    .attr("height", "1.5rem")
+                    .attr("width", "1.5rem")                
+                    .attr("viewBox","0 0 512 640")
+                    .on("click", function() {
+                        showPopup(false)
+                    })
+                    .html(crossIcon)
+                 
+                    singlePopup.append("div").html(`
+                        <p>Enter the variants</p>
+                        <div class="properties-row">
+                            <p class="title">Position</p>
+                            <p class="single-variant-position"></p>
+                        </div>
+                        <div class="properties-row">
+                            <p class="title">Original</p>
+                            <p class="single-variant-original"></p>
+                        </div>
+                        <div class="properties-row">
+                            <p class="title">Variant</p>
+                            <input id="single-variant-input" class="popup-input"></input>
+                        </div>
+                        <span id="single-entry-add-variant" class="add-variant-btn">Add Variant</span>
+                    `)
+
+                 let inputValue;
+
+                 d3.select(div + " #single-variant-input")
+                    .on("change", function() {
+                        inputValue = d3.select(this).property("value");
+                   });
+
+                   d3.select(div + " #single-entry-add-variant")
+                    .on("click", function() {
+                        addVariant(inputValue)
+                  });
+
+                  /**
+                 * Add variant and call onVariantAdded Event
+                 * @param {int} value Variant value
+                 */
+
+                 function addVariant(value) {
+                    let v = {}
+                    v.position = $('.single-variant-position').text();
+                    v.original = seqSelected;
+                    v.variant = value;
+                    variantInputValues.push(v)
+                    callOnVariantAdded(variantInputValues)
+                 }
+                 
+                
+                /**
+                 * Show the single variant entry popup
+                 * @param {boolean} show Show/hide the popup
+                 * @param {float} divPos Position of popup 
+                 */
+
+                function showPopup (show, divPos) {
+                    d3.select(div + " .single-variant-position").text(function() {
+                        console.log(div)
+                        return absoluteSeqPos
+                    })
+
+                    d3.select(div + " .single-variant-original").text(function() {
+                        return seqSelected
+                    })
+
+                    document.getElementById("single-variant-input").value = '';
+
+                    singlePopup
+                    .style("left", `${divPos}px`)
+                    .style("display", show ? "block" : "none")
+                }
+
+                 /**
+                 * Calculate the position of popup
+                 * @param {float} width Screen width of client
+                 * @param {float} posX Position of sequence clicked (in px)
+                 */
+
+                function calculatePos(width, posX) {
+                    const margin = 800;
+                    if(width - posX < margin) return width - (margin/2 + (width-posX));
+                    
+                    return posX;
+                }
             },
             sequenceLine: function () {
                 //Create line to represent the sequence
@@ -793,7 +919,6 @@ function createFeature(sequence, div, options) {
                     .style("z-index", "15")
                     .style("visibility", function (d) {
                         if (d.description) {
-                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
                         } else return "hidden";
                     })
                     .call(d3.helper.tooltip(object));
@@ -1000,10 +1125,12 @@ function createFeature(sequence, div, options) {
         };
 
         this.showFilteredFeature = function(className, color, baseUrl){
+
             var featureSelected = yAxisSVG.selectAll("."+className+"Arrow");
             var minY = margin.left - 105;
             var maxY = margin.left - 7;
 
+            console.log("featureselected", featureSelected)
             var gradient = svg
                 .append("linearGradient")
                 .attr("y1", "0")
@@ -1084,8 +1211,7 @@ function createFeature(sequence, div, options) {
                 svgContainer.selectAll("." + object.className + "Text")
                     .style("visibility", function (d) {
                         if (d.description) {
-                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && object.height > 11 ? "visible" : "hidden";
-                        } else return "hidden";
+                        } else return "none";
                     });
             },
             multiRec: function (object) {
@@ -1690,6 +1816,207 @@ function createFeature(sequence, div, options) {
                     }
                 }
             }
+                    if (!$(div + ' .variantHeader').length) {
+
+                        const optionsHeader = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
+
+                        const multipleVariantContainer = optionsHeader
+                                                    .append("div")
+                                                    .style("position", "relative")
+                                                    .style("display","flex")
+
+                        let showMultipleVariantPopup = true
+
+                        multipleVariantContainer
+                            .append("span")
+                            .attr("class", "add-variant-btn")
+                            .style("margin-left", "auto")
+                            .text("+ Add Multiple Variants")
+                            .on("click", function() {
+                                multipleVariantPopup(showMultipleVariantPopup)
+                                if(variantInputValues.length === 0) {
+                                    appendInputFields()
+                                } 
+                                showMultipleVariantPopup = !showMultipleVariantPopup
+                            })
+
+
+                        const popup = multipleVariantContainer
+                            .append("div")
+                            .attr("class", "multiple-variant-popup")
+                            .html('<p>Enter the variants</p><div class="header"><p>Position</p><p>Original</p><p>Variant</p></div>')
+
+                            popup.append('svg')
+                                .attr("height", "1.5rem")
+                                .attr("width", "1.5rem")
+                                .style("position", "absolute")
+                                .style("top", "0") 
+                                .style("right", "0") 
+                                .style("margin", "1rem")
+                                .style("cursor", "pointer") 
+                                .on("click", function() {
+                                    multipleVariantPopup(false)
+                                })
+                                .attr("viewBox","0 0 512 640")
+                                .html(crossIcon)
+                        
+                        const inputContainer = popup
+                            .append("div")
+                            .attr("class", "input-container")
+
+                        function changeInputValues(value, type, idx) {
+                            switch(type) {
+                                case "position": variantInputValues[idx].position = value;
+                                                $(`#${idx}-original`).text(function() {
+                                                    return sequence.charAt(value-1);
+                                                });
+                                                variantInputValues[idx].original = sequence.charAt(value-1);
+                                                break;
+                                case "variant": variantInputValues[idx].variant = value;
+                                                break;
+                            }
+                        }
+
+                          /**
+                         * Add input fields to multiple variant entry popup
+                         */
+
+                        function appendInputFields() {
+                            const variantValues = { position: "", original: "", variant: "" }
+
+                            variantInputValues.push(variantValues)
+
+                            const inputWrapper = inputContainer.append("div")
+                            
+                            Object.keys(variantValues).forEach(function(key) {
+                                if(key === 'original') {
+                                    inputWrapper
+                                    .append("span")
+                                    .attr("id", function() {
+                                        return variantInputValues.length - 1 + '-' + key;
+                                    })
+                                    .style("margin-top", "0.5rem")
+                                    .text("0")      
+                                } else if(key === 'position') {
+                                    inputWrapper
+                                    .append("input")
+                                    .attr("class", "popup-input")
+                                    .attr("maxlength", "2")
+                                    .attr("id", function() {
+                                        return variantInputValues.length - 1 + '-' + key;
+                                    })       
+                                    .attr("value", function(d, i) {
+                                        return i;
+                                    })
+                                    .on("change", function(d) {
+                                        var value = d3.select(this).property("value");
+                                        var idx = d3.select(this).property("id").split("-")[0]
+                                        changeInputValues(value, key, idx)
+                                    });
+                                } else {
+                                    const dropdown = inputWrapper
+                                    .append("div")
+                                    .attr("class", "dropdown")
+
+                                    dropdown
+                                    .append("button")
+                                    .attr("class", "dropdown-btn")
+                                    .attr("id", function() {
+                                        return variantInputValues.length - 1 + '-' + key;
+                                    })  
+                                    .text("Select variant")
+                                    .on("click", function() {
+                                        let id = $(this).attr('id');
+                                        $("div.dropdown-content").not(`#${id}-dropdown`).hide();
+                                        $(`#${id}-dropdown`).toggle()
+                                    })
+
+                                    const dropdownContainer = dropdown.append("div")
+                                    .attr("id", function() {
+                                        return variantInputValues.length - 1 + '-' + key + '-dropdown';
+                                    })   
+                                    .attr("class", "dropdown-content")
+                                    
+                                    dropdownContainer.append("input")
+                                    .attr("placeholder", "Search...")
+                                    .attr("id", "dropdown-search-input")
+                                    .on("keyup", function() {
+                                        var input, filter, a, i;
+                                        input = document.getElementById("dropdown-search-input");
+                                        filter = input.value.toUpperCase();
+                                        div = document.getElementById("dropdown-container");
+                                        a = div.getElementsByTagName("p");
+                                        for (i = 0; i < a.length; i++) {
+                                          txtValue = a[i].textContent || a[i].innerText;
+                                          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                            a[i].style.display = "";
+                                          } else {
+                                            a[i].style.display = "none";
+                                          }
+                                        }
+                                    })
+
+                                    const dropdownOptions = ["A", "B", "C", "D"]
+                                    
+                                    dropdownOptions.map((d) => {                        
+                                        dropdownContainer.append("p")
+                                        .attr("class", "dropdown-options")
+                                        .attr("id", d)
+                                        .text(d)
+                                    })
+                                }
+                            })
+                        }
+
+                        $(document).on('click', '.dropdown-options', function () {
+                            const value = $(this).attr('id');
+                            $('.dropdown-content').hide()
+
+                            const id = $(this).parent().parent().children('button').attr("id")
+                            const index = id.split('-')[0]
+                            const type = id.split('-')[1]
+
+                            $(this).parent().parent().children('button').text(function() {
+                                return value
+                            });
+                            
+                            changeInputValues(value, type, index)
+                        })
+
+                        const btnContainer = popup.append("div")
+                                                .attr("class", "multiple-variant-btn-container")
+
+                        btnContainer
+                                .append("span")
+                                .attr("class", "add-variant-btn")
+                                .text("+")
+                                .on("click", function() {
+                                    callOnVariantAdded(variantInputValues)
+                                    appendInputFields()
+                                })
+                            
+                        btnContainer
+                                .append("span")
+                                .text("Get Predictions")
+                                .attr("class", "get-predictions-btn")
+                                .on("click", function() {
+                                    callOnGetPredictions(variantInputValues);
+                                })
+
+                        function multipleVariantPopup(showPopup) {
+                            popup
+                            .style("display", showPopup ? "block" : "none")
+                        }
+
+                        multipleVariantContainer
+                        .append("span")
+                            .attr("class", "get-predictions-btn")
+                            .text("Get Predictions")
+                            .on("click", function() {
+                               callOnGetPredictions(variantInputValues);
+                            })
+                    }
+            
             
             svg = d3.select(div).append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -1738,12 +2065,13 @@ function createFeature(sequence, div, options) {
                 .attr("in", "SourceGraphic");
 
             svgContainer.on('mousemove', function () {
-                var absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());;          
-                var pos = Math.round(scalingPosition(absoluteMousePos[0]));
+                let absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());;          
+                seqPos = Math.round(scalingPosition(absoluteMousePos[0]));
+                absoluteSeqPos = seqPos;
                 if (!options.positionWithoutLetter) {
-                    pos += sequence[pos-1] || "";
+                    seqPos += sequence[seqPos-1] || "";
                 }
-                $(div + " #zoomPosition").text(pos);
+                $(div + " #zoomPosition").text(seqPos);
             });
             
             if (typeof options.dottedSequence !== "undefined"){
@@ -1786,6 +2114,38 @@ function createFeature(sequence, div, options) {
         }
 
         initSVG(div, options);
+
+        /**
+        * Calls onVariantAdded Custom Event
+        * @param {Object} variantInputValues Variant Input Values
+        */
+        function callOnVariantAdded(variantInputValues) {
+            if (CustomEvent) {
+                svgElement.dispatchEvent(new CustomEvent(
+                  self.events.VARIANT_ADDED_EVENT,
+                  {detail: variantInputValues}
+                  ));
+              }
+              if (self.trigger)  self.trigger(self.events.VARIANT_ADDED_EVENT, 
+                variantInputValues
+            ); 
+        }
+
+        /**
+        * Calls onGetPredictions Custom Event
+        * @param {Object} variantInputValues Variant Input Values
+        */
+        function callOnGetPredictions(variantInputValues) {
+            if (CustomEvent) {
+                svgElement.dispatchEvent(new CustomEvent(
+                self.events.GET_PREDICTIONS_EVENT,
+                { detail: variantInputValues }
+                ));
+            }
+            if (self.trigger) self.trigger(self.events.GET_PREDICTIONS_EVENT, 
+                variantInputValues
+                    );
+          }
 
         this.addFeature = function (object) {
             Yposition += 20;
