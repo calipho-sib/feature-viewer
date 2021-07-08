@@ -1,7 +1,5 @@
 const { crossIcon } = require('../utils/icons')
 function createFeature(sequence, div, options) {
-        // const cross = crossIcon;
-        // console.log(cross.crossIcon)
 //        var nxSeq = sequence.startsWith('NX_') ? true : false;
         var self = this;
         // if (!div) var div = window;
@@ -794,7 +792,6 @@ function createFeature(sequence, div, options) {
 
                 function showPopup (show, divPos) {
                     d3.select(div + " .single-variant-position").text(function() {
-                        console.log(div)
                         return absoluteSeqPos
                     })
 
@@ -1130,7 +1127,6 @@ function createFeature(sequence, div, options) {
             var minY = margin.left - 105;
             var maxY = margin.left - 7;
 
-            console.log("featureselected", featureSelected)
             var gradient = svg
                 .append("linearGradient")
                 .attr("y1", "0")
