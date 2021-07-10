@@ -163,3 +163,183 @@ path.domain {
 rect{
     rx:2;
 }
+
+/* Styles for variant popups */
+
+.multiple-variant-popup {
+    background-color: #FFF;
+    border: 1px solid rgb(201, 201, 201);
+    border-radius: 0.3rem;
+    color: #000;
+    z-index: 10;
+    display: none;
+    position: absolute;
+    margin-top: 2.5rem;
+    right: 10rem;
+    top: 3rem;
+    padding: 1rem 2rem;
+}
+
+.multiple-variant-container { 
+    display: flex;
+}
+
+.single-variant-popup {
+    position: absolute;
+    display: none;
+    background-color: #FFF;
+    border: 1px solid rgb(201, 201, 201);
+    border-radius: 0.4rem;
+    color: #000;
+    margin-top: 2.5rem;
+    padding: 1rem 2rem;
+}
+
+.single-variant-popup > div > p{
+    margin: 1rem 0;
+}
+
+.cancel-icon {
+    position: absolute;
+    top: 10;
+    right: 10;
+    cursor: pointer;
+}
+
+
+.multiple-variant-popup > .header {
+    display: flex;
+}
+
+.multiple-variant-popup > .header > p {
+    flex: 1;
+    text-align: center;
+}
+
+.multiple-variant-popup > span {
+    text-align: center;
+}
+
+.header > p, .properties-row > .title {
+    color: #726f6f;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.properties-row > .title {
+    display: flex;
+    align-items: center;
+}
+
+.popup-input {
+    width: 5rem !important;
+    border-radius: 0.3rem;
+    height: 2rem !important;
+    outline: none;
+    padding: 0.3rem;
+    text-align: center;   
+    background-color: #f9f9f9;
+    border: 1px solid rgb(165, 165, 165);
+    outline: none;
+}
+
+.multiple-variant-btn-container {
+    display: flex;
+    margin: 2rem 0;
+    column-gap: 1rem;
+}
+
+.properties-row {
+    display: flex;
+    column-gap: 5rem;
+}
+
+.properties-row > div {
+    margin-bottom: 1rem;
+}
+
+.add-variant-btn {
+    background-color: #166FF8;
+    color: #FFF;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    display: flex;
+}
+
+.get-predictions-btn {
+    display: inline-block;
+    margin: 0 1rem;
+    padding: 0px;
+    background-color: #166FF8;
+    color: #FFF;
+    padding: 1rem 2.5rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+}
+
+#single-variant-input {
+    width: 3rem;
+}
+
+.input-container > div {
+    display: flex;
+    column-gap: 2rem;
+    margin-bottom: 1rem;
+}
+
+
+.input-container > div > input {
+    flex: 1;
+}
+
+#single-entry-add-variant {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+  #dropdown-search-input {
+    box-sizing: border-box;
+    background-position: 14px 12px;
+    background-repeat: no-repeat;
+    padding: 14px 10px 12px 10px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    width: 150px;
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f6f6f6;
+    width: 150px;
+    border: 1px solid #ddd;
+    z-index: 1;
+  }
+
+  .dropdown-btn {
+        background-color: #F9f9f9;
+        border: 1px solid rgb(165, 165, 165);
+        padding: 0.6rem 1rem;
+        border-radius: 0.3rem;
+        width: 8rem;
+        border-radius: 0.3rem;
+        height: 2.5rem;
+        cursor: pointer;
+        outline: none;
+  }
+
+  .dropdown-options {
+      padding-left: 1rem;
+      border-bottom: 1px solid rgb(165, 165, 165);
+      padding-bottom: 1rem;
+      cursor: pointer;
+  }
