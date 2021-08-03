@@ -6,8 +6,6 @@ const NXViewerUtils = require("nextprot/src/nextprot-utils.js")["NXViewerUtils"]
 
 var nxClient;
 
-
-
 function nxFeatureViewer(nx, entry, div, options) {
     nxClient = nx;
     return new Promise(function(resolve, reject) {
@@ -20,7 +18,6 @@ function nxFeatureViewer(nx, entry, div, options) {
             nx.getProteinSequence(nxEntry).then(function (data) {
                 var isoSeq = data.filter(function(iso) {return iso.uniqueName === isoNb});
                 var sequence = isoSeq[0].sequence;
-                // Object.setPrototypeOf(createFeature, d);
                 createFeature.prototype.isoform = isoNb;
                 createFeature.prototype.entry = nxEntry;
                 createFeature.prototype.nxClient = nx;
@@ -77,7 +74,6 @@ function getFeaturesByview(nx, list, entry) {
 }
 
 function addNxFeature(featuresName, featuresStyle) {
-    console.log("www")
     var that = this;
     return new Promise(function(resolve, reject) {
         Promise.all(getFeaturesByview(that.nxClient, featuresName, that.entry))
