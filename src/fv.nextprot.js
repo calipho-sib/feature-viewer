@@ -1,4 +1,4 @@
-const FeatureViewer = require('./feature-viewer')
+const createFeature = require('./feature-viewer')
 
 const Nextprot = require("nextprot/src/nextprot-core.js");
 const NXUtils = require("nextprot/src/nextprot-utils.js")["NXUtils"];
@@ -18,11 +18,11 @@ function nxFeatureViewer(nx, entry, div, options) {
             nx.getProteinSequence(nxEntry).then(function (data) {
                 var isoSeq = data.filter(function(iso) {return iso.uniqueName === isoNb});
                 var sequence = isoSeq[0].sequence;
-                FeatureViewer.prototype.isoform = isoNb;
-                FeatureViewer.prototype.entry = nxEntry;
-                FeatureViewer.prototype.nxClient = nx;
-                FeatureViewer.prototype.addNxFeature = addNxFeature;
-                ft = new FeatureViewer(sequence, div, options);
+                createFeature.prototype.isoform = isoNb;
+                createFeature.prototype.entry = nxEntry;
+                createFeature.prototype.nxClient = nx;
+                createFeature.prototype.addNxFeature = addNxFeature;
+                ft = new createFeature(sequence, div, options);
                 resolve(ft);
             })
         }

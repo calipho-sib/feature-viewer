@@ -163,3 +163,261 @@ path.domain {
 rect{
     rx:2;
 }
+
+/* Styles for variant popups */
+
+.multiple-variant-popup {
+    background-color: #FFF;
+    border-radius: 0.6rem;
+    color: #000;
+    z-index: 10;
+    display: none;
+    position: absolute;
+    margin-top: 2.5rem;
+    right: 10rem;
+    top: 3rem;
+    padding: 1rem 2rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.multiple-variant-container { 
+    display: flex;
+}
+
+.single-variant-popup {
+    position: absolute;
+    display: none;
+    background-color: #FFF;
+    border-radius: 0.6rem;
+    color: #000;
+    margin-top: 2.5rem;
+    padding: 1rem 2rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.single-variant-popup > div > p{
+    margin: 1rem 0;
+}
+
+.cancel-icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    margin: 1rem;
+    cursor: pointer;
+}
+
+
+.multiple-variant-popup > .header {
+    display: flex;
+    align-items: center;
+    align-content: center;
+}
+
+.multiple-variant-popup > .header > p {
+    flex: 1;
+    text-align: center;
+}
+
+.multiple-variant-popup > span {
+    text-align: center;
+}
+
+.header > p, .properties-row > .title {
+    color: #726f6f;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.properties-row > .title {
+    display: flex;
+    align-items: center;
+}
+
+.popup-input {
+    width: 5rem !important;
+    border-radius: 0.3rem;
+    height: 2rem !important;
+    outline: none;
+    padding: 0.3rem;
+    text-align: center;   
+    background-color: #f9f9f9;
+    border: 2px solid rgb(230, 230, 230);
+    outline: none;
+}
+
+.popup-input:focus {
+    border: 2px solid #166FF8;
+}
+
+.multiple-variant-btn-container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+    column-gap: 1rem;
+}
+
+.properties-row {
+    display: flex;
+    min-height: 3rem;
+    width: 15rem;
+}
+
+.properties-row > div {
+    margin-left: auto;
+    margin-top: 0.6rem;
+}
+
+.add-variant-btn, .single-add-variant-btn {
+    background-color: #166FF8;
+    color: #FFF;
+    border: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    display: flex;
+    padding: 1rem 2rem;
+    font-size: 0.9rem;
+}
+
+.single-add-variant-btn {
+    margin: 2rem auto 1rem auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.single-add-variant-btn:disabled, 
+.add-variant-btn:disabled, 
+.get-predictions-btn
+ {
+     background-color: #7D7D7D;
+     color: #DFDFDF;
+     cursor: not-allowed;
+ }
+.get-predictions-btn {
+    display: inline-block;
+    background-color: #166FF8;
+    color: #FFF;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    padding: 1rem 2rem;
+    font-size: 0.9rem;
+}
+
+#single-variant-input {
+    width: 3rem;
+}
+
+#single-variant-input:focus {
+   border: 2px solid #166FF8;
+}
+
+.input-container {
+    min-height: 3rem;
+}
+
+.input-container > div {
+    display: flex;
+    column-gap: 2rem;
+    padding: 1rem 0;
+    border-top: 1px solid #eee;
+}
+
+.input-container > div > input {
+    flex: 1;
+    align-self: center;
+}
+
+#single-entry-add-variant {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+  #dropdown-search-input {
+    box-sizing: border-box;
+    background-position: 14px 12px;
+    background-repeat: no-repeat;
+    padding: 14px 10px 12px 10px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    width: 150px;
+  }
+
+  .dropdown {
+    position: relative;
+    display: flex;
+  }
+  
+  .dropdown-content, #single-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f6f6f6;
+    width: 150px;
+    border: 1px solid #ddd;
+    z-index: 1;
+  }
+
+  .dropdown-option-container{
+      max-height: 20rem;
+      overflow-y: auto;
+  }
+
+  .dropdown-btn {
+      display: flex;
+      align-items: center;
+        background-color: #F9f9f9;
+        border: 2px solid rgb(230, 230, 230);
+        padding: 0.6rem 1rem;
+        border-radius: 0.3rem;
+        width: 8rem;
+        border-radius: 0.3rem;
+        cursor: pointer;
+        outline: none;
+  }
+
+  .dropdown-btn:focus {
+    border: 2px solid #166FF8;
+  }
+
+  .dropdown-options, .single-dropdown-options {
+      border-bottom: 1px solid #eee;
+      padding: 0.6rem 0;
+      text-align: center;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-block-start: 0em;
+     margin-block-end: 0em;
+     background-color: #fff;
+     color: rgb(26, 26, 26);
+  }
+
+  .dropdown-options:hover, .single-dropdown-options:hover {
+      background-color: #f3f9fd;
+      color: #000;
+  }
+
+  .delete-icon {
+      height: 1.3rem;
+      width: 1.3rem;
+      cursor: pointer;
+  }
+    
+
+  .bottom-arrow-icon {
+    height: 0.5rem;
+    width: 0.5rem;
+    padding-left: 0.3rem;
+    margin-top: 0.1rem;
+    position: absolute;
+    right: 10px;
+    top: 8px;
+  }
+
+  .original-input {
+    margin-top: 0.5rem;
+    min-width: 4rem;
+    text-align: center;
+  }

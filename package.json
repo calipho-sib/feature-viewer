@@ -28,8 +28,8 @@
     "biojs-events": "x.x.x",
     "bootstrap": "x.x.x",
     "d3": "3.5.6",
-    "jquery": "x.x.x",
-    "nextprot": "x.x.x"
+    "jquery": "^3.6.0",
+    "nextprot": "0.0.162"
   },
   "devDependencies": {
     "css-loader": "^5.2.6",
