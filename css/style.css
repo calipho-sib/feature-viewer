@@ -421,3 +421,9 @@ rect{
     min-width: 4rem;
     text-align: center;
   }
+
+  #variant-error, .error {
+      color: red;
+      font-size: 0.8rem;
+      margin: 1rem 0 0 0; 
+  }
