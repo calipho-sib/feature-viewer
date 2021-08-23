@@ -696,6 +696,7 @@ function createFeature(sequence, div, options) {
                 if (!start) var start = 0;
 
                 let seqSelected;
+                let error = "";
 
                 svgContainer.append("g")
                     .attr("class", "seqGroup")
@@ -748,7 +749,7 @@ function createFeature(sequence, div, options) {
                         <p>Enter the variants</p>
                         <div class="properties-row">
                             <p class="title">Position</p>
-                            <div class="single-variant-position"></div>
+                            <div class="single-variant-nextprotPosition"></div>
                         </div>
                         <div class="properties-row">
                             <p class="title">Original</p>
@@ -785,6 +786,11 @@ function createFeature(sequence, div, options) {
                         return 'single-dropdown-content';
                     })   
 
+                    popupContainer.append("p")
+                    .attr("class", "error")
+                    .attr("id", "single-variant-error")
+                    .text(error)
+
                     popupContainer.append("button")
                     .attr("disabled", true)
                     .attr("class", "single-add-variant-btn")
@@ -798,20 +804,20 @@ function createFeature(sequence, div, options) {
                     .attr("placeholder", "Search...")
                     .attr("id", "dropdown-search-input")
                     .on("keyup", function() {
-                        let input, filter, p, i, div;
+                        let input, filter, p, i, div, txtValue;
                         input = document.getElementById("dropdown-search-input");
                         filter = input.value.toUpperCase();
                         div = document.getElementById("dropdown-options");
                         p = div.getElementsByTagName("p");
 
-                        p.map((_, i) => {
-                            let txtValue = p[i].textContent || p[i].innerText;
+                        for (i = 0; i < p.length; i++) {
+                            txtValue = p[i].textContent || p[i].innerText;
                             if (txtValue.toUpperCase().indexOf(filter) > -1) {
                               p[i].style.display = "";
                             } else {
                               p[i].style.display = "none";
                             }
-                        })
+                          }
                     })
 
                     let dropdownOptionContainer = dropdownContainer.append("div")
@@ -828,6 +834,13 @@ function createFeature(sequence, div, options) {
                     $(document).on('click', '.single-dropdown-options', function () {
                         const value = $(this).attr('id');
                         $('#single-dropdown-content').hide()
+                        let variantAminoAcid = value.split(" /")[0];
+                        if(seqSelected === variantAminoAcid) {
+                            error = "Original value cannot be same as variant";
+                            $('#single-variant-error').text(error);
+                            return;
+                        }
+                        $('#single-variant-error').text("");
                         variantValue = value;
                         $(this).parent().parent().parent().children('button').text(function() {
                             return value
@@ -845,12 +858,13 @@ function createFeature(sequence, div, options) {
                         console.log("Variant not added")
                         return;
                     }
+                    let variantAminoAcid = variantValue.split(" /")[0];
                     let values = {};
-                    let position = $('.single-variant-position').text();
+                    let nextprotPosition = $('.single-variant-nextprotPosition').text();
 
-                    values.position = Number(position);
-                    values['original-amino-acid'] = seqSelected;
-                    values['variant-amino-acid'] = variantValue.split(" /")[0];
+                    values.nextprotPosition = Number(nextprotPosition);
+                    values['originalAminoAcid'] = seqSelected;
+                    values['variantAminoAcid'] = variantAminoAcid;
                     singleVariant.push(values)
 
                     callOnVariantChanged()
@@ -867,10 +881,12 @@ function createFeature(sequence, div, options) {
                     // reset default value
                     $('#single-variant-dropdown-btn').text("Select variant")
                     variantValue = "";
+                    error = "";
+                    $('#single-variant-error').text(error);
                     $(".single-add-variant-btn").attr('disabled', true);
 
 
-                    $(".single-variant-position").text(function() {
+                    $(".single-variant-nextprotPosition").text(function() {
                         return absoluteSeqPos
                     })
 
@@ -1903,6 +1919,7 @@ function createFeature(sequence, div, options) {
 
                         let showMultipleVariantPopup = true;
                         let inputCount = 0;
+                        let error = "";
 
                         multipleVariantContainer
                             .append("span")
@@ -1933,16 +1950,20 @@ function createFeature(sequence, div, options) {
                                             $this.parent().remove()
                                             const variantIndex = multipleVariant.findIndex(m => m.id == id)
                                             multipleVariant.splice(variantIndex, 1)
+                                            callOnVariantChanged()
                                         }
                                     });
 
                                     if(multipleVariant.length === 0) {
                                         inputCount = 0;
-                                        const variantValues = { id: inputCount, position: "", 'original-amino-acid': "", 'variant-amino-acid': "" }
-                                        multipleVariant.push(variantValues)
+                                        setInputError(false);
+                                        multipleVariant = [];
+                                        callOnVariantChanged();
+                                        const variantValues = { id: inputCount, nextprotPosition: "", originalAminoAcid: "", variantAminoAcid: "" }
+                                        multipleVariant.push(variantValues);
                                         appendInputFields();
                                     } 
-                                    callOnVariantChanged()
+                                    
                                 })
                                 
                                 $('#select-all-variant').on("click", function() {
@@ -1973,17 +1994,24 @@ function createFeature(sequence, div, options) {
 
                         function updateInputValues(value, type, idx) {
                             const variantIndex = multipleVariant.findIndex(m => m.id == idx);
+
                             value = value.split(" /")[0];
+
                             switch(type) {
-                                case "position": 
-                                                let originalValue = sequence.charAt(Number(value)-1);
-                                                multipleVariant[variantIndex].position = Number(value);
-                                                multipleVariant[variantIndex]['original-amino-acid'] = originalValue;
+                                case "nextprotPosition": 
+                                                const originalValue = sequence.charAt(Number(value)-1);
                                                 $(`#${idx}-original`).text(function() {
                                                     return `${originalValue} / ${dropdownOptions[originalValue]}`
                                                 });
+                                                multipleVariant[variantIndex]['originalAminoAcid'] = originalValue;
+                                                multipleVariant[variantIndex].nextprotPosition = Number(value);
+                                                if(!validateInput(originalValue, multipleVariant[variantIndex]['variantAminoAcid'])) {
+                                                    multipleVariant[variantIndex]['variantAminoAcid'] = "";
+                                                    $(`#${idx}-variant`).text("Select variant");
+                                                };
                                                 break;
-                                case "variant": multipleVariant[variantIndex]['variant-amino-acid'] = value;
+                                case "variantAminoAcid": if(!validateInput(multipleVariant[variantIndex]['originalAminoAcid'], value)) break;
+                                                multipleVariant[variantIndex]['variantAminoAcid'] = value;
                                                 break;
                             }
                         }
@@ -1995,7 +2023,7 @@ function createFeature(sequence, div, options) {
                         function appendInputFields() {
                             $('#multiple-add-variant-btn').attr("disabled", true)
 
-                            const variantValues = { id: inputCount, position: "", 'original-amino-acid': "", 'variant-amino-acid': "" }
+                            const variantValues = { id: inputCount, nextprotPosition: "", 'originalAminoAcid': "", 'variantAminoAcid': "" }
                             multipleVariant.push(variantValues)
 
 
@@ -2013,8 +2041,9 @@ function createFeature(sequence, div, options) {
                             .attr("class", "popup-input")   
                             .attr("maxlength", "5")
                             .attr("id", function() {
-                                return inputCount + '-position';
+                                return inputCount + '-nextprotPosition';
                             })
+                            .attr("type", "number")
                             .attr("value", function(d, i) {
                                 return i;
                             })
@@ -2023,8 +2052,7 @@ function createFeature(sequence, div, options) {
                                 if(value > sequence.length) return
                                 d3.select(this).attr("value", value)
                                 var idx = d3.select(this).property("id").split("-")[0]
-                                updateInputValues(value, "position", idx)
-                                validateInput()
+                                updateInputValues(value, "nextprotPosition", idx)
                             });
 
                             
@@ -2073,14 +2101,14 @@ function createFeature(sequence, div, options) {
                                 div = document.getElementById("dropdown-options");
                                 p = div.getElementsByTagName("p");
 
-                                p.map((_, i) => {
-                                    let txtValue = p[i].textContent || p[i].innerText;
+                                for (i = 0; i < p.length; i++) {
+                                    txtValue = p[i].textContent || p[i].innerText;
                                     if (txtValue.toUpperCase().indexOf(filter) > -1) {
                                       p[i].style.display = "";
                                     } else {
                                       p[i].style.display = "none";
                                     }
-                                })
+                                  }
                             })
 
                             let dropdownOptionContainer = dropdownContainer.append("div")
@@ -2100,15 +2128,30 @@ function createFeature(sequence, div, options) {
                          * Check if input values are not null before adding next set of input fields
                          */
 
-                        function validateInput(){
+                        function validateInput(original, variant){
+                            if(original === variant) {
+                                setInputError(true);
+                                $('#multiple-add-variant-btn').attr("disabled", true);
+                                return false;
+                            } else {
+                                setInputError(false)
+                            }
+
                             const lastSelectValue = $('.input-container').children(":last").children(":last").children(":first").text();
                             const lastInputValue = $('.input-container').children(":last").children(".popup-input").attr("value");
                            
-                            if(lastSelectValue == "" || lastSelectValue == "Select variant" || lastInputValue == 0) {
-                                return false;
+                            if(!(lastSelectValue == "" || lastSelectValue == "Select variant" || lastInputValue == 0)) {
+                                $('#multiple-add-variant-btn').attr("disabled", false);
                             } 
-                            $('#multiple-add-variant-btn').attr("disabled", false);
                             return true;
+                        }
+
+                         /**
+                         * Set input error value
+                         */
+                        function setInputError(showError) {
+                            error = showError ? "Original value cannot be same as variant" : "";
+                            $('#variant-error').text(error);
                         }
 
                         $(document).on('click', '.dropdown-options', function () {
@@ -2121,12 +2164,16 @@ function createFeature(sequence, div, options) {
                                 return value
                             });
                             
-                            updateInputValues(value, "variant", index)
-                            validateInput()
+                            updateInputValues(value, "variantAminoAcid", index)
                         })
+                        
+                        popup.append("div")
+                                    .attr("id", "variant-error")
+                                    .text("")
 
                         const btnContainer = popup.append("div")
                                                 .attr("class", "multiple-variant-btn-container")
+                        
 
                         btnContainer
                                 .append("button")
@@ -2135,7 +2182,6 @@ function createFeature(sequence, div, options) {
                                 .attr("disabled", true)
                                 .text("+")
                                 .on("click", function() {
-                                    if(!validateInput()) return;
                                     callOnVariantChanged()
                                     appendInputFields()
                                 })
@@ -2268,10 +2314,10 @@ function createFeature(sequence, div, options) {
         * Calls onVariantChanged Custom Event
         */
         function callOnVariantChanged() {
-            let values = multipleVariant;
+            let values = [...multipleVariant];
             if(values.length > 0) {
                 const lastValue = values.length-1;
-                if(values[lastValue]['original-amino-acid'] == "" || values[lastValue]['variant-amino-acid'] == "") {
+                if(values[lastValue]['originalAminoAcid'] == "" || values[lastValue]['variantAminoAcid'] == "") {
                     values.splice(lastValue, 1);
                 }
             }
@@ -2295,9 +2341,10 @@ function createFeature(sequence, div, options) {
         */
         function callOnGetPredictions() {
             let values = multipleVariant.map(({id,...rest}) => ({...rest}));
+
             if(values.length > 0) {
                 const lastValue = values.length-1;
-                if(values[lastValue]['original-amino-acid'] == "" || values[lastValue]['variant-amino-acid'] == "") {
+                if(values[lastValue]['originalAminoAcid'] == "" || values[lastValue]['variantAminoAcid'] == "") {
                     values.splice(lastValue, 1);
                 }
             }
