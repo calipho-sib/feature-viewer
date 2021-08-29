@@ -1,5 +1,6 @@
 const { crossIcon, deleteIcon, bottomArrowIcon } = require('../utils/icons')
 const { dropdownOptions } = require('../utils/data')
+const { toast } = require("../helpers/toast");
 
 function createFeature(sequence, div, options) {
 //        var nxSeq = sequence.startsWith('NX_') ? true : false;
@@ -696,7 +697,6 @@ function createFeature(sequence, div, options) {
                 if (!start) var start = 0;
 
                 let seqSelected;
-                let error = "";
 
                 svgContainer.append("g")
                     .attr("class", "seqGroup")
@@ -767,15 +767,15 @@ function createFeature(sequence, div, options) {
 
                     let dropdownWrapper = dropdown.append("div")
                     .attr("class", "dropdown")
+                    .on("click", function() {
+                        $(`#single-dropdown-content`).toggle()
+                    })
 
                     dropdownWrapper
                     .append("button")
                     .attr("class", "dropdown-btn")
                     .attr("id", "single-variant-dropdown-btn")
                     .text("Select variant")
-                    .on("click", function() {
-                        $(`#single-dropdown-content`).toggle()
-                    })
                     
                     dropdownWrapper.append("div")
                     .attr("class", "bottom-arrow-icon")
@@ -786,10 +786,9 @@ function createFeature(sequence, div, options) {
                         return 'single-dropdown-content';
                     })   
 
-                    popupContainer.append("p")
-                    .attr("class", "error")
-                    .attr("id", "single-variant-error")
-                    .text(error)
+                    popupContainer.append("div")
+                    .attr("class", "toast")
+                    .attr("id", "single-variant-toast")
 
                     popupContainer.append("button")
                     .attr("disabled", true)
@@ -836,11 +835,12 @@ function createFeature(sequence, div, options) {
                         $('#single-dropdown-content').hide()
                         let variantAminoAcid = value.split(" /")[0];
                         if(seqSelected === variantAminoAcid) {
-                            error = "Original value cannot be same as variant";
-                            $('#single-variant-error').text(error);
+                            toast(true, "error", "#single-variant-toast")
+                            $(".single-add-variant-btn").attr('disabled', true);
+                            $('#single-variant-dropdown-btn').text("Select variant");
                             return;
                         }
-                        $('#single-variant-error').text("");
+                        toast(false, "error", "#single-variant-toast")
                         variantValue = value;
                         $(this).parent().parent().parent().children('button').text(function() {
                             return value
@@ -867,6 +867,7 @@ function createFeature(sequence, div, options) {
                     values['variantAminoAcid'] = variantAminoAcid;
                     singleVariant.push(values)
 
+                    toast(true, "success", "#single-variant-toast");
                     callOnVariantChanged()
                  }
 
@@ -879,12 +880,11 @@ function createFeature(sequence, div, options) {
 
                 function showPopup (show, divPos) {
                     // reset default value
-                    $('#single-variant-dropdown-btn').text("Select variant")
                     variantValue = "";
-                    error = "";
-                    $('#single-variant-error').text(error);
+                    toast(false, "error", "#single-variant-error");
+                    $('#single-variant-dropdown-btn').text("Select variant")
+                    $('#single-variant-error').text("");
                     $(".single-add-variant-btn").attr('disabled', true);
-
 
                     $(".single-variant-nextprotPosition").text(function() {
                         return absoluteSeqPos
@@ -1919,7 +1919,6 @@ function createFeature(sequence, div, options) {
 
                         let showMultipleVariantPopup = true;
                         let inputCount = 0;
-                        let error = "";
 
                         multipleVariantContainer
                             .append("span")
@@ -2021,7 +2020,11 @@ function createFeature(sequence, div, options) {
                          */
 
                         function appendInputFields() {
-                            $('#multiple-add-variant-btn').attr("disabled", true)
+                            $('#multiple-add-variant-btn').attr("disabled", true);
+
+                            if(multipleVariant.length > 0) {
+                                toast(true, "success", "#multiple-variant-toast");
+                            }
 
                             const variantValues = { id: inputCount, nextprotPosition: "", 'originalAminoAcid': "", 'variantAminoAcid': "" }
                             multipleVariant.push(variantValues)
@@ -2150,8 +2153,7 @@ function createFeature(sequence, div, options) {
                          * Set input error value
                          */
                         function setInputError(showError) {
-                            error = showError ? "Original value cannot be same as variant" : "";
-                            $('#variant-error').text(error);
+                            toast(showError, "error", "#multiple-variant-toast")
                         }
 
                         $(document).on('click', '.dropdown-options', function () {
@@ -2167,9 +2169,9 @@ function createFeature(sequence, div, options) {
                             updateInputValues(value, "variantAminoAcid", index)
                         })
                         
-                        popup.append("div")
-                                    .attr("id", "variant-error")
-                                    .text("")
+                                    popup.append("div")
+                                    .attr("class", "toast")
+                                    .attr("id", "multiple-variant-toast")
 
                         const btnContainer = popup.append("div")
                                                 .attr("class", "multiple-variant-btn-container")

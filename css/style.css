@@ -187,6 +187,7 @@ rect{
 .single-variant-popup {
     position: absolute;
     display: none;
+    max-width: 15rem;
     background-color: #FFF;
     border-radius: 0.6rem;
     color: #000;
@@ -422,8 +423,25 @@ rect{
     text-align: center;
   }
 
-  #variant-error, .error {
-      color: red;
+  .toast  {
+      display: flex;
       font-size: 0.8rem;
-      margin: 1rem 0 0 0; 
+      margin: 1rem 0 0 0;
+      font-weight: bold;
+      align-items: center;
   }
+
+  .toast-icon {
+    height: 2rem;
+    width: 2rem;
+    padding-right: 0.3rem;
+  }
+
+  .error {
+    color: #982a2e;
+  }
+
+  .success {
+    color: #326f4a;
+  }
+
