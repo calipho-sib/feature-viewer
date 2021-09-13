@@ -337,7 +337,7 @@ rect{
     margin: 2rem 0;
 }
 
-  #dropdown-search-input {
+  #dropdown-search-input,.dropdown-input {
     box-sizing: border-box;
     background-position: 14px 12px;
     background-repeat: no-repeat;
@@ -429,6 +429,7 @@ rect{
       margin: 1rem 0 0 0;
       font-weight: bold;
       align-items: center;
+      justify-content: center;
   }
 
   .toast-icon {
