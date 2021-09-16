@@ -768,7 +768,7 @@ function createFeature(sequence, div, options) {
                     let dropdownWrapper = dropdown.append("div")
                     .attr("class", "dropdown")
                     .on("click", function() {
-                        $(`#single-dropdown-content`).toggle()
+                        $(`#single-dropdown-content`).show()
                     })
 
                     dropdownWrapper
@@ -786,10 +786,6 @@ function createFeature(sequence, div, options) {
                         return 'single-dropdown-content';
                     })   
 
-                    popupContainer.append("div")
-                    .attr("class", "toast")
-                    .attr("id", "single-variant-toast")
-
                     popupContainer.append("button")
                     .attr("disabled", true)
                     .attr("class", "single-add-variant-btn")
@@ -798,6 +794,10 @@ function createFeature(sequence, div, options) {
                         let value = $('#single-variant-dropdown-btn').text()
                         addVariant(value)
                     })
+
+                    popupContainer.append("div")
+                    .attr("class", "toast")
+                    .attr("id", "single-variant-toast")
                     
                     dropdownContainer.append("input")
                     .attr("placeholder", "Search...")
@@ -1924,7 +1924,7 @@ function createFeature(sequence, div, options) {
                             .append("span")
                             .attr("class", "add-variant-btn")
                             .style("margin-left", "auto")
-                            .text("+ Add Multiple Variants")
+                            .text("+ Add Variants")
                             .on("click", function() {
                                 multipleVariantPopup(showMultipleVariantPopup)
                                 if(multipleVariant.length === 0) {
@@ -2096,12 +2096,13 @@ function createFeature(sequence, div, options) {
                             
                             dropdownContainer.append("input")
                             .attr("placeholder", "Search...")
-                            .attr("id", "dropdown-search-input")
+                            .attr("id", `dropdown-search-input-${inputCount}`)
+                            .attr("class", "dropdown-input")
                             .on("keyup", function() {
-                                var input, filter, p, i, div;
-                                input = document.getElementById("dropdown-search-input");
-                                filter = input.value.toUpperCase();
-                                div = document.getElementById("dropdown-options");
+                                let filter, p, i, div;
+                                let id = this.id.split("-")[3];
+                                filter = this.value.toUpperCase();
+                                div = document.getElementById(`dropdown-options-${id}`);
                                 p = div.getElementsByTagName("p");
 
                                 for (i = 0; i < p.length; i++) {
@@ -2116,7 +2117,7 @@ function createFeature(sequence, div, options) {
 
                             let dropdownOptionContainer = dropdownContainer.append("div")
                             .attr("class", "dropdown-option-container")
-                            .attr("id", "dropdown-options")
+                            .attr("id", `dropdown-options-${inputCount}`)
 
                             Object.entries(dropdownOptions).forEach(([key, value]) => {
                                 dropdownOptionContainer.append("p")
@@ -2169,13 +2170,9 @@ function createFeature(sequence, div, options) {
                             updateInputValues(value, "variantAminoAcid", index)
                         })
                         
-                                    popup.append("div")
-                                    .attr("class", "toast")
-                                    .attr("id", "multiple-variant-toast")
-
-                        const btnContainer = popup.append("div")
-                                                .attr("class", "multiple-variant-btn-container")
                         
+                        const btnContainer = popup.append("div")
+                        .attr("class", "multiple-variant-btn-container")
 
                         btnContainer
                                 .append("button")
@@ -2195,19 +2192,15 @@ function createFeature(sequence, div, options) {
                                 .on("click", function() {
                                     callOnGetPredictions();
                                 })
+                        
+                        popup.append("div")
+                                .attr("class", "toast")
+                                .attr("id", "multiple-variant-toast")
 
                         function multipleVariantPopup(showPopup) {
                             popup
                             .style("display", showPopup ? "block" : "none")
                         }
-
-                        multipleVariantContainer
-                        .append("span")
-                            .attr("class", "get-predictions-btn")
-                            .text("Get Predictions")
-                            .on("click", function() {
-                               callOnGetPredictions();
-                            })
                     }
             
             
@@ -2315,7 +2308,7 @@ function createFeature(sequence, div, options) {
         /**
         * Calls onVariantChanged Custom Event
         */
-        function callOnVariantChanged() {
+         function callOnVariantChanged() {
             let values = [...multipleVariant];
             if(values.length > 0) {
                 const lastValue = values.length-1;
@@ -2334,14 +2327,10 @@ function createFeature(sequence, div, options) {
               }
               if (self.trigger) self.trigger(self.events.VARIANT_ADDED_EVENT, 
                 values
-            ); 
-        }
-        
+            );  
+        }        
 
-        /**
-        * Calls onGetPredictions Custom Event
-        */
-        function callOnGetPredictions() {
+        function getPredictionValues() {
             let values = multipleVariant.map(({id,...rest}) => ({...rest}));
 
             if(values.length > 0) {
@@ -2352,6 +2341,15 @@ function createFeature(sequence, div, options) {
             }
 
             values = [...values, ...singleVariant];
+
+            return values;
+        }
+
+        /**
+        * Calls onGetPredictions Custom Event
+        */
+        function callOnGetPredictions() {
+            const values = getPredictionValues()
             
             if (CustomEvent) {
                 svgElement.dispatchEvent(new CustomEvent(
@@ -2363,6 +2361,10 @@ function createFeature(sequence, div, options) {
                 values
                 );
           }
+
+        this.getPredictions = function() {
+            return getPredictionValues();
+        }
 
         this.addFeature = function (object) {
             Yposition += 20;
