@@ -187,7 +187,7 @@ rect{
 .single-variant-popup {
     position: absolute;
     display: none;
-    max-width: 15rem;
+    max-width: 25rem;
     background-color: #FFF;
     border-radius: 0.6rem;
     color: #000;
