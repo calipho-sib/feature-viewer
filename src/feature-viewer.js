@@ -1916,7 +1916,6 @@ function createFeature(sequence, div, options) {
                                                     .style("position", "relative")
                                                     .style("display","flex")
                                                     .style("column-gap", "1rem")
-                                                    .style("margin-right", "40px")
 
                         let showMultipleVariantPopup = true;
                         let inputCount = 0;
