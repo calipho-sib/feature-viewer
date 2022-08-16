@@ -833,18 +833,16 @@ function createFeature(sequence, div, options) {
                     const dropdownContainer = dropdownWrapper.append("div")
                     .attr("id", function() {
                         return 'single-dropdown-content';
-                    })   
-                    if (options && options.showvariant){
-
-                        popupContainer.append("button")
-                        .attr("disabled", true)
-                        .attr("class", "single-add-variant-btn")
-                        .text("Add Variant")
-                        .on("click", function() {
-                            let value = $('#single-variant-dropdown-btn').text()
-                            addVariant(value)
                         })
-                    }
+
+                    popupContainer.append("button")
+                    .attr("disabled", true)
+                    .attr("class", "single-add-variant-btn")
+                    .text("Add Variant")
+                    .on("click", function() {
+                        let value = $('#single-variant-dropdown-btn').text()
+                        addVariant(value)
+                    })
 
                     popupContainer.append("div")
                     .attr("class", "toast")
@@ -2045,8 +2043,7 @@ function createFeature(sequence, div, options) {
                         let showMultipleVariantPopup = true;
                         let inputCount = 0;
 
-                        if (options && options.showvariant){
-                            multipleVariantContainer
+                        multipleVariantContainer
                             .append("span")
                             .attr("class", "add-variant-btn")
                             .style("margin-left", "auto")
@@ -2058,7 +2055,6 @@ function createFeature(sequence, div, options) {
                                 } 
                                 showMultipleVariantPopup = !showMultipleVariantPopup
                             })
-                        }
 
 
                         const popup = multipleVariantContainer
