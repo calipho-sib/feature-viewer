@@ -1825,7 +1825,6 @@ function createFeature(sequence, div, options) {
                     'verticalLine': false,
                     'toolbar': false,
                     'bubbleHelp': false,
-                    'showvariant' : false,
                     'unit': "units",
                     'zoomMax': 50
                 }
