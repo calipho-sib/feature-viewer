@@ -604,6 +604,7 @@ function createFeature(sequence, div, options) {
                 object.level = level;
                 object.shift = shift * 10 +5;
             },
+            // With current implementation bar chart will only consider the non-negative values. 
             bar: function (object) {
                 if (!object.height) object.height = 10;
                 var shift = parseInt(object.height);
@@ -694,7 +695,6 @@ function createFeature(sequence, div, options) {
                         if (d.filter(function(l){ return l.y < 0}).length) negativeNumbers = true;
                     });
                     preComputing.line(object);
-                    console.log("ypos" + Yposition)
                     fillSVG.line(object, Yposition);
                     Yposition += pathLevel;
                     yData.push({
@@ -1001,10 +1001,9 @@ function createFeature(sequence, div, options) {
                 forcePropagation(histog);
             },
             bar: function (object, position) {
-                console.log("bar",object)
-                if (!object.interpolation) object.interpolation = "monotone";
                 if (object.fill === undefined) object.fill = true;
                 var histog = svgContainer.append("g")
+                    .attr("class", "bar")
                     .attr("transform", "translate(0," + position + ")");
                 var dataline=[];
                 dataline.push([{
@@ -1014,18 +1013,19 @@ function createFeature(sequence, div, options) {
                         x: fvLength,
                         y: 0
                     }]);
+
                 var yScale = d3.scale.linear()
                     .domain([0,object.maxValue])
                     .range([0,object.shift]);
-                    console.log("yscale  :",yScale(300))
+
                     histog.selectAll(".line" + object.className)
                     .data(dataline)
                     .enter()
                     .append("path")
                     .attr("clip-path", "url(#clip)")
-                    .attr("d", lineBond)
+                    .attr("d", lineGen)
                     .attr("class", "line" + object.className)
-                    .style("z-index", "10")
+                    .style("z-index", "0")
                     .style("stroke", "black")
                     .style("stroke-width", "1px");
                     object.data.forEach(function(dd,i,array){
@@ -1034,19 +1034,15 @@ function createFeature(sequence, div, options) {
                   .enter().append("rect")
                     .attr("class", "element " + object.className)
                     .attr("x", function (d) {
-                        console.log("d",d)
-                        console.log("d",d.x)
                         return scaling(d.x - 0.4)
                     })
                     .attr("width", function (d) {
                         if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
                         else return scaling(d.x + 0.4) - scaling(d.x - 0.4)})
-                    // .attr("x", function(d) { return (d.x1); })
                     .attr("y", function(d) { return object.shift - yScale(d.y); })
-                    // .attr("width", 0.9)
                     .attr("height", function(d) { return yScale(d.y); })
                     .style("fill", function(d) {return d.color ||  object.color})
-                    .style("z-index", "0")
+                    .style("z-index", "3")
                     .call(d3.helper.tooltip(object));
                     })
 
@@ -1276,11 +1272,6 @@ function createFeature(sequence, div, options) {
                          );
             },
             bar: function (object) {
-                console.log("transob", object);
-                svgContainer.selectAll(".line" + object.className)
-                    .attr("d",line.x(function (d) {
-                    return scaling(d.x);
-                }));
                 var transit;
                 if (animation) {
                     transit = svgContainer.selectAll("." + object.className)
