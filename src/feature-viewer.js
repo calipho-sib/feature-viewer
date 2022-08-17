@@ -158,6 +158,15 @@ function createFeature(sequence, div, options) {
                             var first_line = '<p style="margin:2px;color:' + tooltipColor +'">position : <span id="tLineX">' + elemHover.x + '</span></p>';
                             var second_line = '<p style="margin:2px;color:' + tooltipColor +'">count : <span id="tLineC">' + elemHover.y + '</span></p>';
                         }
+                    } else if (object.type === "bar") {
+                        if (pD.description) {
+                            var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">position : <span id="tLineX">' + pD.x + ' <span> frequency : <span id="tLineC">' + (pD.absoluteY ? pD.absoluteY : pD.y)  + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
+                        }
+                        else {
+                            var first_line = '<p style="margin:2px;color:' + tooltipColor +'">position : <span id="tLineX">' + pD.x + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:' + tooltipColor +'">frequency : <span id="tLineC">' + (pD.absoluteY ? pD.absoluteY : pD.y) + '</span></p>';
+                        }
                     } else if (object.type === "unique" || pD.x === pD.y) {
                         var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + pD.x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
