@@ -1256,7 +1256,7 @@ function createFeature(sequence, div, options) {
                     object.data.forEach(function(dd,i,array){
                     histog.selectAll()
                     .data(dd)
-                  .enter().append("rect")
+                    .enter().append("rect")
                     .attr("class", "element " + object.className)
                     .attr("x", function (d) {
                         return scaling(d.x - 0.4)
