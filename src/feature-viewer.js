@@ -666,6 +666,17 @@ function createFeature(sequence, div, options) {
                 object.data.sort(function (a, b) {
                     return a.x - b.x;
                 });
+                if (object.highlight && Array.isArray(object.highlight)) {
+                    object.highlight.forEach(highlight => {
+                        for (var i in object.data) { 
+                            if (highlight.x == object.data[i].x && highlight.y == object.data[i].y){
+                                object.data[i].color = highlight.color
+                                object.data[i].description = highlight.highlightText
+                            }
+                            
+                        }
+                    })
+                }
                 level = addLevel(object.data);
                 pathLevel = level * 10 + 5;
             }
