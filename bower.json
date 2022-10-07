@@ -1,0 +1,32 @@
+{
+  "name": "feature-viewer",
+  "version": "1.0.5",
+  "main": "dist/feature-viewer.min.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "jquery": "x.x.x",
+    "bootstrap": "3.x.x",
+    "d3" : "3.5.6",
+    "nextprot": "x.x.x"
+  },
+  "keywords": [
+    "feature",
+    "protein",
+    "nextprot",
+    "uniprot",
+    "viewer"
+  ],
+  "license": "GNU GPL v2",
+  "authors": [
+    "Mathieu Schaeffer <mat.schaeff@gmail.com>",
+    "Calipho Team <ndu@isb-sib.ch>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/calipho-sib/feature-viewer.git"
+  }
+}
