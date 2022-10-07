@@ -670,6 +670,7 @@ function createFeature(sequence, div, options) {
                     object.highlight.forEach(highlight => {
                         for (var i in object.data) { 
                             if (highlight.x == object.data[i].x && highlight.y == object.data[i].y){
+                                object.data[i].highlight = true
                                 object.data[i].color = highlight.color
                                 object.data[i].description = highlight.highlightText
                             }
@@ -1077,9 +1078,13 @@ function createFeature(sequence, div, options) {
                     .style("fill", "black")
                     .style("z-index", "15")
                     .style("visibility", function (d) {
-                        if (d.description) {
-                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
-                        } else return "hidden";
+                        if(d.highlight){
+                            return "hidden";
+                        } else {
+                            if (d.description) {
+                                return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
+                            } else return "hidden";
+                        }
                     })
                     .call(d3.helper.tooltip(object));
 
