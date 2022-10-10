@@ -666,6 +666,18 @@ function createFeature(sequence, div, options) {
                 object.data.sort(function (a, b) {
                     return a.x - b.x;
                 });
+                if (object.highlight && Array.isArray(object.highlight)) {
+                    object.highlight.forEach(highlight => {
+                        for (var i in object.data) { 
+                            if (highlight.x == object.data[i].x && highlight.y == object.data[i].y){
+                                object.data[i].highlight = true;
+                                object.data[i].color = highlight.color;
+                                object.data[i].description = highlight.highlightText;
+                            }
+                            
+                        }
+                    })
+                }
                 level = addLevel(object.data);
                 pathLevel = level * 10 + 5;
             }
@@ -995,6 +1007,7 @@ function createFeature(sequence, div, options) {
             rectangle: function (object, position) {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
+                if(typeof object.showDescriptionRect === 'undefined' || object.showDescriptionRect === null) object.showDescriptionRect = true;
                 var rectHeight = object.height;
                 
                 var rectShift = rectHeight + rectHeight/3;
@@ -1052,25 +1065,27 @@ function createFeature(sequence, div, options) {
                     .style("z-index", "13")
                     .call(d3.helper.tooltip(object));
 
-                rectsProGroup
-                    .append("text")
-                    .attr("class", "element " + object.className + "Text")
-                    .attr("y", function (d) {
-                        return d.level * rectShift + rectHeight/2
-                    })
-                    .attr("dy", "0.35em")
-                    .style("font-size", "10px")
-                    .text(function (d) {
-                        return d.description
-                    })
-                    .style("fill", "black")
-                    .style("z-index", "15")
-                    .style("visibility", function (d) {
-                        if (d.description) {
-                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
-                        } else return "hidden";
-                    })
-                    .call(d3.helper.tooltip(object));
+                    if(object.showDescriptionRect){
+                        rectsProGroup
+                        .append("text")
+                        .attr("class", "element " + object.className + "Text")
+                        .attr("y", function (d) {
+                            return d.level * rectShift + rectHeight/2
+                        })
+                        .attr("dy", "0.35em")
+                        .style("font-size", "10px")
+                        .text(function (d) {
+                            return d.description
+                        })
+                        .style("fill", "black")
+                        .style("z-index", "15")
+                        .style("visibility", function (d) {
+                            if (d.description) {
+                                return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
+                            } else return "hidden";
+                        })
+                        .call(d3.helper.tooltip(object));
+                    } 
 
 
                 //rectsPro.selectAll("." + object.className)
