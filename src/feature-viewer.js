@@ -670,9 +670,9 @@ function createFeature(sequence, div, options) {
                     object.highlight.forEach(highlight => {
                         for (var i in object.data) { 
                             if (highlight.x == object.data[i].x && highlight.y == object.data[i].y){
-                                object.data[i].highlight = true
-                                object.data[i].color = highlight.color
-                                object.data[i].description = highlight.highlightText
+                                object.data[i].highlight = true;
+                                object.data[i].color = highlight.color;
+                                object.data[i].description = highlight.highlightText;
                             }
                             
                         }
@@ -1007,7 +1007,7 @@ function createFeature(sequence, div, options) {
             rectangle: function (object, position) {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
-                if(typeof object.showDescriptionRect === 'undefined' || object.showDescriptionRect === null) object.showDescriptionRect = true
+                if(typeof object.showDescriptionRect === 'undefined' || object.showDescriptionRect === null) object.showDescriptionRect = true;
                 var rectHeight = object.height;
                 
                 var rectShift = rectHeight + rectHeight/3;
