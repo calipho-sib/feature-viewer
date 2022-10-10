@@ -1007,6 +1007,7 @@ function createFeature(sequence, div, options) {
             rectangle: function (object, position) {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
+                if(typeof object.showDescriptionRect === 'undefined' || object.showDescriptionRect === null) object.showDescriptionRect = true
                 var rectHeight = object.height;
                 
                 var rectShift = rectHeight + rectHeight/3;
@@ -1064,29 +1065,27 @@ function createFeature(sequence, div, options) {
                     .style("z-index", "13")
                     .call(d3.helper.tooltip(object));
 
-                rectsProGroup
-                    .append("text")
-                    .attr("class", "element " + object.className + "Text")
-                    .attr("y", function (d) {
-                        return d.level * rectShift + rectHeight/2
-                    })
-                    .attr("dy", "0.35em")
-                    .style("font-size", "10px")
-                    .text(function (d) {
-                        return d.description
-                    })
-                    .style("fill", "black")
-                    .style("z-index", "15")
-                    .style("visibility", function (d) {
-                        if(d.highlight){
-                            return "hidden";
-                        } else {
+                    if(object.showDescriptionRect){
+                        rectsProGroup
+                        .append("text")
+                        .attr("class", "element " + object.className + "Text")
+                        .attr("y", function (d) {
+                            return d.level * rectShift + rectHeight/2
+                        })
+                        .attr("dy", "0.35em")
+                        .style("font-size", "10px")
+                        .text(function (d) {
+                            return d.description
+                        })
+                        .style("fill", "black")
+                        .style("z-index", "15")
+                        .style("visibility", function (d) {
                             if (d.description) {
                                 return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
                             } else return "hidden";
-                        }
-                    })
-                    .call(d3.helper.tooltip(object));
+                        })
+                        .call(d3.helper.tooltip(object));
+                    } 
 
 
                 //rectsPro.selectAll("." + object.className)
