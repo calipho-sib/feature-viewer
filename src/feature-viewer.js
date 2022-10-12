@@ -160,8 +160,7 @@ function createFeature(sequence, div, options) {
                         }
                     } else if (object.type === "bar") {
                         if (pD.description) {
-                            var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">position : <span id="tLineX">' + pD.x + ' <span> frequency : <span id="tLineC">' + (pD.absoluteY ? pD.absoluteY : pD.y)  + '</span></p>';
-                            var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
+                            var first_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
                         }
                         else {
                             var first_line = '<p style="margin:2px;color:' + tooltipColor +'">position : <span id="tLineX">' + pD.x + '</span></p>';
