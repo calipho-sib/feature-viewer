@@ -175,8 +175,11 @@ function createFeature(sequence, div, options) {
                         if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
                     }
-
-                    tooltipDiv.html(first_line + second_line);
+                    if(second_line){
+                        tooltipDiv.html(first_line + second_line);
+                    }else {
+                        tooltipDiv.html(first_line);
+                    }
                     if (rightside) {
                         tooltipDiv.style({
                             left: (absoluteMousePos[0] + 10 - (tooltipDiv.node().getBoundingClientRect().width)) + 'px'
