@@ -657,7 +657,7 @@ function createFeature(sequence, div, options) {
                             }
 
                         }
-                    })
+                    });
                 }
                 level = addLevel(object.data);
                 pathLevel = level * 10 + 5;
