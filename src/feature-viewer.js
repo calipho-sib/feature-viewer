@@ -158,6 +158,14 @@ function createFeature(sequence, div, options) {
                             var first_line = '<p style="margin:2px;color:' + tooltipColor +'">position : <span id="tLineX">' + elemHover.x + '</span></p>';
                             var second_line = '<p style="margin:2px;color:' + tooltipColor +'">count : <span id="tLineC">' + elemHover.y + '</span></p>';
                         }
+                    } else if (object.type === "bar") {
+                        if (pD.description) {
+                            var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
+                        }
+                        else {
+                            var first_line = '<p style="margin:2px;color:' + tooltipColor +'">position : <span id="tLineX">' + pD.x + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:' + tooltipColor +'">frequency : <span id="tLineC">' + (pD.absoluteY ? pD.absoluteY : pD.y) + '</span></p>';
+                        }
                     } else if (object.type === "unique" || pD.x === pD.y) {
                         var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">' + pD.x + '</p>';
                         if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
@@ -167,8 +175,11 @@ function createFeature(sequence, div, options) {
                         if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
                     }
-
-                    tooltipDiv.html(first_line + second_line);
+                    if(second_line){
+                        tooltipDiv.html(first_line + second_line);
+                    }else {
+                        tooltipDiv.html(first_line);
+                    }
                     if (rightside) {
                         tooltipDiv.style({
                             left: (absoluteMousePos[0] + 10 - (tooltipDiv.node().getBoundingClientRect().width)) + 'px'
@@ -590,7 +601,7 @@ function createFeature(sequence, div, options) {
                     level = maxValue > level ? maxValue : level;
                     
 
-                    object.data[i] = [object.data[i].map(function (d) {
+                    object.data[i] = [object.data[i].map(function (d) {                        
                         return {
                             x: d.x,
                             y: d.y,
@@ -604,10 +615,53 @@ function createFeature(sequence, div, options) {
                 object.level = level;
                 object.shift = shift * 10 +5;
             },
+            // With current implementation bar chart will only consider the non-negative values. 
+            bar: function (object) {
+                if (!object.height) object.height = 10;
+                var shift = parseInt(object.height);
+                var level = 0;
+                for (var i in object.data) {
+                    object.data[i].sort(function (a, b) {
+                        return a.x - b.x;
+                    });
+                    if (object.data[i][0].y !== 0) {
+                        object.data[i].unshift({
+                            x:object.data[i][0].x-1,
+                            y:0
+                        })
+                    }
+                    if (object.data[i][object.data[i].length -1].y !== 0){
+                        object.data[i].push({
+                            x:object.data[i][object.data[i].length -1].x+1,
+                            y:0
+                        })
+                    }
+                    var maxValue = Math.max.apply(Math,object.data[i].map(function(o){return Math.abs(o.y);}));
+                    level = maxValue > level ? maxValue : level;
+                }
+                lineYscale.range([0, -(shift)]).domain([0, -(level)]);
+                pathLevel = shift * 10 +5;
+                object.maxValue = maxValue;
+                object.level = level;
+                object.shift = shift * 10 +5;
+
+            },
             multipleRect: function (object) {
                 object.data.sort(function (a, b) {
                     return a.x - b.x;
                 });
+                if (object.highlight && Array.isArray(object.highlight)) {
+                    object.highlight.forEach(function(highlight) {
+                        for (var i in object.data) { 
+                            if (highlight.x == object.data[i].x && highlight.y == object.data[i].y){
+                                object.data[i].highlight = true;
+                                object.data[i].color = highlight.color;
+                                object.data[i].description = highlight.highlightText;
+                            }
+
+                        }
+                    });
+                }
                 level = addLevel(object.data);
                 pathLevel = level * 10 + 5;
             }
@@ -672,6 +726,24 @@ function createFeature(sequence, div, options) {
                         filter: object.filter
                     });
                     Yposition += negativeNumbers ? pathLevel-5 : 0;
+                } else if (object.type === "bar") {
+                    if (!(Array.isArray(object.data[0]))) object.data = [object.data];
+                    if (!(Array.isArray(object.color))) object.color = [object.color];
+                    var negativeNumbers = false;
+                    object.data.forEach(function(d){
+                        if (d.filter(function(l){ return l.y < 0}).length) negativeNumbers = true;
+                    });
+                    preComputing.bar(object);
+                    
+                    fillSVG.bar(object, Yposition);
+                    Yposition += pathLevel;
+                    yData.push({
+                        title: object.name,
+                        y: Yposition - 10,
+                        filter: object.filter
+                    });
+                    Yposition += negativeNumbers ? pathLevel-5 : 0;
+                    
                 }
             },
             sequence: function (seq, position, start) {
@@ -721,6 +793,8 @@ function createFeature(sequence, div, options) {
             rectangle: function (object, position) {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
+                if(typeof object.showDescriptionRect === 'undefined' || object.showDescriptionRect === null) object.showDescriptionRect = true;
+
                 var rectHeight = object.height;
                 
                 var rectShift = rectHeight + rectHeight/3;
@@ -777,27 +851,27 @@ function createFeature(sequence, div, options) {
                     .style("fill", function(d) { return d.color || object.color })
                     .style("z-index", "13")
                     .call(d3.helper.tooltip(object));
-
-                rectsProGroup
-                    .append("text")
-                    .attr("class", "element " + object.className + "Text")
-                    .attr("y", function (d) {
-                        return d.level * rectShift + rectHeight/2
-                    })
-                    .attr("dy", "0.35em")
-                    .style("font-size", "10px")
-                    .text(function (d) {
-                        return d.description
-                    })
-                    .style("fill", "black")
-                    .style("z-index", "15")
-                    .style("visibility", function (d) {
-                        if (d.description) {
-                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
-                        } else return "hidden";
-                    })
-                    .call(d3.helper.tooltip(object));
-
+                    if(object.showDescriptionRect){
+                        rectsProGroup
+                        .append("text")
+                        .attr("class", "element " + object.className + "Text")
+                        .attr("y", function (d) {
+                            return d.level * rectShift + rectHeight/2
+                        })
+                        .attr("dy", "0.35em")
+                        .style("font-size", "10px")
+                        .text(function (d) {
+                            return d.description
+                        })
+                        .style("fill", "black")
+                        .style("z-index", "15")
+                        .style("visibility", function (d) {
+                            if (d.description) {
+                                return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
+                            } else return "hidden";
+                        })
+                        .call(d3.helper.tooltip(object));
+                    }
 
                 //rectsPro.selectAll("." + object.className)
                 //    .data(object.data)
@@ -949,7 +1023,54 @@ function createFeature(sequence, div, options) {
 //                    .style("shape-rendering", "crispEdges")
                     .call(d3.helper.tooltip(object));
                 })
-                
+                forcePropagation(histog);
+            },
+            bar: function (object, position) {
+                if (object.fill === undefined) object.fill = true;
+                var histog = svgContainer.append("g")
+                    .attr("class", "bar")
+                    .attr("transform", "translate(0," + position + ")");
+                var dataline=[];
+                dataline.push([{
+                        x: 1,
+                        y: 0
+                    }, {
+                        x: fvLength,
+                        y: 0
+                    }]);
+
+                var yScale = d3.scale.linear()
+                    .domain([0,object.maxValue])
+                    .range([0,object.shift]);
+
+                    histog.selectAll(".line" + object.className)
+                    .data(dataline)
+                    .enter()
+                    .append("path")
+                    .attr("clip-path", "url(#clip)")
+                    .attr("d", lineGen)
+                    .attr("class", "line" + object.className)
+                    .style("z-index", "0")
+                    .style("stroke", "black")
+                    .style("stroke-width", "1px");
+                    object.data.forEach(function(dd,i,array){
+                    histog.selectAll()
+                    .data(dd)
+                  .enter().append("rect")
+                    .attr("class", "element " + object.className)
+                    .attr("x", function (d) {
+                        return scaling(d.x - 0.4)
+                    })
+                    .attr("width", function (d) {
+                        if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                        else return scaling(d.x + 0.4) - scaling(d.x - 0.4)})
+                    .attr("y", function(d) { return object.shift - yScale(d.y); })
+                    .attr("height", function(d) { return yScale(d.y); })
+                    .style("fill", function(d) {return d.color ||  object.color})
+                    .style("z-index", "3")
+                    .call(d3.helper.tooltip(object));
+                    })
+
                 forcePropagation(histog);
             },
             multipleRect: function (object, position, level) {
@@ -1175,6 +1296,29 @@ function createFeature(sequence, div, options) {
                           .interpolate(object.interpolation)
                          );
             },
+            bar: function (object) {
+                var transit;
+                if (animation) {
+                    transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
+                        .transition()
+                        .duration(500);
+                }
+                else {
+                    transit = svgContainer.selectAll("." + object.className);
+                }
+                transit
+//                    .data(object.data)
+                    //.transition()
+                    //.duration(500)
+                    .attr("x", function (d) {
+                        return scaling(d.x - 0.4)
+                    })
+                    .attr("width", function (d) {
+                        if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                        else return scaling(d.x + 0.4) - scaling(d.x - 0.4);
+                    });
+            },
             text: function (object, start) {
                 var transit;
                 if (animation) {
@@ -1392,6 +1536,9 @@ function createFeature(sequence, div, options) {
                 } else if (o.type === "text") {
                     transition.text(o, start);
                 }
+                 else if (o.type === "bar") {
+                    transition.bar(o, start);
+                }
             });
         }
 
@@ -1486,6 +1633,7 @@ function createFeature(sequence, div, options) {
                     'verticalLine': false,
                     'toolbar': false,
                     'bubbleHelp': false,
+                    'showvariant' : false,
                     'unit': "units",
                     'zoomMax': 50
                 }
