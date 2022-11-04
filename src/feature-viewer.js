@@ -803,13 +803,13 @@ function createFeature(sequence, div, options) {
 
                 let btnPosition = 0
                 if(object.summaryViewProperties.position === 'left'){
-                    btnPosition = 2
+                    btnPosition = 2;
                 } else if(object.summaryViewProperties.position === 'right'){
-                    btnPosition = (fvLength/8) *  6.6 - 2
+                    btnPosition = (fvLength/8) *  6.6 - 2;
                 } else if(object.summaryViewProperties.position === 'center'){
-                    btnPosition = (fvLength/8) * 3.5 - 2
+                    btnPosition = (fvLength/8) * 3.5 - 2;
                 } else{
-                    btnPosition = 2
+                    btnPosition = 2;
                 }
 
                 var rectHeight = object.height;
@@ -855,7 +855,7 @@ function createFeature(sequence, div, options) {
                     .attr("x", btnPosition)
                     .attr("y", lineShift - 10)
                     .attr("fill", object.summaryViewProperties.buttonColor )
-                    .on("click", onClick)
+                    .on("click", onClick);
 
                     rectsPro.append("text")
                     .attr("x", btnPosition + (fvLength/80))
@@ -1075,15 +1075,15 @@ function createFeature(sequence, div, options) {
                 if(typeof object.summaryViewProperties.buttonLabel === 'undefined' || object.summaryViewProperties.buttonLabel === null) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
                 if(typeof object.summaryViewProperties.position === 'undefined' || object.summaryViewProperties.position === null) object.summaryViewProperties.position = "left";
 
-                let btnPosition = 0
+                let btnPosition = 0;
                 if(object.summaryViewProperties.position === 'left'){
-                    btnPosition = 2
+                    btnPosition = 2;
                 } else if(object.summaryViewProperties.position === 'right'){
-                    btnPosition = (fvLength/6) *  4.7 - 2
+                    btnPosition = (fvLength/6) *  4.7 - 2;
                 } else if(object.summaryViewProperties.position === 'center'){
-                    btnPosition = (fvLength/6) * 2.5
+                    btnPosition = (fvLength/6) * 2.5;
                 } else{
-                    btnPosition = 2
+                    btnPosition = 2;
                 }
 
                 var histog = svgContainer.append("g")
@@ -1123,7 +1123,7 @@ function createFeature(sequence, div, options) {
                         .attr("x", btnPosition)
                         .attr("y", object.shift - 25)
                         .attr("fill", object.summaryViewProperties.buttonColor )
-                        .on("click", onClick)
+                        .on("click", onClick);
     
                         histog.append("text")
                         .attr("x", btnPosition + (fvLength/60))
@@ -2020,7 +2020,7 @@ function createFeature(sequence, div, options) {
             // To prevent calculation exceptions the below dummy data is setting if summaryView option is true and data is not provided
             // But this data will not be visible
             if(object.summaryView && (object.data === undefined || object.data.length === 0)){  
-                object.data = [{x:10,y:15}]
+                object.data = [{x:10,y:15}];
             }
             const obj = JSON.parse(JSON.stringify(object));
             featuresArray.push(obj);
@@ -2044,11 +2044,12 @@ function createFeature(sequence, div, options) {
         */
         this.loadSummaryFeature = function(object) {
             let temp = featuresArray;
+            // Remove current svg and reset parameters
             featuresArray = [];
-            let d = document.getElementById("div2")
-            let svg = d.getElementsByTagName("svg")
-            d.removeChild(svg[0])
-            Yposition = 20
+            let d = document.getElementById("div2");
+            let svg = d.getElementsByTagName("svg");
+            d.removeChild(svg[0]);
+            Yposition = 20;
             yData = [];
             features = [];
             d3.select(div)
@@ -2057,9 +2058,10 @@ function createFeature(sequence, div, options) {
             .style("z-index", "2");
             initSVG(div, options);
 
+            // Add updated features with new data
             temp.forEach(featureObject => {
                 if(featureObject.className == object.className){
-                    featureObject.summaryView = false
+                    featureObject.summaryView = false;
                     featureObject.data = object.data;  
                 } 
                 this.addFeature(featureObject);
