@@ -49,7 +49,7 @@ function createFeature(sequence, div, options) {
                 }
         var featureSelected = {};
         var animation = true;
-
+        var featuresArray = [];
         function colorSelectedFeat(feat, object) {
             //change color && memorize
             if (featureSelected !== {}) d3.select(featureSelected.id).style("fill", featureSelected.originalColor);
@@ -668,7 +668,7 @@ function createFeature(sequence, div, options) {
         };
 
         var fillSVG = {
-            typeIdentifier: function (object) {
+            typeIdentifier: function (object, onClick) {
                 if (object.type === "rect") {
                     preComputing.multipleRect(object);
                     yData.push({
@@ -735,7 +735,7 @@ function createFeature(sequence, div, options) {
                     });
                     preComputing.bar(object);
                     
-                    fillSVG.bar(object, Yposition);
+                    fillSVG.bar(object, Yposition,onClick);
                     Yposition += pathLevel;
                     yData.push({
                         title: object.name,
@@ -1025,8 +1025,9 @@ function createFeature(sequence, div, options) {
                 })
                 forcePropagation(histog);
             },
-            bar: function (object, position) {
+            bar: function (object, position,onClick) {
                 if (object.fill === undefined) object.fill = true;
+                if(typeof object.summaryView === 'undefined' || object.summaryView === null) object.summaryView = false;
                 var histog = svgContainer.append("g")
                     .attr("class", "bar")
                     .attr("transform", "translate(0," + position + ")");
@@ -1053,25 +1054,47 @@ function createFeature(sequence, div, options) {
                     .style("z-index", "0")
                     .style("stroke", "black")
                     .style("stroke-width", "1px");
-                    object.data.forEach(function(dd,i,array){
-                    histog.selectAll()
-                    .data(dd)
-                  .enter().append("rect")
-                    .attr("class", "element " + object.className)
-                    .attr("x", function (d) {
-                        return scaling(d.x - 0.4)
-                    })
-                    .attr("width", function (d) {
-                        if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
-                        else return scaling(d.x + 0.4) - scaling(d.x - 0.4)})
-                    .attr("y", function(d) { return object.shift - yScale(d.y); })
-                    .attr("height", function(d) { return yScale(d.y); })
-                    .style("fill", function(d) {return d.color ||  object.color})
-                    .style("z-index", "3")
-                    .call(d3.helper.tooltip(object));
-                    })
 
-                forcePropagation(histog);
+                    if(object.summaryView){
+                        histog.selectAll("rectbox")
+                        .data([10])
+                        .enter()
+                        .append("rect")
+                        .attr("width", fvLength/5.5)
+                        .attr("height", 25)
+                        .attr("x", (fvLength/50) * 1)
+                        .attr("y", object.shift - 25)
+                        .attr("fill",  "#5789d4")
+                        .on("click", onClick)
+    
+                        histog.append("text")
+                        .attr("x", (fvLength/50) * 1.15)
+                        .attr("y", object.shift - 12)
+                        .attr("dy", ".35em")
+                        .attr("fill",  "white")
+                        .text("Click here to load all the data")
+                        .on("click", onClick);
+                        
+                    } else {
+                        object.data.forEach(function(dd,i,array){
+                            histog.selectAll()
+                            .data(dd)
+                          .enter().append("rect")
+                            .attr("class", "element " + object.className)
+                            .attr("x", function (d) {
+                                return scaling(d.x - 0.4)
+                            })
+                            .attr("width", function (d) {
+                                if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                                else return scaling(d.x + 0.4) - scaling(d.x - 0.4)})
+                            .attr("y", function(d) { return object.shift - yScale(d.y); })
+                            .attr("height", function(d) { return yScale(d.y); })
+                            .style("fill", function(d) {return d.color ||  object.color})
+                            .style("z-index", "3")
+                            .call(d3.helper.tooltip(object));
+                            })
+                    }
+                    forcePropagation(histog);
             },
             multipleRect: function (object, position, level) {
                 var rectHeight = 8;
@@ -1935,10 +1958,12 @@ function createFeature(sequence, div, options) {
 
         initSVG(div, options);
 
-        this.addFeature = function (object) {
+        this.addFeature = function (object,onClick ) {
+            const obj = JSON.parse(JSON.stringify(object))
+            featuresArray.push(obj)
             Yposition += 20;
             features.push(object);
-            fillSVG.typeIdentifier(object);
+            fillSVG.typeIdentifier(object,onClick);
             updateYaxis();
             updateXaxis(Yposition);
             updateSVGHeight(Yposition);
@@ -1948,6 +1973,37 @@ function createFeature(sequence, div, options) {
             }
             if (SVGOptions.verticalLine) d3.selectAll(".Vline").style("height", (Yposition + 50) + "px");
             if (d3.selectAll(".element")[0].length > 1500) animation = false;
+
+        }
+
+        this.loadSummaryFeature = function(object) {
+            console.log("###ls")
+            let temp = featuresArray;
+            featuresArray = [];
+            let d = document.getElementById("div2")
+            let svg = d.getElementsByTagName("svg")
+            d.removeChild(svg[0])
+            Yposition = 20
+            yData = [];
+            features = [];
+            d3.select(div)
+            .style("position", "relative")
+            .style("padding", "0px")
+            .style("z-index", "2");
+            initSVG(div, options);
+
+            console.log("temp",temp.length)
+            temp.forEach(featureObject => {
+                console.log(featureObject.data)
+                console.log(object.data)
+                if(featureObject.className == object.className){
+                    featureObject.summaryView = false
+                    featureObject.data = object.data;
+                    this.addFeature(featureObject);
+                } else {
+                    this.addFeature(featureObject);
+                }
+            });
 
         }
         
