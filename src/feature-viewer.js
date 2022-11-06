@@ -2046,9 +2046,13 @@ function createFeature(sequence, div, options) {
             let temp = featuresArray;
             // Remove current svg and reset parameters
             featuresArray = [];
-            let d = document.getElementById("div2");
-            let svg = d.getElementsByTagName("svg");
-            d.removeChild(svg[0]);
+            let div_name = div;
+            if (div.includes("#")) {
+                div_name = div.split("#")[1];
+            }
+            let div_element = document.getElementById(div_name);
+            let svg = div_element.getElementsByTagName("svg");
+            div_element.removeChild(svg[0]);
             Yposition = 20;
             yData = [];
             features = [];
