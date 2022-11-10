@@ -803,6 +803,7 @@ function createFeature(sequence, div, options) {
 
                 var rectsPro = svgContainer.append("g")
                     .attr("class", "rectangle")
+                    .attr("clip-path", "url(#clip)")
                     .attr("transform", "translate(0," + position + ")");
                 
                 var dataline=[];
