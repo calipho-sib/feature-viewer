@@ -793,13 +793,13 @@ function createFeature(sequence, div, options) {
             rectangle: function (object, position, onClick) {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
-                if(typeof object.showDescriptionRect === 'undefined' || object.showDescriptionRect === null) object.showDescriptionRect = true;
-                if(typeof object.summaryView === 'undefined' || object.summaryView === null) object.summaryView = false;
-                if(typeof object.summaryViewProperties === 'undefined' || object.summaryViewProperties === null) object.summaryViewProperties = {};
-                if(typeof object.summaryViewProperties.buttonColor === 'undefined' || object.summaryViewProperties.buttonColor === null) object.summaryViewProperties.buttonColor = "#5789d4";
-                if(typeof object.summaryViewProperties.buttonTextColor === 'undefined' || object.summaryViewProperties.buttonTextColor === null) object.summaryViewProperties.buttonTextColor = "#ffffff";
-                if(typeof object.summaryViewProperties.buttonLabel === 'undefined' || object.summaryViewProperties.buttonLabel === null) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
-                if(typeof object.summaryViewProperties.position === 'undefined' || object.summaryViewProperties.position === null) object.summaryViewProperties.position = "left";
+                if(!object.showDescriptionRect) object.showDescriptionRect = true;
+                if(!object.summaryView) object.summaryView = false;
+                if(!object.summaryViewProperties) object.summaryViewProperties = {};
+                if(!object.summaryViewProperties.buttonColor) object.summaryViewProperties.buttonColor = "#5789d4";
+                if(!object.summaryViewProperties.buttonTextColor) object.summaryViewProperties.buttonTextColor = "#ffffff";
+                if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
+                if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
 
                 let btnPosition = 0
                 if(object.summaryViewProperties.position === 'left'){
@@ -1068,12 +1068,12 @@ function createFeature(sequence, div, options) {
 
             bar: function (object, position,onClick) {
                 if (object.fill === undefined) object.fill = true;
-                if(typeof object.summaryView === 'undefined' || object.summaryView === null) object.summaryView = false;
-                if(typeof object.summaryViewProperties === 'undefined' || object.summaryViewProperties === null) object.summaryViewProperties = {};
-                if(typeof object.summaryViewProperties.buttonColor === 'undefined' || object.summaryViewProperties.buttonColor === null) object.summaryViewProperties.buttonColor = "#5789d4";
-                if(typeof object.summaryViewProperties.buttonTextColor === 'undefined' || object.summaryViewProperties.buttonTextColor === null) object.summaryViewProperties.buttonTextColor = "#ffffff";
-                if(typeof object.summaryViewProperties.buttonLabel === 'undefined' || object.summaryViewProperties.buttonLabel === null) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
-                if(typeof object.summaryViewProperties.position === 'undefined' || object.summaryViewProperties.position === null) object.summaryViewProperties.position = "left";
+                if(!object.summaryView) object.summaryView = false;
+                if(!object.summaryViewProperties) object.summaryViewProperties = {};
+                if(!object.summaryViewProperties.buttonColor) object.summaryViewProperties.buttonColor = "#5789d4";
+                if(!object.summaryViewProperties.buttonTextColor) object.summaryViewProperties.buttonTextColor = "#ffffff";
+                if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
+                if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
 
                 let btnPosition = 0;
                 if(object.summaryViewProperties.position === 'left'){
