@@ -2094,8 +2094,8 @@ function createFeature(sequence, div, options) {
             let svg = div_element.getElementsByTagName("svg")[0];
 
 
-            var serializer = new XMLSerializer();
-            var source = serializer.serializeToString(svg);
+            let serializer = new XMLSerializer();
+            let source = serializer.serializeToString(svg);
 
             if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
                 source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
@@ -2105,10 +2105,10 @@ function createFeature(sequence, div, options) {
             }
 
             source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-            var url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
+            let url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
 
-            var link = document.createElement("a");
-            link.setAttribute('download', "name");
+            let link = document.createElement("a");
+            link.setAttribute('download', "feature-viewer.svg");
             link.href = url;
             document.body.appendChild(link);
             link.click();
