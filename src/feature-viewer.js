@@ -676,7 +676,7 @@ function createFeature(sequence, div, options) {
                         y: Yposition,
                         filter: object.filter
                     });
-                    fillSVG.rectangle(object, Yposition);
+                    fillSVG.rectangle(object, Yposition,onClick);
                 } else if (object.type === "text") {
                     fillSVG.sequence(object.data, Yposition);
                     yData.push({
@@ -790,10 +790,27 @@ function createFeature(sequence, div, options) {
                         .style("stroke-opacity", 1);
                 }
             },
-            rectangle: function (object, position) {
+            rectangle: function (object, position, onClick) {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
-                if(typeof object.showDescriptionRect === 'undefined' || object.showDescriptionRect === null) object.showDescriptionRect = true;
+                if(!object.showDescriptionRect) object.showDescriptionRect = true;
+                if(!object.summaryView) object.summaryView = false;
+                if(!object.summaryViewProperties) object.summaryViewProperties = {};
+                if(!object.summaryViewProperties.buttonColor) object.summaryViewProperties.buttonColor = "#5789d4";
+                if(!object.summaryViewProperties.buttonTextColor) object.summaryViewProperties.buttonTextColor = "#ffffff";
+                if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
+                if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
+
+                let btnPosition = 0
+                if(object.summaryViewProperties.position === 'left'){
+                    btnPosition = 2;
+                } else if(object.summaryViewProperties.position === 'right'){
+                    btnPosition = (fvLength/8) *  6.6 - 2;
+                } else if(object.summaryViewProperties.position === 'center'){
+                    btnPosition = (fvLength/8) * 3.5 - 2;
+                } else{
+                    btnPosition = 2;
+                }
 
                 var rectHeight = object.height;
                 
@@ -827,52 +844,78 @@ function createFeature(sequence, div, options) {
                     .style("z-index", "0")
                     .style("stroke", object.color)
                     .style("stroke-width", "1px");
+                
+                if(object.summaryView){
 
+                    rectsPro.selectAll("rectbox")
+                    .data([10])
+                    .enter()
+                    .append("rect")
+                    .attr("width", fvLength/8)
+                    .attr("height", 15)
+                    .attr("x", btnPosition)
+                    .attr("y", lineShift - 10)
+                    .attr("fill", object.summaryViewProperties.buttonColor )
+                    .on("click", onClick);
+
+                    rectsPro.append("text")
+                    .attr("x", btnPosition + (fvLength/80))
+                    .attr("y", lineShift + 1)
+                    .attr("font-size", "10px")
+                    .attr("fill",  object.summaryViewProperties.buttonTextColor)
+                    .text(object.summaryViewProperties.buttonLabel)
+                    .on("click", onClick);
+
+                } else {
 
                 var rectsProGroup = rectsPro.selectAll("." + object.className + "Group")
-                    .data(object.data)
-                    .enter()
-                    .append("g")
-                    .attr("class", object.className + "Group")
-                    .attr("transform", function (d) {
-                        return "translate(" + rectX(d) + ",0)"
-                    });
+                .data(object.data)
+                .enter()
+                .append("g")
+                .attr("class", object.className + "Group")
+                .attr("transform", function (d) {
+                    return "translate(" + rectX(d) + ",0)"
+                });
 
-                rectsProGroup
-                    .append("rect")
-                    .attr("class", "element " + object.className)
-                    .attr("id", function (d) {
-                        return "f" + d.id
-                    })
+            rectsProGroup
+                .append("rect")
+                .attr("class", "element " + object.className)
+                .attr("id", function (d) {
+                    return "f" + d.id
+                })
+                .attr("y", function (d) {
+                    return d.level * rectShift
+                })
+                .attr("width", rectWidth2)
+                .attr("height", rectHeight)
+                .style("fill", function(d) { return d.color || object.color })
+                .style("z-index", "13")
+                .call(d3.helper.tooltip(object));
+                if(object.showDescriptionRect){
+                    rectsProGroup
+                    .append("text")
+                    .attr("class", "element " + object.className + "Text")
                     .attr("y", function (d) {
-                        return d.level * rectShift
+                        return d.level * rectShift + rectHeight/2
                     })
-                    .attr("width", rectWidth2)
-                    .attr("height", rectHeight)
-                    .style("fill", function(d) { return d.color || object.color })
-                    .style("z-index", "13")
+                    .attr("dy", "0.35em")
+                    .style("font-size", "10px")
+                    .text(function (d) {
+                        return d.description
+                    })
+                    .style("fill", "black")
+                    .style("z-index", "15")
+                    .style("visibility", function (d) {
+                        if (d.description) {
+                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
+                        } else return "hidden";
+                    })
                     .call(d3.helper.tooltip(object));
-                    if(object.showDescriptionRect){
-                        rectsProGroup
-                        .append("text")
-                        .attr("class", "element " + object.className + "Text")
-                        .attr("y", function (d) {
-                            return d.level * rectShift + rectHeight/2
-                        })
-                        .attr("dy", "0.35em")
-                        .style("font-size", "10px")
-                        .text(function (d) {
-                            return d.description
-                        })
-                        .style("fill", "black")
-                        .style("z-index", "15")
-                        .style("visibility", function (d) {
-                            if (d.description) {
-                                return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
-                            } else return "hidden";
-                        })
-                        .call(d3.helper.tooltip(object));
-                    }
+                }
+                forcePropagation(rectsProGroup);
+                var uniqueShift = rectHeight > 12 ? rectHeight - 6 : 0;
+                Yposition += level < 2 ? uniqueShift : (level-1) * rectShift + uniqueShift;
+                }
 
                 //rectsPro.selectAll("." + object.className)
                 //    .data(object.data)
@@ -888,9 +931,6 @@ function createFeature(sequence, div, options) {
                 //    .style("z-index", "13")
                 //    .call(d3.helper.tooltip(object));
 
-                forcePropagation(rectsProGroup);
-                var uniqueShift = rectHeight > 12 ? rectHeight - 6 : 0;
-                Yposition += level < 2 ? uniqueShift : (level-1) * rectShift + uniqueShift;
             },
             unique: function (object, position) {
                 var rectsPro = svgContainer.append("g")
@@ -1026,9 +1066,27 @@ function createFeature(sequence, div, options) {
                 })
                 forcePropagation(histog);
             },
+
             bar: function (object, position,onClick) {
                 if (object.fill === undefined) object.fill = true;
-                if(typeof object.summaryView === 'undefined' || object.summaryView === null) object.summaryView = false;
+                if(!object.summaryView) object.summaryView = false;
+                if(!object.summaryViewProperties) object.summaryViewProperties = {};
+                if(!object.summaryViewProperties.buttonColor) object.summaryViewProperties.buttonColor = "#5789d4";
+                if(!object.summaryViewProperties.buttonTextColor) object.summaryViewProperties.buttonTextColor = "#ffffff";
+                if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
+                if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
+
+                let btnPosition = 0;
+                if(object.summaryViewProperties.position === 'left'){
+                    btnPosition = 2;
+                } else if(object.summaryViewProperties.position === 'right'){
+                    btnPosition = (fvLength/6) *  4.7 - 2;
+                } else if(object.summaryViewProperties.position === 'center'){
+                    btnPosition = (fvLength/6) * 2.5;
+                } else{
+                    btnPosition = 2;
+                }
+
                 var histog = svgContainer.append("g")
                     .attr("class", "bar")
                     .attr("clip-path", "url(#clip)")
@@ -1062,19 +1120,19 @@ function createFeature(sequence, div, options) {
                         .data([10])
                         .enter()
                         .append("rect")
-                        .attr("width", fvLength/5.5)
+                        .attr("width", fvLength/6)
                         .attr("height", 25)
-                        .attr("x", (fvLength/50) * 1)
+                        .attr("x", btnPosition)
                         .attr("y", object.shift - 25)
-                        .attr("fill",  "#5789d4")
-                        .on("click", onClick)
+                        .attr("fill", object.summaryViewProperties.buttonColor )
+                        .on("click", onClick);
     
                         histog.append("text")
-                        .attr("x", (fvLength/50) * 1.15)
+                        .attr("x", btnPosition + (fvLength/60))
                         .attr("y", object.shift - 12)
                         .attr("dy", ".35em")
-                        .attr("fill",  "white")
-                        .text("Click here to load all the data")
+                        .attr("fill",  object.summaryViewProperties.buttonTextColor)
+                        .text(object.summaryViewProperties.buttonLabel)
                         .on("click", onClick);
                         
                     } else {
@@ -1961,8 +2019,13 @@ function createFeature(sequence, div, options) {
         initSVG(div, options);
 
         this.addFeature = function (object,onClick ) {
-            const obj = JSON.parse(JSON.stringify(object))
-            featuresArray.push(obj)
+            // To prevent calculation exceptions the below dummy data is setting if summaryView option is true and data is not provided
+            // But this data will not be visible
+            if(object.summaryView && (object.data === undefined || object.data.length === 0)){  
+                object.data = [{x:10,y:15}];
+            }
+            const obj = JSON.parse(JSON.stringify(object));
+            featuresArray.push(obj);
             Yposition += 20;
             features.push(object);
             fillSVG.typeIdentifier(object,onClick);
@@ -1978,14 +2041,21 @@ function createFeature(sequence, div, options) {
 
         }
 
+        /*
+            The below function is used to load the data on request by the user
+        */
         this.loadSummaryFeature = function(object) {
-            console.log("###ls")
             let temp = featuresArray;
+            // Remove current svg and reset parameters
             featuresArray = [];
-            let d = document.getElementById("div2")
-            let svg = d.getElementsByTagName("svg")
-            d.removeChild(svg[0])
-            Yposition = 20
+            let div_name = div;
+            if (div.includes("#")) {
+                div_name = div.split("#")[1];
+            }
+            let div_element = document.getElementById(div_name);
+            let svg = div_element.getElementsByTagName("svg");
+            div_element.removeChild(svg[0]);
+            Yposition = 20;
             yData = [];
             features = [];
             d3.select(div)
@@ -1994,17 +2064,13 @@ function createFeature(sequence, div, options) {
             .style("z-index", "2");
             initSVG(div, options);
 
-            console.log("temp",temp.length)
+            // Add updated features with new data
             temp.forEach(featureObject => {
-                console.log(featureObject.data)
-                console.log(object.data)
                 if(featureObject.className == object.className){
-                    featureObject.summaryView = false
-                    featureObject.data = object.data;
-                    this.addFeature(featureObject);
-                } else {
-                    this.addFeature(featureObject);
-                }
+                    featureObject.summaryView = false;
+                    featureObject.data = object.data;  
+                } 
+                this.addFeature(featureObject);
             });
 
         }
