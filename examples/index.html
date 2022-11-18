@@ -400,14 +400,25 @@ bubbleHelp:true,
 zoomMax:20
         });
 
+var onCilck = function(){
+    ft6.loadSummaryFeature({
+            className: "test1",
+            data: [{x:20,y:32},{x:28,y:100},{x:123,y:167}, {x:200,y:232},{x:320,y:410},{x:430,y:500},{x:550,y:570},{x:590,y:619},{x:640,y:700},{x:770,y:800},{x:860,y:950},{x:1100,y:1300}]
+            })
+        }
 //Add some features
 ft6.addFeature({
     data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
     name: "test feature 1",
     className: "test1",
     color: "#968D73",
-    type: "rect"
-});
+    type: "rect",
+    summaryView: true,
+    summaryViewProperties: {
+        buttonLabel:"Click Here to Load All Data",
+        position:"center"
+    },
+},onCilck);
 ft6.addFeature({
     data: [{x:52,y:52},{x:92,y:92}],
     name: "test feature 2",
@@ -449,6 +460,7 @@ ft6.addFeature({
     type: "rect"
 });
 
+
 //Get and print in the browser console the position of the feature selected
 ft6.onFeatureSelected(function (d) {
     console.log(d.detail);
@@ -462,7 +474,7 @@ ft6.onZoom(function (d) {
                 </textarea>
                 </form>
                 <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
-                        onclick=executeCode("#div4",eventCode)>Execute
+                        onclick=executeCode("#div4",summaryCode)>Execute
                 </button>
             </div>
         </div>
@@ -488,7 +500,7 @@ ft6.onZoom(function (d) {
                 <form>
                 <textarea id="code5" name="code5" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
 //Create a new Feature Viewer and add some rendering options
-var ft4 = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div4", {
+var ft4 = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div5", {
             showAxis: true,
             showSequence: true,
             brushActive: true,
@@ -568,20 +580,20 @@ zoomOut = function(){
 var buttonZoom = '<a class="btn btn-info btnZoom" onclick="zoomIn()">ZOOM between 40 and 80</a>';
 var buttonResetZoom = '<a class="btn btn-info btnZoom" onclick="zoomOut()">Reset ZOOM</a>';
                         
-$("#div4").append("<p class='btnBlock'>"+buttonZoom+buttonResetZoom+"</p");
+$("#div5").append("<p class='btnBlock'>"+buttonZoom+buttonResetZoom+"</p");
                         
 
 
                 </textarea>
                 </form>
                 <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
-                        onclick=executeCode("#div4",zoomCode)>Execute
+                        onclick=executeCode("#div5",zoomCode)>Execute
                 </button>
             </div>
         </div>
         <div class="col-md-6 col-md-offset-1 col-xs-12"
              style="height:250px;vertical-align:top;margin-top:15px;">
-            <div id="div4">
+            <div id="div5">
             </div>
         </div>
     </div>
@@ -622,7 +634,7 @@ var options = {showAxis: true, showSequence: true,
    bubbleHelp: true, zoomMax:20 };
                     
 // Init nextprot feature viewer
-nxFeatureViewer(nx, isoform, "#div5", options)
+nxFeatureViewer(nx, isoform, "#div6", options)
     .then(function(ff){
     //(ff is here an instance of the feature viewer with few more methods)
     // Add first custom feature
@@ -673,13 +685,13 @@ nxFeatureViewer(nx, isoform, "#div5", options)
                 </textarea>
                 </form>
                 <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
-                        onclick=executeCode("#div5",nextprot)>Execute
+                        onclick=executeCode("#div6",nextprot)>Execute
                 </button>
             </div>
         </div>
         <div class="col-md-6 col-md-offset-1 col-xs-12"
              style="height:250px;vertical-align:top;margin-top:15px;">
-            <div id="div5"></div>
+            <div id="div6"></div>
         </div>
     </div>
 </div>
@@ -691,6 +703,7 @@ nxFeatureViewer(nx, isoform, "#div5", options)
     var initSVG;
     var addFeatures;
     var eventCode;
+    var summaryCode;
     var zoomCode;
     var nextprot;
 
@@ -717,12 +730,17 @@ nxFeatureViewer(nx, isoform, "#div5", options)
             lineNumbers: true,
             lineWrapping: true
         });
-        zoomCode = CodeMirror.fromTextArea(code4, {
+        summaryCode = CodeMirror.fromTextArea(code4, {
             mode: "javascript",
             lineNumbers: true,
             lineWrapping: true
         });
-        nextprot = CodeMirror.fromTextArea(code5, {
+        zoomCode = CodeMirror.fromTextArea(code5, {
+            mode: "javascript",
+            lineNumbers: true,
+            lineWrapping: true
+        });
+        nextprot = CodeMirror.fromTextArea(code6, {
             mode: "javascript",
             lineNumbers: true,
             lineWrapping: true
@@ -731,8 +749,9 @@ nxFeatureViewer(nx, isoform, "#div5", options)
             executeCode("#div1", initSVG);
             executeCode("#div2", addFeatures);
             executeCode("#div3", eventCode);
-            executeCode("#div4", zoomCode);
-            executeCode("#div5", nextprot);
+            executeCode("#div4", summaryCode);
+            executeCode("#div5", zoomCode);
+            executeCode("#div6", nextprot);
         });
     };
 
