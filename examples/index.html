@@ -351,6 +351,15 @@ ft3.onZoom(function (d) {
     console.log(d.detail);
 });
 
+downloadSvg = function(){
+    ft3.downloadSVG();      
+   }
+
+var buttonDownload = '<a class="btn btn-info btnZoom" onclick="downloadSvg()">Download as SVG</a>';
+
+$("#div3").append("<p class='btnBlock'>"+buttonDownload+"</p");
+
+
                 </textarea>
                 </form>
                 <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
@@ -363,7 +372,8 @@ ft3.onZoom(function (d) {
             <div id="div3"></div>
         </div>
     </div>
-    <div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
+<!-- This section was commented due to width issue is example page and summary view button -->
+    <!-- <div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
         <div class="col-md-5 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -482,7 +492,7 @@ ft6.onZoom(function (d) {
              style="height:250px;vertical-align:top;margin-top:15px;">
             <div id="div4"></div>
         </div>
-    </div>
+    </div> -->
     <div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
         <div class="col-md-5 col-xs-12">
             <div class="panel panel-default">
@@ -730,11 +740,11 @@ nxFeatureViewer(nx, isoform, "#div6", options)
             lineNumbers: true,
             lineWrapping: true
         });
-        summaryCode = CodeMirror.fromTextArea(code4, {
-            mode: "javascript",
-            lineNumbers: true,
-            lineWrapping: true
-        });
+        // summaryCode = CodeMirror.fromTextArea(code4, {
+        //     mode: "javascript",
+        //     lineNumbers: true,
+        //     lineWrapping: true
+        // });
         zoomCode = CodeMirror.fromTextArea(code5, {
             mode: "javascript",
             lineNumbers: true,
@@ -749,7 +759,7 @@ nxFeatureViewer(nx, isoform, "#div6", options)
             executeCode("#div1", initSVG);
             executeCode("#div2", addFeatures);
             executeCode("#div3", eventCode);
-            executeCode("#div4", summaryCode);
+            // executeCode("#div4", summaryCode);
             executeCode("#div5", zoomCode);
             executeCode("#div6", nextprot);
         });
