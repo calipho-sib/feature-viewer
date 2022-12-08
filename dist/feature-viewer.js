@@ -1,3 +1,7 @@
+const { crossIcon, deleteIcon, bottomArrowIcon } = require('../utils/icons')
+const { dropdownOptions } = require('../utils/data')
+const { toast } = require("../helpers/toast");
+
 function createFeature(sequence, div, options) {
 //        var nxSeq = sequence.startsWith('NX_') ? true : false;
         var self = this;
@@ -5,7 +9,9 @@ function createFeature(sequence, div, options) {
         this.events = {
           FEATURE_SELECTED_EVENT: "feature-viewer-position-selected",
             FEATURE_DESELECTED_EVENT: "feature-viewer-position-deselected",
-          ZOOM_EVENT: "feature-viewer-zoom-altered"
+          ZOOM_EVENT: "feature-viewer-zoom-altered",
+          GET_PREDICTIONS_EVENT: "feature-viewer-vep-predictions",
+          VARIANT_ADDED_EVENT: "feature-viewer-variant-added"
         };
 
         // if (!div) var div = window;
@@ -20,7 +26,8 @@ function createFeature(sequence, div, options) {
             showSequence: false,
             brushActive: false,
             verticalLine: false,
-            dottedSequence: true
+            dottedSequence: true,
+            variant: false
         };
         var offset = {start:1,end:fvLength};
         if (options && options.offset) {
@@ -49,7 +56,12 @@ function createFeature(sequence, div, options) {
                 }
         var featureSelected = {};
         var animation = true;
-        var featuresArray = [];
+        
+        let seqPos; // Stores sequence + its position
+        let absoluteSeqPos; // Store only sequence position
+        let singleVariant = []; // Entered variant values
+        let multipleVariant = [] 
+
         function colorSelectedFeat(feat, object) {
             //change color && memorize
             if (featureSelected !== {}) d3.select(featureSelected.id).style("fill", featureSelected.originalColor);
@@ -160,7 +172,8 @@ function createFeature(sequence, div, options) {
                         }
                     } else if (object.type === "bar") {
                         if (pD.description) {
-                            var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
+                            var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">position : <span id="tLineX">' + pD.x + ' <span> frequency : <span id="tLineC">' + (pD.absoluteY ? pD.absoluteY : pD.y)  + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
                         }
                         else {
                             var first_line = '<p style="margin:2px;color:' + tooltipColor +'">position : <span id="tLineX">' + pD.x + '</span></p>';
@@ -175,11 +188,8 @@ function createFeature(sequence, div, options) {
                         if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
                     }
-                    if(second_line){
-                        tooltipDiv.html(first_line + second_line);
-                    }else {
-                        tooltipDiv.html(first_line);
-                    }
+
+                    tooltipDiv.html(first_line + second_line);
                     if (rightside) {
                         tooltipDiv.style({
                             left: (absoluteMousePos[0] + 10 - (tooltipDiv.node().getBoundingClientRect().width)) + 'px'
@@ -358,9 +368,15 @@ function createFeature(sequence, div, options) {
             svgElement.addEventListener(self.events.FEATURE_DESELECTED_EVENT, listener);
         };
 
-      this.onZoom = function (listener) {
+        this.onZoom = function (listener) {
             svgElement.addEventListener(self.events.ZOOM_EVENT, listener);
         };
+        this.onGetPredictions = function (listener) {
+            svgElement.addEventListener(self.events.GET_PREDICTIONS_EVENT, listener);
+        }
+        this.onVariantChanged = function (listener) {
+            svgElement.addEventListener(self.events.VARIANT_ADDED_EVENT, listener);
+        }
 
         function addLevel(array) {
             var leveling = [];
@@ -651,16 +667,16 @@ function createFeature(sequence, div, options) {
                     return a.x - b.x;
                 });
                 if (object.highlight && Array.isArray(object.highlight)) {
-                    object.highlight.forEach(function(highlight) {
+                    object.highlight.forEach(highlight => {
                         for (var i in object.data) { 
                             if (highlight.x == object.data[i].x && highlight.y == object.data[i].y){
                                 object.data[i].highlight = true;
                                 object.data[i].color = highlight.color;
                                 object.data[i].description = highlight.highlightText;
                             }
-
+                            
                         }
-                    });
+                    })
                 }
                 level = addLevel(object.data);
                 pathLevel = level * 10 + 5;
@@ -668,7 +684,7 @@ function createFeature(sequence, div, options) {
         };
 
         var fillSVG = {
-            typeIdentifier: function (object, onClick) {
+            typeIdentifier: function (object) {
                 if (object.type === "rect") {
                     preComputing.multipleRect(object);
                     yData.push({
@@ -676,7 +692,7 @@ function createFeature(sequence, div, options) {
                         y: Yposition,
                         filter: object.filter
                     });
-                    fillSVG.rectangle(object, Yposition,onClick);
+                    fillSVG.rectangle(object, Yposition);
                 } else if (object.type === "text") {
                     fillSVG.sequence(object.data, Yposition);
                     yData.push({
@@ -735,7 +751,7 @@ function createFeature(sequence, div, options) {
                     });
                     preComputing.bar(object);
                     
-                    fillSVG.bar(object, Yposition,onClick);
+                    fillSVG.bar(object, Yposition);
                     Yposition += pathLevel;
                     yData.push({
                         title: object.name,
@@ -749,12 +765,17 @@ function createFeature(sequence, div, options) {
             sequence: function (seq, position, start) {
                 //Create group of sequence
                 if (!start) var start = 0;
+
+                let seqSelected;
+
                 svgContainer.append("g")
                     .attr("class", "seqGroup")
                     .selectAll(".AA")
                     .data(seq)
                     .enter()
-                    .append("text")
+                    .append("text", function() {
+                        return d + '-' + i
+                    })
                     .attr("clip-path", "url(#clip)")
                     .attr("class", "AA")
                     .attr("text-anchor", "middle")
@@ -766,7 +787,200 @@ function createFeature(sequence, div, options) {
                     .attr("font-family", "monospace")
                     .text(function (d, i) {
                         return d
-                    });
+                    })
+                    .on("click", function(e) {
+                        seqSelected = e;
+                        const width = $(window).width();
+                        const posX = this.getBoundingClientRect().x;
+
+                        const divPos = calculatePos(width, posX)
+                        showPopup(true, divPos)
+                    })
+                    
+                let optionsHeader = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
+
+                let singlePopup = optionsHeader.append("div") 
+                    .attr("class", "single-variant-popup")
+     
+                    singlePopup.append('svg')
+                    .attr("class", "cancel-icon")
+                    .attr("height", "1.5rem")
+                    .attr("width", "1.5rem")                
+                    .attr("viewBox","0 0 512 640")
+                    .on("click", function() {
+                        showPopup(false)
+                        $(`#single-dropdown-content`).hide()
+                    })
+                    .html(crossIcon)
+                 
+                    let popupContainer = singlePopup.append("div")
+                    
+                    popupContainer.html(`
+                        <p>Enter the variants</p>
+                        <div class="properties-row">
+                            <p class="title">Position</p>
+                            <div class="single-variant-nextprotPosition"></div>
+                        </div>
+                        <div class="properties-row">
+                            <p class="title">Original</p>
+                            <div class="single-variant-original"></div>
+                        </div>
+                    `)
+
+                    const dropdown = popupContainer
+                    .append("div")
+                    .attr("class", "properties-row")
+
+                    dropdown.append("p")
+                    .attr("class", "title")
+                    .text("Variant")
+
+                    let dropdownWrapper = dropdown.append("div")
+                    .attr("class", "dropdown")
+                    .on("click", function() {
+                        $(`#single-dropdown-content`).show()
+                    })
+
+                    dropdownWrapper
+                    .append("button")
+                    .attr("class", "dropdown-btn")
+                    .attr("id", "single-variant-dropdown-btn")
+                    .text("Select variant")
+                    
+                    dropdownWrapper.append("div")
+                    .attr("class", "bottom-arrow-icon")
+                    .html(bottomArrowIcon)
+
+                    const dropdownContainer = dropdownWrapper.append("div")
+                    .attr("id", function() {
+                        return 'single-dropdown-content';
+                        })
+
+                    popupContainer.append("button")
+                    .attr("disabled", true)
+                    .attr("class", "single-add-variant-btn")
+                    .text("Add Variant")
+                    .on("click", function() {
+                        let value = $('#single-variant-dropdown-btn').text()
+                        addVariant(value)
+                    })
+
+                    popupContainer.append("div")
+                    .attr("class", "toast")
+                    .attr("id", "single-variant-toast")
+                    
+                    dropdownContainer.append("input")
+                    .attr("placeholder", "Search...")
+                    .attr("id", "dropdown-search-input")
+                    .on("keyup", function() {
+                        let input, filter, p, i, div, txtValue;
+                        input = document.getElementById("dropdown-search-input");
+                        filter = input.value.toUpperCase();
+                        div = document.getElementById("dropdown-options");
+                        p = div.getElementsByTagName("p");
+
+                        for (i = 0; i < p.length; i++) {
+                            txtValue = p[i].textContent || p[i].innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                              p[i].style.display = "";
+                            } else {
+                              p[i].style.display = "none";
+                            }
+                          }
+                    })
+
+                    let dropdownOptionContainer = dropdownContainer.append("div")
+                                                .attr("class", "dropdown-option-container")
+                                                .attr("id", "dropdown-options")
+
+                    Object.entries(dropdownOptions).forEach(([key, value]) => {
+                        dropdownOptionContainer.append("p")
+                        .attr("class", "single-dropdown-options")
+                        .attr("id", `${key} / ${value}`)
+                        .text(`${key} / ${value}`)
+                    })        
+                    
+                    $(document).on('click', '.single-dropdown-options', function () {
+                        const value = $(this).attr('id');
+                        $('#single-dropdown-content').hide()
+                        let variantAminoAcid = value.split(" /")[0];
+                        if(seqSelected === variantAminoAcid) {
+                            toast(true, "error", "#single-variant-toast")
+                            $(".single-add-variant-btn").attr('disabled', true);
+                            $('#single-variant-dropdown-btn').text("Select variant");
+                            return;
+                        }
+                        toast(false, "error", "#single-variant-toast")
+                        variantValue = value;
+                        $(this).parent().parent().parent().children('button').text(function() {
+                            return value
+                        });
+                        $(".single-add-variant-btn").attr('disabled', false);
+                    })
+
+                /**
+                 * Add variant and call onVariantChanged Event
+                 * @param {number} variantValue - Variant value
+                */
+
+                 function addVariant(variantValue) {
+                    if(variantValue === "") {
+                        console.log("Variant not added")
+                        return;
+                    }
+                    let variantAminoAcid = variantValue.split(" /")[0];
+                    let values = {};
+                    let nextprotPosition = $('.single-variant-nextprotPosition').text();
+
+                    values.nextprotPosition = Number(nextprotPosition);
+                    values['originalAminoAcid'] = seqSelected;
+                    values['variantAminoAcid'] = variantAminoAcid;
+                    singleVariant.push(values)
+
+                    toast(true, "success", "#single-variant-toast");
+                    callOnVariantChanged()
+                 }
+
+                
+                /**
+                 * Show the single variant entry popup
+                 * @param {number} show - Show/hide the popup
+                 * @param {number} divPos - Position of popup 
+                 */
+
+                function showPopup (show, divPos) {
+                    // reset default value
+                    variantValue = "";
+                    toast(false, "error", "#single-variant-error");
+                    $('#single-variant-dropdown-btn').text("Select variant")
+                    $('#single-variant-error').text("");
+                    $(".single-add-variant-btn").attr('disabled', true);
+
+                    $(".single-variant-nextprotPosition").text(function() {
+                        return absoluteSeqPos
+                    })
+
+                    $(".single-variant-original").text(function() {
+                        return `${seqSelected} / ${dropdownOptions[seqSelected]}`
+                    })
+                    
+                    singlePopup
+                    .style("left", `${divPos}px`)
+                    .style("display", show ? "block" : "none")
+                }
+
+                 /**
+                 * Calculate the position of popup
+                 * @param {number} width - Screen width of client
+                 * @param {number} posX - Position of sequence clicked (in px)
+                 */
+
+                function calculatePos(width, posX) {
+                    const margin = 800;
+                    if(width - posX < margin) return width - (margin/2 + (width-posX));
+                    
+                    return posX;
+                }
             },
             sequenceLine: function () {
                 //Create line to represent the sequence
@@ -790,28 +1004,10 @@ function createFeature(sequence, div, options) {
                         .style("stroke-opacity", 1);
                 }
             },
-            rectangle: function (object, position, onClick) {
+            rectangle: function (object, position) {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
-                if(!object.showDescriptionRect) object.showDescriptionRect = true;
-                if(!object.summaryView) object.summaryView = false;
-                if(!object.summaryViewProperties) object.summaryViewProperties = {};
-                if(!object.summaryViewProperties.buttonColor) object.summaryViewProperties.buttonColor = "#5789d4";
-                if(!object.summaryViewProperties.buttonTextColor) object.summaryViewProperties.buttonTextColor = "#ffffff";
-                if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
-                if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
-
-                let btnPosition = 0
-                if(object.summaryViewProperties.position === 'left'){
-                    btnPosition = 2;
-                } else if(object.summaryViewProperties.position === 'right'){
-                    btnPosition = (fvLength/8) *  6.6 - 2;
-                } else if(object.summaryViewProperties.position === 'center'){
-                    btnPosition = (fvLength/8) * 3.5 - 2;
-                } else{
-                    btnPosition = 2;
-                }
-
+                if(typeof object.showDescriptionRect === 'undefined' || object.showDescriptionRect === null) object.showDescriptionRect = true;
                 var rectHeight = object.height;
                 
                 var rectShift = rectHeight + rectHeight/3;
@@ -820,7 +1016,6 @@ function createFeature(sequence, div, options) {
 
                 var rectsPro = svgContainer.append("g")
                     .attr("class", "rectangle")
-                    .attr("clip-path", "url(#clip)")
                     .attr("transform", "translate(0," + position + ")");
                 
                 var dataline=[];
@@ -844,78 +1039,54 @@ function createFeature(sequence, div, options) {
                     .style("z-index", "0")
                     .style("stroke", object.color)
                     .style("stroke-width", "1px");
-                
-                if(object.summaryView){
 
-                    rectsPro.selectAll("rectbox")
-                    .data([10])
-                    .enter()
-                    .append("rect")
-                    .attr("width", fvLength/8)
-                    .attr("height", 15)
-                    .attr("x", btnPosition)
-                    .attr("y", lineShift - 10)
-                    .attr("fill", object.summaryViewProperties.buttonColor )
-                    .on("click", onClick);
-
-                    rectsPro.append("text")
-                    .attr("x", btnPosition + (fvLength/80))
-                    .attr("y", lineShift + 1)
-                    .attr("font-size", "10px")
-                    .attr("fill",  object.summaryViewProperties.buttonTextColor)
-                    .text(object.summaryViewProperties.buttonLabel)
-                    .on("click", onClick);
-
-                } else {
 
                 var rectsProGroup = rectsPro.selectAll("." + object.className + "Group")
-                .data(object.data)
-                .enter()
-                .append("g")
-                .attr("class", object.className + "Group")
-                .attr("transform", function (d) {
-                    return "translate(" + rectX(d) + ",0)"
-                });
+                    .data(object.data)
+                    .enter()
+                    .append("g")
+                    .attr("class", object.className + "Group")
+                    .attr("transform", function (d) {
+                        return "translate(" + rectX(d) + ",0)"
+                    });
 
-            rectsProGroup
-                .append("rect")
-                .attr("class", "element " + object.className)
-                .attr("id", function (d) {
-                    return "f" + d.id
-                })
-                .attr("y", function (d) {
-                    return d.level * rectShift
-                })
-                .attr("width", rectWidth2)
-                .attr("height", rectHeight)
-                .style("fill", function(d) { return d.color || object.color })
-                .style("z-index", "13")
-                .call(d3.helper.tooltip(object));
-                if(object.showDescriptionRect){
-                    rectsProGroup
-                    .append("text")
-                    .attr("class", "element " + object.className + "Text")
+                rectsProGroup
+                    .append("rect")
+                    .attr("class", "element " + object.className)
+                    .attr("id", function (d) {
+                        return "f" + d.id
+                    })
                     .attr("y", function (d) {
-                        return d.level * rectShift + rectHeight/2
+                        return d.level * rectShift
                     })
-                    .attr("dy", "0.35em")
-                    .style("font-size", "10px")
-                    .text(function (d) {
-                        return d.description
-                    })
-                    .style("fill", "black")
-                    .style("z-index", "15")
-                    .style("visibility", function (d) {
-                        if (d.description) {
-                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
-                        } else return "hidden";
-                    })
+                    .attr("width", rectWidth2)
+                    .attr("height", rectHeight)
+                    .style("fill", function(d) { return d.color || object.color })
+                    .style("z-index", "13")
                     .call(d3.helper.tooltip(object));
-                }
-                forcePropagation(rectsProGroup);
-                var uniqueShift = rectHeight > 12 ? rectHeight - 6 : 0;
-                Yposition += level < 2 ? uniqueShift : (level-1) * rectShift + uniqueShift;
-                }
+
+                    if(object.showDescriptionRect){
+                        rectsProGroup
+                        .append("text")
+                        .attr("class", "element " + object.className + "Text")
+                        .attr("y", function (d) {
+                            return d.level * rectShift + rectHeight/2
+                        })
+                        .attr("dy", "0.35em")
+                        .style("font-size", "10px")
+                        .text(function (d) {
+                            return d.description
+                        })
+                        .style("fill", "black")
+                        .style("z-index", "15")
+                        .style("visibility", function (d) {
+                            if (d.description) {
+                                return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
+                            } else return "hidden";
+                        })
+                        .call(d3.helper.tooltip(object));
+                    } 
+
 
                 //rectsPro.selectAll("." + object.className)
                 //    .data(object.data)
@@ -931,6 +1102,9 @@ function createFeature(sequence, div, options) {
                 //    .style("z-index", "13")
                 //    .call(d3.helper.tooltip(object));
 
+                forcePropagation(rectsProGroup);
+                var uniqueShift = rectHeight > 12 ? rectHeight - 6 : 0;
+                Yposition += level < 2 ? uniqueShift : (level-1) * rectShift + uniqueShift;
             },
             unique: function (object, position) {
                 var rectsPro = svgContainer.append("g")
@@ -1066,30 +1240,10 @@ function createFeature(sequence, div, options) {
                 })
                 forcePropagation(histog);
             },
-
-            bar: function (object, position,onClick) {
+            bar: function (object, position) {
                 if (object.fill === undefined) object.fill = true;
-                if(!object.summaryView) object.summaryView = false;
-                if(!object.summaryViewProperties) object.summaryViewProperties = {};
-                if(!object.summaryViewProperties.buttonColor) object.summaryViewProperties.buttonColor = "#5789d4";
-                if(!object.summaryViewProperties.buttonTextColor) object.summaryViewProperties.buttonTextColor = "#ffffff";
-                if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
-                if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
-
-                let btnPosition = 0;
-                if(object.summaryViewProperties.position === 'left'){
-                    btnPosition = 2;
-                } else if(object.summaryViewProperties.position === 'right'){
-                    btnPosition = (fvLength/6) *  4.7 - 2;
-                } else if(object.summaryViewProperties.position === 'center'){
-                    btnPosition = (fvLength/6) * 2.5;
-                } else{
-                    btnPosition = 2;
-                }
-
                 var histog = svgContainer.append("g")
                     .attr("class", "bar")
-                    .attr("clip-path", "url(#clip)")
                     .attr("transform", "translate(0," + position + ")");
                 var dataline=[];
                 dataline.push([{
@@ -1114,47 +1268,25 @@ function createFeature(sequence, div, options) {
                     .style("z-index", "0")
                     .style("stroke", "black")
                     .style("stroke-width", "1px");
+                    object.data.forEach(function(dd,i,array){
+                    histog.selectAll()
+                    .data(dd)
+                    .enter().append("rect")
+                    .attr("class", "element " + object.className)
+                    .attr("x", function (d) {
+                        return scaling(d.x - 0.4)
+                    })
+                    .attr("width", function (d) {
+                        if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                        else return scaling(d.x + 0.4) - scaling(d.x - 0.4)})
+                    .attr("y", function(d) { return object.shift - yScale(d.y); })
+                    .attr("height", function(d) { return yScale(d.y); })
+                    .style("fill", function(d) {return d.color ||  object.color})
+                    .style("z-index", "3")
+                    .call(d3.helper.tooltip(object));
+                    })
 
-                    if(object.summaryView){
-                        histog.selectAll("rectbox")
-                        .data([10])
-                        .enter()
-                        .append("rect")
-                        .attr("width", fvLength/6)
-                        .attr("height", 25)
-                        .attr("x", btnPosition)
-                        .attr("y", object.shift - 25)
-                        .attr("fill", object.summaryViewProperties.buttonColor )
-                        .on("click", onClick);
-    
-                        histog.append("text")
-                        .attr("x", btnPosition + (fvLength/60))
-                        .attr("y", object.shift - 12)
-                        .attr("dy", ".35em")
-                        .attr("fill",  object.summaryViewProperties.buttonTextColor)
-                        .text(object.summaryViewProperties.buttonLabel)
-                        .on("click", onClick);
-                        
-                    } else {
-                        object.data.forEach(function(dd,i,array){
-                            histog.selectAll()
-                            .data(dd)
-                          .enter().append("rect")
-                            .attr("class", "element " + object.className)
-                            .attr("x", function (d) {
-                                return scaling(d.x - 0.4)
-                            })
-                            .attr("width", function (d) {
-                                if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
-                                else return scaling(d.x + 0.4) - scaling(d.x - 0.4)})
-                            .attr("y", function(d) { return object.shift - yScale(d.y); })
-                            .attr("height", function(d) { return yScale(d.y); })
-                            .style("fill", function(d) {return d.color ||  object.color})
-                            .style("z-index", "3")
-                            .call(d3.helper.tooltip(object));
-                            })
-                    }
-                    forcePropagation(histog);
+                forcePropagation(histog);
             },
             multipleRect: function (object, position, level) {
                 var rectHeight = 8;
@@ -1204,6 +1336,7 @@ function createFeature(sequence, div, options) {
         };
 
         this.showFilteredFeature = function(className, color, baseUrl){
+
             var featureSelected = yAxisSVG.selectAll("."+className+"Arrow");
             var minY = margin.left - 105;
             var maxY = margin.left - 7;
@@ -1716,7 +1849,6 @@ function createFeature(sequence, div, options) {
                     'verticalLine': false,
                     'toolbar': false,
                     'bubbleHelp': false,
-                    'showvariant' : false,
                     'unit': "units",
                     'zoomMax': 50
                 }
@@ -1921,6 +2053,302 @@ function createFeature(sequence, div, options) {
                     }
                 }
             }
+                    if (!$(div + ' .variantHeader').length) {
+
+                        const optionsHeader = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
+
+                        const multipleVariantContainer = optionsHeader
+                                                    .append("div")
+                                                    .style("position", "relative")
+                                                    .style("display","flex")
+                                                    .style("column-gap", "1rem")
+
+                        let showMultipleVariantPopup = true;
+                        let inputCount = 0;
+
+                        multipleVariantContainer
+                            .append("span")
+                            .attr("class", "add-variant-btn")
+                            .style("margin-left", "auto")
+                            .text("+ Add Variants")
+                            .on("click", function() {
+                                multipleVariantPopup(showMultipleVariantPopup)
+                                if(multipleVariant.length === 0) {
+                                    appendInputFields()
+                                } 
+                                showMultipleVariantPopup = !showMultipleVariantPopup
+                            })
+
+
+                        const popup = multipleVariantContainer
+                            .append("div")
+                            .attr("class", "multiple-variant-popup")
+                            
+                            
+                        popup.html(`<p>Enter the variants</p><div class="header"><input type="checkbox" id="select-all-variant" />${deleteIcon}<p>Position</p><p>Original</p><p>Variant</p></div>`)
+
+                        $('.delete-icon').on("click", function() {
+                                    $(".input-wrapper input:checkbox").each(function(){
+                                        var $this = $(this);
+                                        if($this.is(":checked")){
+                                            let id = $(this).attr('id')
+                                            $this.parent().remove()
+                                            const variantIndex = multipleVariant.findIndex(m => m.id == id)
+                                            multipleVariant.splice(variantIndex, 1)
+                                            callOnVariantChanged()
+                                        }
+                                    });
+
+                                    if(multipleVariant.length === 0) {
+                                        inputCount = 0;
+                                        setInputError(false);
+                                        multipleVariant = [];
+                                        callOnVariantChanged();
+                                        const variantValues = { id: inputCount, nextprotPosition: "", originalAminoAcid: "", variantAminoAcid: "" }
+                                        multipleVariant.push(variantValues);
+                                        appendInputFields();
+                                    } 
+                                    
+                                })
+                                
+                                $('#select-all-variant').on("click", function() {
+                                    $('.input-wrapper input:checkbox').prop('checked', this.checked); 
+                                })
+
+                            popup.append('svg')
+                                .attr("height", "1.5rem")
+                                .attr("width", "1.5rem")
+                                .attr("class", "cancel-icon")
+                                .on("click", function() {
+                                    showMultipleVariantPopup = !showMultipleVariantPopup
+                                    multipleVariantPopup(false)
+                                })
+                                .attr("viewBox","0 0 500 620")
+                                .html(crossIcon)
+                        
+                        const inputContainer = popup
+                            .append("div")
+                            .attr("class", "input-container")
+
+                        /**
+                         * Updates the values of multiple variant entry popup
+                         * @param {number} value - Position of amino acid/variant amino acid value
+                         * @param {string} type - "Position" || "Variant"
+                         * @param {number} idx - Index of multipleVariant to be updated
+                         */
+
+                        function updateInputValues(value, type, idx) {
+                            const variantIndex = multipleVariant.findIndex(m => m.id == idx);
+
+                            value = value.split(" /")[0];
+
+                            switch(type) {
+                                case "nextprotPosition": 
+                                                const originalValue = sequence.charAt(Number(value)-1);
+                                                $(`#${idx}-original`).text(function() {
+                                                    return `${originalValue} / ${dropdownOptions[originalValue]}`
+                                                });
+                                                multipleVariant[variantIndex]['originalAminoAcid'] = originalValue;
+                                                multipleVariant[variantIndex].nextprotPosition = Number(value);
+                                                if(!validateInput(originalValue, multipleVariant[variantIndex]['variantAminoAcid'])) {
+                                                    multipleVariant[variantIndex]['variantAminoAcid'] = "";
+                                                    $(`#${idx}-variant`).text("Select variant");
+                                                };
+                                                break;
+                                case "variantAminoAcid": if(!validateInput(multipleVariant[variantIndex]['originalAminoAcid'], value)) break;
+                                                multipleVariant[variantIndex]['variantAminoAcid'] = value;
+                                                break;
+                            }
+                        }
+
+                        /**
+                         * Add input fields to multiple variant entry popup
+                         */
+
+                        function appendInputFields() {
+                            $('#multiple-add-variant-btn').attr("disabled", true);
+
+                            if(multipleVariant.length > 0) {
+                                toast(true, "success", "#multiple-variant-toast");
+                            }
+
+                            const variantValues = { id: inputCount, nextprotPosition: "", 'originalAminoAcid': "", 'variantAminoAcid': "" }
+                            multipleVariant.push(variantValues)
+
+
+                            const inputWrapper = inputContainer.append("div").attr("class", "input-wrapper")
+                            
+                            inputWrapper.append("input")
+                            .attr("type", "checkbox")
+                            .attr("class", "input-checkbox")
+                            .attr("id", function() {
+                                return inputCount;
+                            })
+
+                            inputWrapper
+                            .append("input")
+                            .attr("class", "popup-input")   
+                            .attr("maxlength", "5")
+                            .attr("id", function() {
+                                return inputCount + '-nextprotPosition';
+                            })
+                            .attr("type", "number")
+                            .attr("value", function(d, i) {
+                                return i;
+                            })
+                            .on("change", function(d) {
+                                const value = d3.select(this).property("value");
+                                if(value > sequence.length) return
+                                d3.select(this).attr("value", value)
+                                var idx = d3.select(this).property("id").split("-")[0]
+                                updateInputValues(value, "nextprotPosition", idx)
+                            });
+
+                            
+                            inputWrapper
+                            .append("span")
+                            .attr("id", function() {
+                                return inputCount + '-original';
+                            })
+                            .attr("class", "original-input")
+                            .text("0")      
+                            
+                            const dropdown = inputWrapper
+                            .append("div")
+                            .attr("class", "dropdown")
+                            
+                            dropdown
+                            .append("button")
+                            .attr("class", "dropdown-btn")
+                            .attr("id", function() {
+                                return inputCount + '-variant';
+                            })  
+                            .text("Select variant")
+                            .on("click", function() {
+                                let id = $(this).attr('id');
+                                $("div.dropdown-content").not(`#${id}-dropdown`).hide();
+                                $(`#${id}-dropdown`).toggle()
+                            })
+                            
+                            dropdown.append("div")
+                            .attr("class", "bottom-arrow-icon")
+                            .html(bottomArrowIcon)
+
+                            const dropdownContainer = dropdown.append("div")
+                            .attr("id", function() {
+                                return inputCount + '-variant-dropdown';
+                            })   
+                            .attr("class", "dropdown-content")
+                            
+                            dropdownContainer.append("input")
+                            .attr("placeholder", "Search...")
+                            .attr("id", `dropdown-search-input-${inputCount}`)
+                            .attr("class", "dropdown-input")
+                            .on("keyup", function() {
+                                let filter, p, i, div;
+                                let id = this.id.split("-")[3];
+                                filter = this.value.toUpperCase();
+                                div = document.getElementById(`dropdown-options-${id}`);
+                                p = div.getElementsByTagName("p");
+
+                                for (i = 0; i < p.length; i++) {
+                                    txtValue = p[i].textContent || p[i].innerText;
+                                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                      p[i].style.display = "";
+                                    } else {
+                                      p[i].style.display = "none";
+                                    }
+                                  }
+                            })
+
+                            let dropdownOptionContainer = dropdownContainer.append("div")
+                            .attr("class", "dropdown-option-container")
+                            .attr("id", `dropdown-options-${inputCount}`)
+
+                            Object.entries(dropdownOptions).forEach(([key, value]) => {
+                                dropdownOptionContainer.append("p")
+                                .attr("class", "dropdown-options")
+                                .attr("id", `${key} / ${value}`)
+                                .text(`${key} / ${value}`)
+                            })
+                            inputCount++;
+                        }
+
+                         /**
+                         * Check if input values are not null before adding next set of input fields
+                         */
+
+                        function validateInput(original, variant){
+                            if(original === variant) {
+                                setInputError(true);
+                                $('#multiple-add-variant-btn').attr("disabled", true);
+                                return false;
+                            } else {
+                                setInputError(false)
+                            }
+
+                            const lastSelectValue = $('.input-container').children(":last").children(":last").children(":first").text();
+                            const lastInputValue = $('.input-container').children(":last").children(".popup-input").attr("value");
+                           
+                            if(!(lastSelectValue == "" || lastSelectValue == "Select variant" || lastInputValue == 0)) {
+                                $('#multiple-add-variant-btn').attr("disabled", false);
+                            } 
+                            return true;
+                        }
+
+                         /**
+                         * Set input error value
+                         */
+                        function setInputError(showError) {
+                            toast(showError, "error", "#multiple-variant-toast")
+                        }
+
+                        $(document).on('click', '.dropdown-options', function () {
+                            const value = $(this).attr('id');
+                            $('.dropdown-content').hide()
+                            
+                            const id = $(this).parent().parent().attr("id")
+                            const index = id.split('-')[0];
+                            $(this).parent().parent().parent().children('button').text(function() {
+                                return value
+                            });
+                            
+                            updateInputValues(value, "variantAminoAcid", index)
+                        })
+                        
+                        
+                        const btnContainer = popup.append("div")
+                        .attr("class", "multiple-variant-btn-container")
+
+                        btnContainer
+                                .append("button")
+                                .attr("class", "add-variant-btn")
+                                .attr("id", "multiple-add-variant-btn")
+                                .attr("disabled", true)
+                                .text("+")
+                                .on("click", function() {
+                                    callOnVariantChanged()
+                                    appendInputFields()
+                                })
+                            
+                        btnContainer
+                                .append("span")
+                                .text("Get Predictions")
+                                .attr("class", "get-predictions-btn")
+                                .on("click", function() {
+                                    callOnGetPredictions();
+                                })
+                        
+                        popup.append("div")
+                                .attr("class", "toast")
+                                .attr("id", "multiple-variant-toast")
+
+                        function multipleVariantPopup(showPopup) {
+                            popup
+                            .style("display", showPopup ? "block" : "none")
+                        }
+                    }
+            
             
             svg = d3.select(div).append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -1936,6 +2364,7 @@ function createFeature(sequence, div, options) {
 
             svgContainer = svg
                 .append("g")
+                .attr("id", "svg-container")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             //Create Clip-Path
@@ -1969,12 +2398,13 @@ function createFeature(sequence, div, options) {
                 .attr("in", "SourceGraphic");
 
             svgContainer.on('mousemove', function () {
-                var absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());;          
-                var pos = Math.round(scalingPosition(absoluteMousePos[0]));
+                let absoluteMousePos = SVGOptions.brushActive ? d3.mouse(d3.select(".background").node()) : d3.mouse(svgContainer.node());;          
+                seqPos = Math.round(scalingPosition(absoluteMousePos[0]));
+                absoluteSeqPos = seqPos;
                 if (!options.positionWithoutLetter) {
-                    pos += sequence[pos-1] || "";
+                    seqPos += sequence[seqPos-1] || "";
                 }
-                $(div + " #zoomPosition").text(pos);
+                $(div + " #zoomPosition").text(seqPos);
             });
             
             if (typeof options.dottedSequence !== "undefined"){
@@ -2018,17 +2448,74 @@ function createFeature(sequence, div, options) {
 
         initSVG(div, options);
 
-        this.addFeature = function (object,onClick ) {
-            // To prevent calculation exceptions the below dummy data is setting if summaryView option is true and data is not provided
-            // But this data will not be visible
-            if(object.summaryView && (object.data === undefined || object.data.length === 0)){  
-                object.data = [{x:10,y:15}];
+        // Workaround for re-ordering svg <g> element
+        $('.seqGroup').appendTo($('#svg-container'));
+
+        /**
+        * Calls onVariantChanged Custom Event
+        */
+         function callOnVariantChanged() {
+            let values = [...multipleVariant];
+            if(values.length > 0) {
+                const lastValue = values.length-1;
+                if(values[lastValue]['originalAminoAcid'] == "" || values[lastValue]['variantAminoAcid'] == "") {
+                    values.splice(lastValue, 1);
+                }
             }
-            const obj = JSON.parse(JSON.stringify(object));
-            featuresArray.push(obj);
+
+            values = [...values, ...singleVariant];
+
+            if (CustomEvent) {
+                svgElement.dispatchEvent(new CustomEvent(
+                  self.events.VARIANT_ADDED_EVENT,  
+                  {detail: values}
+                  ));
+              }
+              if (self.trigger) self.trigger(self.events.VARIANT_ADDED_EVENT, 
+                values
+            );  
+        }        
+
+        function getPredictionValues() {
+            let values = multipleVariant.map(({id,...rest}) => ({...rest}));
+
+            if(values.length > 0) {
+                const lastValue = values.length-1;
+                if(values[lastValue]['originalAminoAcid'] == "" || values[lastValue]['variantAminoAcid'] == "") {
+                    values.splice(lastValue, 1);
+                }
+            }
+
+            values = [...values, ...singleVariant];
+
+            return values;
+        }
+
+        /**
+        * Calls onGetPredictions Custom Event
+        */
+        function callOnGetPredictions() {
+            const values = getPredictionValues()
+            
+            if (CustomEvent) {
+                svgElement.dispatchEvent(new CustomEvent(
+                self.events.GET_PREDICTIONS_EVENT,
+                { detail: values }
+                ));
+            }
+            if (self.trigger) self.trigger(self.events.GET_PREDICTIONS_EVENT, 
+                values
+                );
+          }
+
+        this.getPredictions = function() {
+            return getPredictionValues();
+        }
+
+        this.addFeature = function (object) {
             Yposition += 20;
             features.push(object);
-            fillSVG.typeIdentifier(object,onClick);
+            fillSVG.typeIdentifier(object);
             updateYaxis();
             updateXaxis(Yposition);
             updateSVGHeight(Yposition);
@@ -2038,40 +2525,6 @@ function createFeature(sequence, div, options) {
             }
             if (SVGOptions.verticalLine) d3.selectAll(".Vline").style("height", (Yposition + 50) + "px");
             if (d3.selectAll(".element")[0].length > 1500) animation = false;
-
-        }
-
-        /*
-            The below function is used to load the data on request by the user
-        */
-        this.loadSummaryFeature = function(object) {
-            let temp = featuresArray;
-            // Remove current svg and reset parameters
-            featuresArray = [];
-            let div_name = div;
-            if (div.includes("#")) {
-                div_name = div.split("#")[1];
-            }
-            let div_element = document.getElementById(div_name);
-            let svg = div_element.getElementsByTagName("svg");
-            div_element.removeChild(svg[0]);
-            Yposition = 20;
-            yData = [];
-            features = [];
-            d3.select(div)
-            .style("position", "relative")
-            .style("padding", "0px")
-            .style("z-index", "2");
-            initSVG(div, options);
-
-            // Add updated features with new data
-            temp.forEach(featureObject => {
-                if(featureObject.className == object.className){
-                    featureObject.summaryView = false;
-                    featureObject.data = object.data;  
-                } 
-                this.addFeature(featureObject);
-            });
 
         }
         
@@ -2086,7 +2539,6 @@ function createFeature(sequence, div, options) {
             sbcRip = null;
             d3.helper = {};
         }
-
     }
 
 if ( typeof module === "object" && typeof module.exports === "object" ) {
