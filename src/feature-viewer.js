@@ -1716,6 +1716,7 @@ function createFeature(sequence, div, options) {
                     'verticalLine': false,
                     'toolbar': false,
                     'bubbleHelp': false,
+                    'buttonDownload' : true,
                     'showvariant' : false,
                     'unit': "units",
                     'zoomMax': 50
@@ -1919,6 +1920,48 @@ function createFeature(sequence, div, options) {
                             });
                         })
                     }
+                }
+
+                if(options.buttonDownload) {
+                    var headerDownload = headerZoom
+                        .append("div")
+                        //                            .insert("div",":first-child")
+                        //                            .attr("class", "pull-right")
+                        .attr("id", "download")
+                        .style("display", "inline-block")
+                        //                            .style("margin", "15px 35px 0px 0px")
+                        .style("margin", "0px")
+                        .style("margin-right", "5px")
+                        //                            .style("line-height","32px")
+                        .style("padding", "0px");
+                    var buttonDownload = headerDownload
+                        .append("a")
+                        .attr("type", "button")
+                        .attr("class", "header-help")
+                        .attr("data-toggle", "popover")
+                        .attr("data-placement", "auto left")
+                        .attr("title", "Download")
+                        .attr("data-content", "")
+                        .style("font-size", "14px");
+//                            .style("margin-bottom", "2px");
+                    buttonDownload
+                        .append("span")
+                        .attr("class", "label label-as-badge label-info")
+                        .style("font-weight","500")
+                        //                            .style("border-radius","3px")
+                        .style("border-radius","3px")
+                        //                            .style("background-color","#f8f8f8")
+                        //                            .style("background-color","#108D9F")
+                        //                            .style("border","1px solid #ddd")
+                        //                            .style("border","1px solid #0C6B78")
+                        //                            .style("color","#777")
+                        .style("box-shadow","inset 0px 0px 4px rgba(0,0,0,0.10)")
+                        .style("color","#fff")
+                        //                            .style("padding","2px 6px")
+                        .html("<span class='state'>Download</span>");
+                    $(function () {
+                        $("#download").click(this.downloadSVG)
+                    })
                 }
             }
             
