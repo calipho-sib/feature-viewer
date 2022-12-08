@@ -2087,6 +2087,36 @@ function createFeature(sequence, div, options) {
             d3.helper = {};
         }
 
+        this.downloadSVG = function() {
+            let div_name = div;
+            if (div.includes("#")) {
+                div_name = div.split("#")[1];
+            }
+            let div_element = document.getElementById(div_name);
+            let svg = div_element.getElementsByTagName("svg")[0];
+
+
+            let serializer = new XMLSerializer();
+            let source = serializer.serializeToString(svg);
+
+            if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
+                source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+            }
+            if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
+                source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+            }
+
+            source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+            let url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
+
+            let link = document.createElement("a");
+            link.setAttribute('download', "feature-viewer.svg");
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
     }
 
 if ( typeof module === "object" && typeof module.exports === "object" ) {
