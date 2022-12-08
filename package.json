@@ -1,7 +1,7 @@
 {
   "name": "feature-viewer",
   "description": "A lightweight, generic and easy-to-use feature-viewer written in javascript with D3",
-  "version": "1.3.0-beta.6",
+  "version": "1.3.0-beta.7",
   "homepage": "https://github.com/calipho-sib/feature-viewer",
   "authors": [
     "Mathieu Schaeffer <mat.schaeff@gmail.com>",
