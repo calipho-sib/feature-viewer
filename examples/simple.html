@@ -30,6 +30,7 @@
             brushActive: true,
             toolbar:true,
             bubbleHelp:true,
+            buttonDownload: true,
             zoomMax:10
                     });
 //
@@ -96,6 +97,18 @@
             type: "multipleRect",
             filter: "type2"
         });
+        ft2.addFeature({
+            data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
+            name: "test feature 1",
+            className: "test1",
+            color: "#968D73",
+            type: "rect",
+            summaryView: true,
+            summaryViewProperties: {
+                buttonLabel:"Click Here to Load All Data",
+                position:"center"
+            },
+        },function(){});
         ft2.onFeatureSelected(function (d) {
             console.log(d.detail);
         });
