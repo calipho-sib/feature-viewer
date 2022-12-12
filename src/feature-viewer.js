@@ -793,7 +793,7 @@ function createFeature(sequence, div, options) {
                 if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
                 if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
 
-                let btnPosition = 0
+                var btnPosition = 0
                 if(object.summaryViewProperties.position === 'left'){
                     btnPosition = 2;
                 } else if(object.summaryViewProperties.position === 'right'){
@@ -1068,7 +1068,7 @@ function createFeature(sequence, div, options) {
                 if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
                 if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
 
-                let btnPosition = 0;
+                var btnPosition = 0;
                 if(object.summaryViewProperties.position === 'left'){
                     btnPosition = 2;
                 } else if(object.summaryViewProperties.position === 'right'){
@@ -1956,15 +1956,15 @@ function createFeature(sequence, div, options) {
             The below function is used to load the data on request by the user
         */
         this.loadSummaryFeature = function(object) {
-            let temp = featuresArray;
+            var temp = featuresArray;
             // Remove current svg and reset parameters
             featuresArray = [];
-            let div_name = div;
+            var div_name = div;
             if (div.includes("#")) {
                 div_name = div.split("#")[1];
             }
-            let div_element = document.getElementById(div_name);
-            let svg = div_element.getElementsByTagName("svg");
+            var div_element = document.getElementById(div_name);
+            var svg = div_element.getElementsByTagName("svg");
             div_element.removeChild(svg[0]);
             Yposition = 20;
             yData = [];
@@ -1976,7 +1976,7 @@ function createFeature(sequence, div, options) {
             initSVG(div, options);
 
             // Add updated features with new data
-            temp.forEach(featureObject => {
+            temp.forEach(function(featureObject){
                 if(featureObject.className == object.className){
                     featureObject.summaryView = false;
                     featureObject.data = object.data;  
@@ -1999,16 +1999,16 @@ function createFeature(sequence, div, options) {
         }
 
         const downloadSVG = function() {
-            let div_name = div;
+            var div_name = div;
             if (div.includes("#")) {
                 div_name = div.split("#")[1];
             }
-            let div_element = document.getElementById(div_name);
-            let svg = div_element.getElementsByTagName("svg")[0];
+            var div_element = document.getElementById(div_name);
+            var svg = div_element.getElementsByTagName("svg")[0];
 
 
-            let serializer = new XMLSerializer();
-            let source = serializer.serializeToString(svg);
+            var serializer = new XMLSerializer();
+            var source = serializer.serializeToString(svg);
 
             if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
                 source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
@@ -2018,9 +2018,9 @@ function createFeature(sequence, div, options) {
             }
 
             source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-            let url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
+            var url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
 
-            let link = document.createElement("a");
+            var link = document.createElement("a");
             link.setAttribute('download', "feature-viewer.svg");
             link.href = url;
             document.body.appendChild(link);
