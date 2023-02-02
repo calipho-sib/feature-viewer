@@ -1800,36 +1800,38 @@ function createFeature(sequence, div, options) {
                 }
 
                 if(options.buttonDownload === true) {
-                    var headerDownload = headerZoom
-                        .append("div")
-                        .attr("id", "download")
-                        .style("display", "inline-block")
-                        .style("margin", "0px")
-                        .style("margin-right", "5px")
-                        .style("padding", "0px")
-                        .attr("width", "30px");
-                    var buttonDownload = headerDownload
-                        .append("a")
-                        .attr("type", "button")
-                        .attr("class", "header-help")
-                        .attr("data-toggle", "popover")
-                        .attr("data-placement", "auto left")
-                        .attr("title", "SVG")
-                        .attr("data-content", "")
-                        .style("font-size", "14px");
-                    buttonDownload
-                        .append("span")
-                        .attr("class", "label label-as-badge label-info")
-                        .style("font-weight","500")
-                        .style("border-radius","3px")
-                        .style("box-shadow","inset 0px 0px 4px rgba(0,0,0,0.10)")
-                        .style("color","#fff")
-                        .html("<span class='state'>SVG</span>");
-                    $(function () {
-                        $("#download").click(function(){
-                            downloadSVG()
-                        })
-                    });
+                    if (!$(div + ' .header-help').length) {
+                        var headerDownload = headerZoom
+                            .append("div")
+                            .attr("id", "download")
+                            .style("display", "inline-block")
+                            .style("margin", "0px")
+                            .style("margin-right", "5px")
+                            .style("padding", "0px")
+                            .attr("width", "30px");
+                        var buttonDownload = headerDownload
+                            .append("a")
+                            .attr("type", "button")
+                            .attr("class", "header-help")
+                            .attr("data-toggle", "popover")
+                            .attr("data-placement", "auto left")
+                            .attr("title", "SVG")
+                            .attr("data-content", "")
+                            .style("font-size", "14px");
+                        buttonDownload
+                            .append("span")
+                            .attr("class", "label label-as-badge label-info")
+                            .style("font-weight","500")
+                            .style("border-radius","3px")
+                            .style("box-shadow","inset 0px 0px 4px rgba(0,0,0,0.10)")
+                            .style("color","#fff")
+                            .html("<span class='state'>SVG</span>");
+                        $(function () {
+                            $("#download").click(function(){
+                                downloadSVG()
+                            })
+                        });
+                    }
                 }
             }
             
