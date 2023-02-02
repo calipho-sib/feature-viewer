@@ -1800,7 +1800,7 @@ function createFeature(sequence, div, options) {
                 }
 
                 if(options.buttonDownload === true) {
-                    if (!$(div + ' .header-help').length) {
+                    if (!$(div + ' .header-svg').length) {
                         var headerDownload = headerZoom
                             .append("div")
                             .attr("id", "download")
@@ -1812,7 +1812,7 @@ function createFeature(sequence, div, options) {
                         var buttonDownload = headerDownload
                             .append("a")
                             .attr("type", "button")
-                            .attr("class", "header-help")
+                            .attr("class", "header-svg")
                             .attr("data-toggle", "popover")
                             .attr("data-placement", "auto left")
                             .attr("title", "SVG")
