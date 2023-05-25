@@ -26,7 +26,7 @@ const minConfig = {
     filename: "feature-viewer.min.js",
   },
 
-  target: ['web', 'es5']
+  target: ['web']
 };
 
 // For complete version — including external dependencies
@@ -61,7 +61,7 @@ const maxConfig = {
     ],
   },
 
-  target: ['web', 'es5']
+  target: ['web']
 };
 
 module.exports = [
