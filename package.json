@@ -1,7 +1,7 @@
 {
   "name": "feature-viewer",
   "description": "A lightweight, generic and easy-to-use feature-viewer written in javascript with D3",
-  "version": "1.0.7",
+  "version": "1.2.1",
   "homepage": "https://github.com/calipho-sib/feature-viewer",
   "authors": [
     "Mathieu Schaeffer <mat.schaeff@gmail.com>",
@@ -28,8 +28,8 @@
     "biojs-events": "x.x.x",
     "bootstrap": "x.x.x",
     "d3": "3.5.6",
-    "jquery": "x.x.x",
-    "nextprot": "x.x.x"
+    "jquery": "^3.6.0",
+    "nextprot": "0.0.162"
   },
   "devDependencies": {
     "css-loader": "^5.2.6",
