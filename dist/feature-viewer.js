@@ -3,15 +3,18 @@ const { dropdownOptions } = require('../utils/data')
 const { toast } = require("../helpers/toast");
 
 function createFeature(sequence, div, options) {
+//        var nxSeq = sequence.startsWith('NX_') ? true : false;
         var self = this;
+        // if (!div) var div = window;
         this.events = {
-            FEATURE_SELECTED_EVENT: "feature-viewer-position-selected",
+          FEATURE_SELECTED_EVENT: "feature-viewer-position-selected",
             FEATURE_DESELECTED_EVENT: "feature-viewer-position-deselected",
-            ZOOM_EVENT: "feature-viewer-zoom-altered",
-            GET_PREDICTIONS_EVENT: "feature-viewer-vep-predictions",
-            VARIANT_ADDED_EVENT: "feature-viewer-variant-added"
+          ZOOM_EVENT: "feature-viewer-zoom-altered",
+          GET_PREDICTIONS_EVENT: "feature-viewer-vep-predictions",
+          VARIANT_ADDED_EVENT: "feature-viewer-variant-added"
         };
 
+        // if (!div) var div = window;
         var div = div;
         var el = document.getElementById(div.substring(1));
         var svgElement;
@@ -59,7 +62,6 @@ function createFeature(sequence, div, options) {
         let singleVariant = []; // Entered variant values
         let multipleVariant = [] 
 
-        var featuresArray = [];
         function colorSelectedFeat(feat, object) {
             //change color && memorize
             if (featureSelected !== {}) d3.select(featureSelected.id).style("fill", featureSelected.originalColor);
@@ -69,8 +71,11 @@ function createFeature(sequence, div, options) {
             }
         }
 
+        /**
+         * Private Methods
+         */
 
-        //Init box & scaling
+            //Init box & scaling
         d3.select(div)
             .style("position", "relative")
             .style("padding", "0px")
@@ -90,6 +95,8 @@ function createFeature(sequence, div, options) {
         var scalingPosition = d3.scale.linear()
             .domain([0, width])
             .range([offset.start, offset.end]);
+        
+        
         
 
         function updateLineTooltip(mouse,pD){
@@ -165,7 +172,8 @@ function createFeature(sequence, div, options) {
                         }
                     } else if (object.type === "bar") {
                         if (pD.description) {
-                            var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
+                            var first_line = '<p style="margin:2px;font-weight:700;color:' + tooltipColor +'">position : <span id="tLineX">' + pD.x + ' <span> frequency : <span id="tLineC">' + (pD.absoluteY ? pD.absoluteY : pD.y)  + '</span></p>';
+                            var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
                         }
                         else {
                             var first_line = '<p style="margin:2px;color:' + tooltipColor +'">position : <span id="tLineX">' + pD.x + '</span></p>';
@@ -180,11 +188,8 @@ function createFeature(sequence, div, options) {
                         if (pD.description) var second_line = '<p style="margin:2px;color:' + tooltipColor +';font-size:9px">' + pD.description + '</p>';
                         else var second_line = '';
                     }
-                    if(second_line){
-                        tooltipDiv.html(first_line + second_line);
-                    }else {
-                        tooltipDiv.html(first_line);
-                    }
+
+                    tooltipDiv.html(first_line + second_line);
                     if (rightside) {
                         tooltipDiv.style({
                             left: (absoluteMousePos[0] + 10 - (tooltipDiv.node().getBoundingClientRect().width)) + 'px'
@@ -662,16 +667,16 @@ function createFeature(sequence, div, options) {
                     return a.x - b.x;
                 });
                 if (object.highlight && Array.isArray(object.highlight)) {
-                    object.highlight.forEach(function(highlight) {
+                    object.highlight.forEach(highlight => {
                         for (var i in object.data) { 
                             if (highlight.x == object.data[i].x && highlight.y == object.data[i].y){
                                 object.data[i].highlight = true;
                                 object.data[i].color = highlight.color;
                                 object.data[i].description = highlight.highlightText;
                             }
-
+                            
                         }
-                    });
+                    })
                 }
                 level = addLevel(object.data);
                 pathLevel = level * 10 + 5;
@@ -679,7 +684,7 @@ function createFeature(sequence, div, options) {
         };
 
         var fillSVG = {
-            typeIdentifier: function (object, onClick) {
+            typeIdentifier: function (object) {
                 if (object.type === "rect") {
                     preComputing.multipleRect(object);
                     yData.push({
@@ -687,7 +692,7 @@ function createFeature(sequence, div, options) {
                         y: Yposition,
                         filter: object.filter
                     });
-                    fillSVG.rectangle(object, Yposition,onClick);
+                    fillSVG.rectangle(object, Yposition);
                 } else if (object.type === "text") {
                     fillSVG.sequence(object.data, Yposition);
                     yData.push({
@@ -746,7 +751,7 @@ function createFeature(sequence, div, options) {
                     });
                     preComputing.bar(object);
                     
-                    fillSVG.bar(object, Yposition,onClick);
+                    fillSVG.bar(object, Yposition);
                     Yposition += pathLevel;
                     yData.push({
                         title: object.name,
@@ -849,7 +854,7 @@ function createFeature(sequence, div, options) {
                     const dropdownContainer = dropdownWrapper.append("div")
                     .attr("id", function() {
                         return 'single-dropdown-content';
-                    })   
+                        })
 
                     popupContainer.append("button")
                     .attr("disabled", true)
@@ -999,28 +1004,10 @@ function createFeature(sequence, div, options) {
                         .style("stroke-opacity", 1);
                 }
             },
-            rectangle: function (object, position, onClick) {
+            rectangle: function (object, position) {
                 //var rectShift = 20;
                 if (!object.height) object.height = 12;
-                if(!object.showDescriptionRect) object.showDescriptionRect = true;
-                if(!object.summaryView) object.summaryView = false;
-                if(!object.summaryViewProperties) object.summaryViewProperties = {};
-                if(!object.summaryViewProperties.buttonColor) object.summaryViewProperties.buttonColor = "#5789d4";
-                if(!object.summaryViewProperties.buttonTextColor) object.summaryViewProperties.buttonTextColor = "#ffffff";
-                if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
-                if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
-
-                var btnPosition = 0
-                if(object.summaryViewProperties.position === 'left'){
-                    btnPosition = 2;
-                } else if(object.summaryViewProperties.position === 'right'){
-                    btnPosition = (fvLength/8) *  6.6 - 2;
-                } else if(object.summaryViewProperties.position === 'center'){
-                    btnPosition = (fvLength/8) * 3.5 - 2;
-                } else{
-                    btnPosition = 2;
-                }
-
+                if(typeof object.showDescriptionRect === 'undefined' || object.showDescriptionRect === null) object.showDescriptionRect = true;
                 var rectHeight = object.height;
                 
                 var rectShift = rectHeight + rectHeight/3;
@@ -1029,7 +1016,6 @@ function createFeature(sequence, div, options) {
 
                 var rectsPro = svgContainer.append("g")
                     .attr("class", "rectangle")
-                    .attr("clip-path", "url(#clip)")
                     .attr("transform", "translate(0," + position + ")");
                 
                 var dataline=[];
@@ -1053,78 +1039,54 @@ function createFeature(sequence, div, options) {
                     .style("z-index", "0")
                     .style("stroke", object.color)
                     .style("stroke-width", "1px");
-                
-                if(object.summaryView){
 
-                    rectsPro.selectAll("rectbox")
-                    .data([10])
-                    .enter()
-                    .append("rect")
-                    .attr("width", fvLength/8)
-                    .attr("height", 15)
-                    .attr("x", btnPosition)
-                    .attr("y", lineShift - 10)
-                    .attr("fill", object.summaryViewProperties.buttonColor )
-                    .on("click", onClick);
-
-                    rectsPro.append("text")
-                    .attr("x", btnPosition + (fvLength/80))
-                    .attr("y", lineShift + 1)
-                    .attr("font-size", "10px")
-                    .attr("fill",  object.summaryViewProperties.buttonTextColor)
-                    .text(object.summaryViewProperties.buttonLabel)
-                    .on("click", onClick);
-
-                } else {
 
                 var rectsProGroup = rectsPro.selectAll("." + object.className + "Group")
-                .data(object.data)
-                .enter()
-                .append("g")
-                .attr("class", object.className + "Group")
-                .attr("transform", function (d) {
-                    return "translate(" + rectX(d) + ",0)"
-                });
+                    .data(object.data)
+                    .enter()
+                    .append("g")
+                    .attr("class", object.className + "Group")
+                    .attr("transform", function (d) {
+                        return "translate(" + rectX(d) + ",0)"
+                    });
 
-            rectsProGroup
-                .append("rect")
-                .attr("class", "element " + object.className)
-                .attr("id", function (d) {
-                    return "f" + d.id
-                })
-                .attr("y", function (d) {
-                    return d.level * rectShift
-                })
-                .attr("width", rectWidth2)
-                .attr("height", rectHeight)
-                .style("fill", function(d) { return d.color || object.color })
-                .style("z-index", "13")
-                .call(d3.helper.tooltip(object));
-                if(object.showDescriptionRect){
-                    rectsProGroup
-                    .append("text")
-                    .attr("class", "element " + object.className + "Text")
+                rectsProGroup
+                    .append("rect")
+                    .attr("class", "element " + object.className)
+                    .attr("id", function (d) {
+                        return "f" + d.id
+                    })
                     .attr("y", function (d) {
-                        return d.level * rectShift + rectHeight/2
+                        return d.level * rectShift
                     })
-                    .attr("dy", "0.35em")
-                    .style("font-size", "10px")
-                    .text(function (d) {
-                        return d.description
-                    })
-                    .style("fill", "black")
-                    .style("z-index", "15")
-                    .style("visibility", function (d) {
-                        if (d.description) {
-                            return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
-                        } else return "hidden";
-                    })
+                    .attr("width", rectWidth2)
+                    .attr("height", rectHeight)
+                    .style("fill", function(d) { return d.color || object.color })
+                    .style("z-index", "13")
                     .call(d3.helper.tooltip(object));
-                }
-                forcePropagation(rectsProGroup);
-                var uniqueShift = rectHeight > 12 ? rectHeight - 6 : 0;
-                Yposition += level < 2 ? uniqueShift : (level-1) * rectShift + uniqueShift;
-                }
+
+                    if(object.showDescriptionRect){
+                        rectsProGroup
+                        .append("text")
+                        .attr("class", "element " + object.className + "Text")
+                        .attr("y", function (d) {
+                            return d.level * rectShift + rectHeight/2
+                        })
+                        .attr("dy", "0.35em")
+                        .style("font-size", "10px")
+                        .text(function (d) {
+                            return d.description
+                        })
+                        .style("fill", "black")
+                        .style("z-index", "15")
+                        .style("visibility", function (d) {
+                            if (d.description) {
+                                return (scaling(d.y) - scaling(d.x)) > d.description.length * 8 && rectHeight > 11 ? "visible" : "hidden";
+                            } else return "hidden";
+                        })
+                        .call(d3.helper.tooltip(object));
+                    } 
+
 
                 //rectsPro.selectAll("." + object.className)
                 //    .data(object.data)
@@ -1140,6 +1102,9 @@ function createFeature(sequence, div, options) {
                 //    .style("z-index", "13")
                 //    .call(d3.helper.tooltip(object));
 
+                forcePropagation(rectsProGroup);
+                var uniqueShift = rectHeight > 12 ? rectHeight - 6 : 0;
+                Yposition += level < 2 ? uniqueShift : (level-1) * rectShift + uniqueShift;
             },
             unique: function (object, position) {
                 var rectsPro = svgContainer.append("g")
@@ -1275,30 +1240,10 @@ function createFeature(sequence, div, options) {
                 })
                 forcePropagation(histog);
             },
-
-            bar: function (object, position,onClick) {
+            bar: function (object, position) {
                 if (object.fill === undefined) object.fill = true;
-                if(!object.summaryView) object.summaryView = false;
-                if(!object.summaryViewProperties) object.summaryViewProperties = {};
-                if(!object.summaryViewProperties.buttonColor) object.summaryViewProperties.buttonColor = "#5789d4";
-                if(!object.summaryViewProperties.buttonTextColor) object.summaryViewProperties.buttonTextColor = "#ffffff";
-                if(!object.summaryViewProperties.buttonLabel) object.summaryViewProperties.buttonLabel = "Click Here to Load All Data";
-                if(!object.summaryViewProperties.position) object.summaryViewProperties.position = "left";
-
-                var btnPosition = 0;
-                if(object.summaryViewProperties.position === 'left'){
-                    btnPosition = 2;
-                } else if(object.summaryViewProperties.position === 'right'){
-                    btnPosition = (fvLength/6) *  4.7 - 2;
-                } else if(object.summaryViewProperties.position === 'center'){
-                    btnPosition = (fvLength/6) * 2.5;
-                } else{
-                    btnPosition = 2;
-                }
-
                 var histog = svgContainer.append("g")
                     .attr("class", "bar")
-                    .attr("clip-path", "url(#clip)")
                     .attr("transform", "translate(0," + position + ")");
                 var dataline=[];
                 dataline.push([{
@@ -1323,47 +1268,25 @@ function createFeature(sequence, div, options) {
                     .style("z-index", "0")
                     .style("stroke", "black")
                     .style("stroke-width", "1px");
+                    object.data.forEach(function(dd,i,array){
+                    histog.selectAll()
+                    .data(dd)
+                    .enter().append("rect")
+                    .attr("class", "element " + object.className)
+                    .attr("x", function (d) {
+                        return scaling(d.x - 0.4)
+                    })
+                    .attr("width", function (d) {
+                        if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
+                        else return scaling(d.x + 0.4) - scaling(d.x - 0.4)})
+                    .attr("y", function(d) { return object.shift - yScale(d.y); })
+                    .attr("height", function(d) { return yScale(d.y); })
+                    .style("fill", function(d) {return d.color ||  object.color})
+                    .style("z-index", "3")
+                    .call(d3.helper.tooltip(object));
+                    })
 
-                    if(object.summaryView){
-                        histog.selectAll("rectbox")
-                        .data([10])
-                        .enter()
-                        .append("rect")
-                        .attr("width", fvLength/6)
-                        .attr("height", 25)
-                        .attr("x", btnPosition)
-                        .attr("y", object.shift - 25)
-                        .attr("fill", object.summaryViewProperties.buttonColor )
-                        .on("click", onClick);
-    
-                        histog.append("text")
-                        .attr("x", btnPosition + (fvLength/60))
-                        .attr("y", object.shift - 12)
-                        .attr("dy", ".35em")
-                        .attr("fill",  object.summaryViewProperties.buttonTextColor)
-                        .text(object.summaryViewProperties.buttonLabel)
-                        .on("click", onClick);
-                        
-                    } else {
-                        object.data.forEach(function(dd,i,array){
-                            histog.selectAll()
-                            .data(dd)
-                          .enter().append("rect")
-                            .attr("class", "element " + object.className)
-                            .attr("x", function (d) {
-                                return scaling(d.x - 0.4)
-                            })
-                            .attr("width", function (d) {
-                                if (scaling(d.x + 0.4) - scaling(d.x - 0.4) < 2) return 2;
-                                else return scaling(d.x + 0.4) - scaling(d.x - 0.4)})
-                            .attr("y", function(d) { return object.shift - yScale(d.y); })
-                            .attr("height", function(d) { return yScale(d.y); })
-                            .style("fill", function(d) {return d.color ||  object.color})
-                            .style("z-index", "3")
-                            .call(d3.helper.tooltip(object));
-                            })
-                    }
-                    forcePropagation(histog);
+                forcePropagation(histog);
             },
             multipleRect: function (object, position, level) {
                 var rectHeight = 8;
@@ -1478,6 +1401,7 @@ function createFeature(sequence, div, options) {
                 var transit;
                 if (animation) {
                     transit1 = svgContainer.selectAll("." + object.className + "Group")
+    //                    .data(object.data)
                         .transition()
                         .duration(500);
                     transit2 = svgContainer.selectAll("." + object.className)
@@ -1503,6 +1427,9 @@ function createFeature(sequence, div, options) {
             },
             multiRec: function (object) {
                 svgContainer.selectAll("." + object.className)
+//                    .data(object.data)
+                    //.transition()
+                    //.duration(500)
                     .attr("x", function (d) {
                         return scaling(d.x)
                     })
@@ -1518,6 +1445,7 @@ function createFeature(sequence, div, options) {
                 var transit;
                 if (animation) {
                     transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
                         .transition()
                         .duration(500);
                 }
@@ -1525,6 +1453,9 @@ function createFeature(sequence, div, options) {
                     transit = svgContainer.selectAll("." + object.className);
                 }
                 transit
+//                    .data(object.data)
+                    //.transition()
+                    //.duration(500)
                     .attr("x", function (d) {
                         return scaling(d.x - 0.4)
                     })
@@ -1545,6 +1476,7 @@ function createFeature(sequence, div, options) {
                 var transit;
                 if (animation) {
                     transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
                         .transition()
                         .duration(500);
                 }
@@ -1565,6 +1497,7 @@ function createFeature(sequence, div, options) {
                 var transit;
                 if (animation) {
                     transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
                         .transition()
                         .duration(500);
                 }
@@ -1583,6 +1516,7 @@ function createFeature(sequence, div, options) {
                 var transit;
                 if (animation) {
                     transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
                         .transition()
                         .duration(500);
                 }
@@ -1590,6 +1524,9 @@ function createFeature(sequence, div, options) {
                     transit = svgContainer.selectAll("." + object.className);
                 }
                 transit
+//                    .data(object.data)
+                    //.transition()
+                    //.duration(500)
                     .attr("x", function (d) {
                         return scaling(d.x - 0.4)
                     })
@@ -1602,6 +1539,7 @@ function createFeature(sequence, div, options) {
                 var transit;
                 if (animation) {
                     transit = svgContainer.selectAll("." + object.className)
+    //                    .data(object.data)
                         .transition()
                         .duration(500);
                 }
@@ -1617,6 +1555,7 @@ function createFeature(sequence, div, options) {
 
         var brush = d3.svg.brush()
             .x(scaling)
+            //.on("brush", brushmove)
             .on("brushend", brushend);
 
         function addBrush() {
@@ -1668,7 +1607,8 @@ function createFeature(sequence, div, options) {
                 current_extend.length = extentLength;
                 var zoomScale = (fvLength / extentLength).toFixed(1);
                 $(div + " .zoomUnit").text(zoomScale.toString());
-
+                
+//                scaling.range([5,width-5]); 
                 if (SVGOptions.showSequence && !(intLength) && seq && svgContainer.selectAll(".AA").empty()) {
                     current_extend = { 
                     length : extentLength,
@@ -1680,6 +1620,8 @@ function createFeature(sequence, div, options) {
                     fillSVG.sequence(sequence.substring(start-1, end), 20, seqShift-1);
                 }
 
+                //modify scale
+//                scaling.range([5,width-5]);
                 scaling.domain(extent);
                 scalingPosition.range(extent);
                 var currentShift = seqShift ? seqShift : offset.start;
@@ -1700,19 +1642,24 @@ function createFeature(sequence, div, options) {
                             zoom: zoomScale
                         });
 
+                //rectsPep2.classed("selected", false);
                 d3.select(div).selectAll(".brush").call(brush.clear());
             } else {
                 d3.select(div).selectAll(".brush").call(brush.clear());
+                //resetAll();
             }
         }
-
+//        
         var resizeCallback = function(){
+            
             updateWindow();
         }
         
         $(window).on("resize", resizeCallback);
         
         function updateWindow(){
+//            var new_width = $(div).width() - margin.left - margin.right - 17;
+//            var width_larger = (width < new_width);
             
             width = $(div).width() - margin.left - margin.right - 17;
             d3.select(div+" svg")
@@ -1722,7 +1669,8 @@ function createFeature(sequence, div, options) {
                 d3.select(div+" .background").attr("width", width);
             }
             d3.select(div).selectAll(".brush").call(brush.clear());
-
+            
+//            var currentSeqLength = svgContainer.selectAll(".AA").size();
             var seq = displaySequence(current_extend.length);
             if (SVGOptions.showSequence && !(intLength)){
                 if (seq === false && !svgContainer.selectAll(".AA").empty()) {
@@ -1827,12 +1775,18 @@ function createFeature(sequence, div, options) {
                 .style("width", "1px")
                 .style("height", (Yposition + 50) + "px")
                 .style("top", "30px")
+                // .style("left", "0px")
                 .style("background", "#000");
+
             d3.select(".chart")
                 .on("mousemove.Vline", function () {
                     mousex = d3.mouse(this)[0] - 2;
                     vertical.style("left", mousex + "px")
                 });
+            //.on("click", function(){
+            //    mousex = d3.mouse(this);
+            //    mousex = mousex[0] + 5;
+            //    vertical.style("left", mousex + "px")});
         }
 
         this.addRectSelection = function (svgId) {
@@ -1895,8 +1849,6 @@ function createFeature(sequence, div, options) {
                     'verticalLine': false,
                     'toolbar': false,
                     'bubbleHelp': false,
-                    'buttonDownload' : true,
-                    'showvariant' : false,
                     'unit': "units",
                     'zoomMax': 50
                 }
@@ -1919,7 +1871,11 @@ function createFeature(sequence, div, options) {
             }
 
             if (options.toolbar === true) {
+                
                 var headerOptions = $(div + " .svgHeader").length ? d3.select(div + " .svgHeader") : d3.select(div).append("div").attr("class", "svgHeader");
+                
+//                if (options.toolbarTemplate && options.toolbarTemplate === 2) {
+
                     if (!$(div + ' .header-position').length) {
                         var headerPosition = headerOptions
                             .append("div")
@@ -1976,17 +1932,89 @@ function createFeature(sequence, div, options) {
                             .attr("class", "zoomUnit")
                             .text("1");
                     }
+//                }
+//                else{
+//                    if (!$(div + ' .header-zoom').length) {
+//                        var headerZoom = headerOptions
+//                            .append("div")
+//                            .attr("class", "panel panel-default header-zoom")
+//                            .style("display", "inline-block")
+//                            .style("width", "150px")
+//                            .style("margin", "20px 0px 0px")
+//                            .style("padding", "0px");
+//                        headerZoom
+//                            .append("div")
+//                            .attr("class", "panel-heading")
+//                            .style("padding", "0px 15px")
+//                            .style("border-right", "1px solid #DDD")
+//                            .style("display", "inline-block")
+//                            .style("width", "80px")
+//                            .append("h5")
+//                            .style("padding", "0px")
+//                            .style("height", "10px")
+//                            .style("color", "#777")
+//                            .text("ZOOM");
+//                        headerZoom
+//                            .append("div")
+//                            .attr("class", "panel-body")
+//                            .style("display", "inline-block")
+//                            .style("padding", "0px")
+//                            .append("h5")
+//                            .style("padding-left", "15px")
+//                            .style("height", "10px")
+//                            .text("x ")
+//                            .append("span")
+//                            .attr("class", "zoomUnit")
+//                            .text("1");
+//                    }
+//                    if (!$(div + ' .header-position').length) {
+//                        var headerPosition = headerOptions
+//                            .append("div")
+//                            .attr("class", "panel panel-default header-position")
+//                            .style("display", "inline-block")
+//                            .style("width", "175px")
+//                            .style("margin", "20px 20px 0px")
+//                            .style("padding", "0px");
+//                        headerPosition
+//                            .append("div")
+//                            .attr("class", "panel-heading")
+//                            .style("padding", "0px 15px")
+//                            .style("border-right", "1px solid #DDD")
+//                            .style("display", "inline-block")
+//                            .append("h5")
+//                            .style("padding", "0px")
+//                            .style("height", "10px")
+//                            .style("color", "#777")
+//                            .text("POSITION");
+//                        headerPosition
+//                            .append("div")
+//                            .attr("class", "panel-body")
+//                            .style("display", "inline-block")
+//                            .style("padding", "0px")
+//                            .append("h5")
+//                            .style("padding-left", "15px")
+//                            .style("height", "10px")
+//                            .append("span")
+//                            .attr("id", "zoomPosition")
+//                            .text("0");
+//                    }
+//                }
                 var headerZoom = $(div + ' .header-zoom').length ? d3.select(div + ' .header-zoom') : headerOptions;
                 if (options.bubbleHelp === true) {
                     if (!$(div + ' .header-help').length) {
                         var helpContent = "<div><strong>To zoom in :</strong> Left click to select area of interest</div>" +
                             "<div><strong>To zoom out :</strong> Right click to reset the scale</div>" +
                             "<div><strong>Zoom max  :</strong> Limited to <strong>" + zoomMax.toString() + " " + options.unit +"</strong></div>";
+//                        var headerHelp = headerOptions
                         var headerHelp = headerZoom
                             .append("div")
+//                            .insert("div",":first-child")
+//                            .attr("class", "pull-right")
                             .style("display", "inline-block")
+//                            .style("margin", "15px 35px 0px 0px")
                             .style("margin", "0px")
                             .style("margin-right", "5px")
+//                            .style("line-height","32px")
                             .style("padding", "0px");
                         var buttonHelp = headerHelp
                             .append("a")
@@ -1997,13 +2025,21 @@ function createFeature(sequence, div, options) {
                             .attr("title", "Help")
                             .attr("data-content", helpContent)
                             .style("font-size", "14px");
+//                            .style("margin-bottom", "2px");
                         buttonHelp
                             .append("span")
                             .attr("class", "label label-as-badge label-info")
                             .style("font-weight","500")
+//                            .style("border-radius","3px")
                             .style("border-radius","3px")
+//                            .style("background-color","#f8f8f8")
+//                            .style("background-color","#108D9F")
+//                            .style("border","1px solid #ddd")
+//                            .style("border","1px solid #0C6B78")
+//                            .style("color","#777")
                             .style("box-shadow","inset 0px 0px 4px rgba(0,0,0,0.10)")
                             .style("color","#fff")
+//                            .style("padding","2px 6px")
                             .html("<span class='state'>Show</span> help");
                         $(function () {
                             $('[data-toggle="popover"]').popover({html: true});
@@ -2014,41 +2050,6 @@ function createFeature(sequence, div, options) {
                               $(this).find(".state").text("Hide");
                             });
                         })
-                    }
-                }
-
-                if(options.buttonDownload === true) {
-                    if (!$(div + ' .header-svg').length) {
-                        var headerDownload = headerZoom
-                            .append("div")
-                            .attr("id", "download")
-                            .style("display", "inline-block")
-                            .style("margin", "0px")
-                            .style("margin-right", "5px")
-                            .style("padding", "0px")
-                            .attr("width", "30px");
-                        var buttonDownload = headerDownload
-                            .append("a")
-                            .attr("type", "button")
-                            .attr("class", "header-svg")
-                            .attr("data-toggle", "popover")
-                            .attr("data-placement", "auto left")
-                            .attr("title", "SVG")
-                            .attr("data-content", "")
-                            .style("font-size", "14px");
-                        buttonDownload
-                            .append("span")
-                            .attr("class", "label label-as-badge label-info")
-                            .style("font-weight","500")
-                            .style("border-radius","3px")
-                            .style("box-shadow","inset 0px 0px 4px rgba(0,0,0,0.10)")
-                            .style("color","#fff")
-                            .html("<span class='state'>SVG</span>");
-                        $(function () {
-                            $("#download").click(function(){
-                                downloadSVG()
-                            })
-                        });
                     }
                 }
             }
@@ -2511,17 +2512,10 @@ function createFeature(sequence, div, options) {
             return getPredictionValues();
         }
 
-        this.addFeature = function (object,onClick ) {
-            // To prevent calculation exceptions the below dummy data is setting if summaryView option is true and data is not provided
-            // But this data will not be visible
-            if(object.summaryView && (object.data === undefined || object.data.length === 0)){  
-                object.data = [{x:10,y:15}];
-            }
-            const obj = JSON.parse(JSON.stringify(object));
-            featuresArray.push(obj);
+        this.addFeature = function (object) {
             Yposition += 20;
             features.push(object);
-            fillSVG.typeIdentifier(object,onClick);
+            fillSVG.typeIdentifier(object);
             updateYaxis();
             updateXaxis(Yposition);
             updateSVGHeight(Yposition);
@@ -2531,40 +2525,6 @@ function createFeature(sequence, div, options) {
             }
             if (SVGOptions.verticalLine) d3.selectAll(".Vline").style("height", (Yposition + 50) + "px");
             if (d3.selectAll(".element")[0].length > 1500) animation = false;
-
-        }
-
-        /*
-            The below function is used to load the data on request by the user
-        */
-        this.loadSummaryFeature = function(object) {
-            var temp = featuresArray;
-            // Remove current svg and reset parameters
-            featuresArray = [];
-            var div_name = div;
-            if (div.includes("#")) {
-                div_name = div.split("#")[1];
-            }
-            var div_element = document.getElementById(div_name);
-            var svg = div_element.getElementsByTagName("svg");
-            div_element.removeChild(svg[0]);
-            Yposition = 20;
-            yData = [];
-            features = [];
-            d3.select(div)
-            .style("position", "relative")
-            .style("padding", "0px")
-            .style("z-index", "2");
-            initSVG(div, options);
-
-            // Add updated features with new data
-            temp.forEach(function(featureObject){
-                if(featureObject.className == object.className){
-                    featureObject.summaryView = false;
-                    featureObject.data = object.data;  
-                } 
-                this.addFeature(featureObject);
-            });
 
         }
         
@@ -2579,37 +2539,6 @@ function createFeature(sequence, div, options) {
             sbcRip = null;
             d3.helper = {};
         }
-
-        const downloadSVG = function() {
-            var div_name = div;
-            if (div.includes("#")) {
-                div_name = div.split("#")[1];
-            }
-            var div_element = document.getElementById(div_name);
-            var svg = div_element.getElementsByTagName("svg")[0];
-
-
-            var serializer = new XMLSerializer();
-            var source = serializer.serializeToString(svg);
-
-            if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
-                source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-            }
-            if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
-                source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
-            }
-
-            source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-            var url = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(source);
-
-            var link = document.createElement("a");
-            link.setAttribute('download', "feature-viewer.svg");
-            link.href = url;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-        }
-
     }
 
 if ( typeof module === "object" && typeof module.exports === "object" ) {

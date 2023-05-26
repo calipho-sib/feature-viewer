@@ -139,15 +139,29 @@ var ft = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLD
                         </li>
                         <li><strong>height</strong> <em>(int)</em> : height of the feature (default: 12)</li>
                         <li><strong>color</strong> <em>(string)</em> : The color of the features</li>
-                        <li><strong>type</strong> <em>("rect","path", "line")</em> : The type of feature,
+                        <li><strong>type</strong> <em>("rect","path", "line", "bar")</em> : The type of feature,
                             for a
                             specific rendering
                         </li>
                         <li><strong>interpolation</strong> <em>("basis","step","monotone",..)</em> : Customize the layout of a the line  <br><em style="font-weight:600">(Only for the "line" feature)</em>
                         </li>
+                        <li><strong>highlight</strong> <em>(array of object)</em> : Customize the layout of a the line  <br><em style="font-weight:600">(Only for the "multipleRect" type)</em>
+                            <dl class="dl-horizontal" style="margin-bottom:5px;">
+                                <dt>x <em style="font-weight:500">(int)</em> :</dt><dd>first position</dd> 
+                                <dt>y <em style="font-weight:500">(int)</em> :</dt><dd>last position</dd> 
+                                <dt>highlightText <em style="font-weight:500">(string)</em> :</dt><dd> Highlight Text(This text will replace the already provided description in data) </dd>
+                                <dt>color <em style="font-weight:500">(string)</em> :</dt><dd> highlight color</dd>
+                                </dl>
+                        </li>
+                        <li><strong>summaryView</strong> <em>boolean</em> To enable summary view <br><em style="font-weight:600">(Only for the "bar" and "rect" type)</em></li>
+                        <li><strong>summaryViewProperties</strong> <em>object</em> Customer properties for summary view<br><em style="font-weight:600">(Only required when summaryView is enabled)</em></li>
+
                     </ul>
                     <p><strong>Note 1 :</strong> In case of <em>"line"</em> feature, you can add 2 arrays of data within an array (e.g. <em style="font-family:Courier;font-weight:500">data:[dataArray1,dataArray2]</em>), and 2 colors for each data within an array (e.g. <em style="font-family:Courier;font-weight:500">color:["#C50063","#005572"]</em>)</p>
                     <p><strong>Note 2 :</strong> Be carefull to specify different className for each type of feature</p>
+                    <p><strong>Note 3 :</strong> For further information about summary view, please refer the "Summary View - On demand loading data" section below </p>
+
+
                 </div>
                 <form>
                 <textarea id="code2" name="code2" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
@@ -213,6 +227,16 @@ ft2.addFeature({
     height: "5"
 });
 
+ft2.addFeature({
+    data: dataDemo,
+    name: "test feature 6",
+    className: "test5",
+    color: "#03b1fc",
+    type: "bar",
+    filter: "type2",
+    height: "5"
+});
+
 //Beside positions of each element, you can also give a specific description, which will appears in the tooltip when mouse hover, and a specific ID, for example to link a click event on the feature with something else in your project.
 ft2.addFeature({
     data: [{x:120,y:154,description:"aaaaa",id:"a1"},{x:22,y:163,description:"bbbbb",id:"b1"},
@@ -220,8 +244,8 @@ ft2.addFeature({
            {x:193,y:210,description:"eeeee",id:"e1"},{x:78,y:85,description:"fffff",id:"f1"},
            {x:96,y:143,description:"ggggg",id:"g1"},{x:14,y:65,description:"hhhhh",id:"h1", color:"#12E09D"},
            {x:56,y:167,description:"jjjjj",id:"j1"}],
-    name: "test feature 6",
-    className: "test6",
+    name: "test feature 7",
+    className: "test7",
     color: "#81BEAA",
     type: "rect",
     filter: "type2"
@@ -252,6 +276,8 @@ ft2.addFeature({
                     <ul>
                         <li><strong>onFeatureSelected</strong> : A click on a feature, return an object with the specific positions of this feature</li>
                         <li><strong>onZoom</strong> : When a zoom occurs, return an object with the coordinates and zoom level</li>
+                        <li><strong>downloadSVG</strong> Download the feature-viewer as SVG</li>
+
                     </ul>
                         <p>Those methods take a custom function (callback) in parameter, receiving the event object, allowing you to link the event with the rest of your application.</p>
                 </div>
@@ -327,6 +353,15 @@ ft3.onZoom(function (d) {
     console.log(d.detail);
 });
 
+downloadSvg = function(){
+    ft3.downloadSVG();      
+   }
+
+var buttonDownload = '<a class="btn btn-info btnZoom" onclick="downloadSvg()">Download as SVG</a>';
+
+$("#div3").append("<p class='btnBlock'>"+buttonDownload+"</p");
+
+
                 </textarea>
                 </form>
                 <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
@@ -339,6 +374,127 @@ ft3.onZoom(function (d) {
             <div id="div3"></div>
         </div>
     </div>
+<!-- This section was commented due to width issue is example page and summary view button -->
+    <!-- <div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
+        <div class="col-md-5 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="text-center">Summary View - On demand loading data</h4>
+                </div>
+                <div class="panel-body">
+                    <p>You can now load the large data to feature viewer on request (Currently only available for bar and rect types) :</p>
+                    <ul>
+                        <li><strong>loadSummaryFeature</strong> This method is used to load the data to FV from your immediate upper layer</li>
+                    </ul>
+                        <p>Initially to enable this, you need to define summaryView property and summaryViewProperties(optional) property in the addFeature function. 
+                            Then using the loadSummaryFeature method you can load the data to the relevant feature. </p>
+                            <ul>
+                                <li><strong>summaryViewProperties</strong> <em>(Object)</em> : An object containing :
+                                    <dl class="dl-horizontal" style="margin-bottom:5px;">
+                                        <dt>position<em style="font-weight:500">("left", "right", "center")</em> :</dt><dd>Position of the data loading button</dd> 
+                                        <dt>buttonLabel <em style="font-weight:500">(string)</em> :</dt><dd> custom text for button label <em style="font-weight:600">(Optionnal)</em></dd>
+                                        <dt>buttonColor<em style="font-weight:500">(string)</em> :</dt><dd> a custom color for button <em style="font-weight:600">(Optionnal)</em></dd>
+                                        <dt>buttonTextColor<em style="font-weight:500">(string)</em> :</dt><dd> a custom color for button text <em style="font-weight:600">(Optionnal)</em></dd>
+                                        </dl>
+                                </li>
+                            </ul>
+                </div>
+                <form>
+                <textarea id="code4" name="code4" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
+//Create a new Feature Viewer and add some rendering options
+var ft6 = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJ"+
+"KLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div4", {
+showAxis: true,
+showSequence: true,
+brushActive: true,
+toolbar:true,
+bubbleHelp:true,
+zoomMax:20
+        });
+
+var onCilck = function(){
+    ft6.loadSummaryFeature({
+            className: "test1",
+            data: [{x:20,y:32},{x:28,y:100},{x:123,y:167}, {x:200,y:232},{x:320,y:410},{x:430,y:500},{x:550,y:570},{x:590,y:619},{x:640,y:700},{x:770,y:800},{x:860,y:950},{x:1100,y:1300}]
+            })
+        }
+//Add some features
+ft6.addFeature({
+    data: [{x:20,y:32},{x:46,y:100},{x:123,y:167}],
+    name: "test feature 1",
+    className: "test1",
+    color: "#968D73",
+    type: "rect",
+    summaryView: true,
+    summaryViewProperties: {
+        buttonLabel:"Click Here to Load All Data",
+        position:"center"
+    },
+},onCilck);
+ft6.addFeature({
+    data: [{x:52,y:52},{x:92,y:92}],
+    name: "test feature 2",
+    className: "test2",
+    color: "#4F4C41",
+    type: "rect"
+});
+ft6.addFeature({
+    data: [{x:130,y:184},{x:40,y:142},{x:80,y:110}],
+    name: "test feature 3",
+    className: "test3",
+    color: "#667580",
+    type: "path"
+});
+var dataDemo = [];
+for (var i=1;i<100;i++) {
+    var count = Math.floor((Math.random() * 20) + 1);
+    dataDemo.push({
+        x: i*2,
+        y:count
+    })
+}
+ft6.addFeature({
+    data: dataDemo,
+    name: "test feature 4",
+    className: "test4",
+    color: "#667580",
+    type: "line",
+    filter: "type2",
+    height: "5"
+});
+
+ft6.addFeature({
+    data: [{x:120,y:154},{x:22,y:163},{x:90,y:108},{x:10,y:25},{x:193,y:210},{x:78,y:85},{x:96,y:143},{x:14,y:65},{x:56,y:167}],
+    name: "test feature 5",
+    className: "test5",
+    color: "#5C832F",
+    height: 8,
+    type: "rect"
+});
+
+
+//Get and print in the browser console the position of the feature selected
+ft6.onFeatureSelected(function (d) {
+    console.log(d.detail);
+});
+                        
+//Get and print in the browser console the zoom level and coordinates
+ft6.onZoom(function (d) {
+    console.log(d.detail);
+});
+
+                </textarea>
+                </form>
+                <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
+                        onclick=executeCode("#div4",summaryCode)>Execute
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6 col-md-offset-1 col-xs-12"
+             style="height:250px;vertical-align:top;margin-top:15px;">
+            <div id="div4"></div>
+        </div>
+    </div> -->
     <div class="row" style="margin-top: 30px;border-bottom:1px solid #E7EAEC;">
         <div class="col-md-5 col-xs-12">
             <div class="panel panel-default">
@@ -354,9 +510,9 @@ ft3.onZoom(function (d) {
                     </ul>
                 </div>
                 <form>
-                <textarea id="code4" name="code4" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
+                <textarea id="code5" name="code5" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
 //Create a new Feature Viewer and add some rendering options
-var ft4 = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div4", {
+var ft4 = new FeatureViewer.createFeature("FDSJKLFJDSFKLJDFHADJKLFHDSJKLFHDAFJKLDHFJKLDASFHDJKLFHDSAJKLFHDAKLFJDHSAFKLDLSNCDJKLFENFIUPERWDJKPCNVDFPIEHFDCFJDKOWFPDJWFKLXSJFDW9FIPUAENDCXAMSFNDUAFIDJFDLKSAFJDSAKFLJDSADJFDW9FIPUAENDCXAMSFNDAAAAAAAAAAAFJDSAKFL","#div5", {
             showAxis: true,
             showSequence: true,
             brushActive: true,
@@ -436,20 +592,20 @@ zoomOut = function(){
 var buttonZoom = '<a class="btn btn-info btnZoom" onclick="zoomIn()">ZOOM between 40 and 80</a>';
 var buttonResetZoom = '<a class="btn btn-info btnZoom" onclick="zoomOut()">Reset ZOOM</a>';
                         
-$("#div4").append("<p class='btnBlock'>"+buttonZoom+buttonResetZoom+"</p");
+$("#div5").append("<p class='btnBlock'>"+buttonZoom+buttonResetZoom+"</p");
                         
 
 
                 </textarea>
                 </form>
                 <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
-                        onclick=executeCode("#div4",zoomCode)>Execute
+                        onclick=executeCode("#div5",zoomCode)>Execute
                 </button>
             </div>
         </div>
         <div class="col-md-6 col-md-offset-1 col-xs-12"
              style="height:250px;vertical-align:top;margin-top:15px;">
-            <div id="div4">
+            <div id="div5">
             </div>
         </div>
     </div>
@@ -470,7 +626,7 @@ $("#div4").append("<p class='btnBlock'>"+buttonZoom+buttonResetZoom+"</p");
                     </ul>
                 </div>
                 <form>
-                <textarea id="code5" name="code5" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
+                <textarea id="code6" name="code6" style="width:500px;max-height:200px;overflow:auto;font-size:11px;">
 
 //initalize nextprot Client
 //please provide a name for your application
@@ -490,7 +646,7 @@ var options = {showAxis: true, showSequence: true,
    bubbleHelp: true, zoomMax:20 };
                     
 // Init nextprot feature viewer
-nxFeatureViewer(nx, isoform, "#div5", options)
+nxFeatureViewer(nx, isoform, "#div6", options)
     .then(function(ff){
     //(ff is here an instance of the feature viewer with few more methods)
     // Add first custom feature
@@ -541,13 +697,13 @@ nxFeatureViewer(nx, isoform, "#div5", options)
                 </textarea>
                 </form>
                 <button type="button" class="btn btn-default center-block" style="margin-bottom:20px;"
-                        onclick=executeCode("#div5",nextprot)>Execute
+                        onclick=executeCode("#div6",nextprot)>Execute
                 </button>
             </div>
         </div>
         <div class="col-md-6 col-md-offset-1 col-xs-12"
              style="height:250px;vertical-align:top;margin-top:15px;">
-            <div id="div5"></div>
+            <div id="div6"></div>
         </div>
     </div>
 </div>
@@ -559,6 +715,7 @@ nxFeatureViewer(nx, isoform, "#div5", options)
     var initSVG;
     var addFeatures;
     var eventCode;
+    var summaryCode;
     var zoomCode;
     var nextprot;
 
@@ -585,12 +742,17 @@ nxFeatureViewer(nx, isoform, "#div5", options)
             lineNumbers: true,
             lineWrapping: true
         });
-        zoomCode = CodeMirror.fromTextArea(code4, {
+        // summaryCode = CodeMirror.fromTextArea(code4, {
+        //     mode: "javascript",
+        //     lineNumbers: true,
+        //     lineWrapping: true
+        // });
+        zoomCode = CodeMirror.fromTextArea(code5, {
             mode: "javascript",
             lineNumbers: true,
             lineWrapping: true
         });
-        nextprot = CodeMirror.fromTextArea(code5, {
+        nextprot = CodeMirror.fromTextArea(code6, {
             mode: "javascript",
             lineNumbers: true,
             lineWrapping: true
@@ -599,8 +761,9 @@ nxFeatureViewer(nx, isoform, "#div5", options)
             executeCode("#div1", initSVG);
             executeCode("#div2", addFeatures);
             executeCode("#div3", eventCode);
-            executeCode("#div4", zoomCode);
-            executeCode("#div5", nextprot);
+            // executeCode("#div4", summaryCode);
+            executeCode("#div5", zoomCode);
+            executeCode("#div6", nextprot);
         });
     };
 
