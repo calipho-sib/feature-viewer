@@ -2147,6 +2147,7 @@ function createFeature(sequence, div, options) {
                                                 $(`#${idx}-original`).text(function() {
                                                     return `${originalValue} / ${dropdownOptions[originalValue]}`
                                                 });
+                                                $(`#${idx}-nextprotPosition`).val(value);
                                                 multipleVariant[variantIndex]['originalAminoAcid'] = originalValue;
                                                 multipleVariant[variantIndex].nextprotPosition = Number(value);
                                                 if(!validateInput(originalValue, multipleVariant[variantIndex]['variantAminoAcid'])) {
@@ -2196,11 +2197,12 @@ function createFeature(sequence, div, options) {
                                 return i;
                             })
                             .on("change", function(d) {
-                                const value = d3.select(this).property("value");
-                                if(value > sequence.length) return
-                                d3.select(this).attr("value", value)
-                                var idx = d3.select(this).property("id").split("-")[0]
-                                updateInputValues(value, "nextprotPosition", idx)
+                                var value = d3.select(this).property("value");
+                                if(value > sequence.length) value = sequence.length;
+                                if(value < 2) value = 2;
+                                d3.select(this).attr("value", value);
+                                var idx = d3.select(this).property("id").split("-")[0];
+                                updateInputValues(value, "nextprotPosition", idx);
                             });
 
                             
