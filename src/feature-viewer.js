@@ -2199,8 +2199,9 @@ function createFeature(sequence, div, options) {
                             .on("change", function(d) {
                                 var value = d3.select(this).property("value");
                                 if(value > sequence.length) value = sequence.length;
-                                if(value < 2) value = 2;
+                                if(value < 2) value = "2";
                                 d3.select(this).attr("value", value);
+                                d3.select(this)[0][0].setAttribute("value", value);
                                 var idx = d3.select(this).property("id").split("-")[0];
                                 updateInputValues(value, "nextprotPosition", idx);
                             });
