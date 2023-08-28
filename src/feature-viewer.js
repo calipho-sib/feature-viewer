@@ -2332,14 +2332,6 @@ function createFeature(sequence, div, options) {
                                     callOnVariantChanged()
                                     appendInputFields()
                                 })
-                            
-                        btnContainer
-                                .append("span")
-                                .text("Get Predictions")
-                                .attr("class", "get-predictions-btn")
-                                .on("click", function() {
-                                    callOnGetPredictions();
-                                })
                         
                         popup.append("div")
                                 .attr("class", "toast")
