@@ -2065,19 +2065,19 @@ function createFeature(sequence, div, options) {
                         let showMultipleVariantPopup = true;
                         let inputCount = 0;
 
-                        multipleVariantContainer
-                            .append("span")
-                            .attr("class", "add-variant-btn")
-                            .style("margin-left", "auto")
-                            .text("+ Add Variants")
-                            .on("click", function() {
-                                multipleVariantPopup(showMultipleVariantPopup)
-                                if(multipleVariant.length === 0) {
-                                    appendInputFields()
-                                } 
-                                showMultipleVariantPopup = !showMultipleVariantPopup
-                            })
-
+                        if(options.showvariant)
+                            multipleVariantContainer
+                                .append("span")
+                                .attr("class", "add-variant-btn")
+                                .style("margin-left", "auto")
+                                .text("+ Add Variants")
+                                .on("click", function() {
+                                    multipleVariantPopup(showMultipleVariantPopup)
+                                    if(multipleVariant.length === 0) {
+                                        appendInputFields()
+                                    }
+                                    showMultipleVariantPopup = !showMultipleVariantPopup
+                                })
 
                         const popup = multipleVariantContainer
                             .append("div")
