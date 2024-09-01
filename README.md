@@ -188,7 +188,9 @@ If you have any problem or suggestion please open an issue [here](https://github
 
 `npm publish` (will publish in npm)
 
+## Release convention
 
+Releases are done with the respective release branch, while maintaining the develop branch for development and most stable version on master branch.
 
 ## License 
 
